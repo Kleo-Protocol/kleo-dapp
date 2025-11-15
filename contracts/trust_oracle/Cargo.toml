@@ -2,24 +2,26 @@
 name = "trust_oracle"
 version = "0.1.0"
 authors = ["Fabian Sanchez <fabiansanchezd@outlook.com>"]
-edition = "2024"
-
-[dependencies]
-ink = { version = "6.0.0-beta.1", default-features = false, features = ["unstable-hostfn"] }
-
-[dev-dependencies]
-ink_e2e = { version = "6.0.0-beta.1" }
+edition = "2021"
 
 [lib]
+name = "trust_oracle"
 path = "lib.rs"
+
+[dependencies]
+ink = { version = "6.0.0-beta.1", default-features = false }
+
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
+scale-info = { version = "2", default-features = false, features = ["derive"] }
 
 [features]
 default = ["std"]
 std = [
     "ink/std",
+    "scale/std",
+    "scale-info/std",
 ]
 ink-as-dependency = []
-e2e-tests = []
 
 [package.metadata.ink-lang]
 abi = "ink"
@@ -27,5 +29,6 @@ abi = "ink"
 [lints.rust.unexpected_cfgs]
 level = "warn"
 check-cfg = [
-    'cfg(ink_abi, values("ink", "sol", "all"))'
+    'cfg(ink_abi, values("ink", "sol", "all"))',
+    'cfg(feature, values("default", "std", "ink-as-dependency"))',
 ]
