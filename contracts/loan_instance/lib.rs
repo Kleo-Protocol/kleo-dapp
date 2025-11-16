@@ -2,6 +2,7 @@
 
 #[ink::contract]
 mod loan_instance {
+    #[cfg(not(test))]
     use ink::env::{
         call::{build_call, ExecutionInput, Selector},
         DefaultEnvironment,
@@ -14,7 +15,7 @@ mod loan_instance {
     // DATA TYPES
     // ─────────────────────────────────────────────
 
-    #[derive(scale::Encode, scale::Decode, Clone, Copy, PartialEq, Eq)]
+    #[derive(Debug, scale::Encode, scale::Decode, Clone, Copy, PartialEq, Eq)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo, StorageLayout))]
     pub enum LoanState {
         Funding,
@@ -23,7 +24,7 @@ mod loan_instance {
         Completed,
     }
 
-    #[derive(scale::Encode, scale::Decode, Clone)]
+    #[derive(Debug, scale::Encode, scale::Decode, Clone)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
     pub struct LenderContribution {
         pub lender: H160,
@@ -58,6 +59,58 @@ mod loan_instance {
         buffer_amount: u128,
 
         trust_score_at_issuance: i32,
+    }
+
+    #[cfg(test)]
+    mod test_helpers {
+        use super::*;
+        use std::cell::RefCell;
+
+        thread_local! {
+            static TRUST_SCORE: RefCell<i32> = RefCell::new(0);
+            static INSTALLMENTS: RefCell<Vec<(H160, u128)>> = RefCell::new(Vec::new());
+            static DEFAULTS: RefCell<Vec<H160>> = RefCell::new(Vec::new());
+            static TRANSFERS: RefCell<Vec<(H160, u128)>> = RefCell::new(Vec::new());
+        }
+
+        pub fn reset() {
+            TRUST_SCORE.with(|v| *v.borrow_mut() = 0);
+            INSTALLMENTS.with(|v| v.borrow_mut().clear());
+            DEFAULTS.with(|v| v.borrow_mut().clear());
+            TRANSFERS.with(|v| v.borrow_mut().clear());
+        }
+
+        pub fn set_trust_score(score: i32) {
+            TRUST_SCORE.with(|v| *v.borrow_mut() = score);
+        }
+
+        pub fn trust_score() -> i32 {
+            TRUST_SCORE.with(|v| *v.borrow())
+        }
+
+        pub fn record_installment(borrower: H160, amount: u128) {
+            INSTALLMENTS.with(|v| v.borrow_mut().push((borrower, amount)));
+        }
+
+        pub fn installments() -> Vec<(H160, u128)> {
+            INSTALLMENTS.with(|v| v.borrow().clone())
+        }
+
+        pub fn record_default(borrower: H160) {
+            DEFAULTS.with(|v| v.borrow_mut().push(borrower));
+        }
+
+        pub fn defaults() -> Vec<H160> {
+            DEFAULTS.with(|v| v.borrow().clone())
+        }
+
+        pub fn record_transfer(to: H160, amount: u128) {
+            TRANSFERS.with(|v| v.borrow_mut().push((to, amount)));
+        }
+
+        pub fn transfers() -> Vec<(H160, u128)> {
+            TRANSFERS.with(|v| v.borrow().clone())
+        }
     }
 
     impl LoanInstance {
@@ -234,7 +287,6 @@ mod loan_instance {
                 // Buffer no alcanza para cubrir la deuda
                 let shortfall = self.remaining_debt - available;
                 self.remaining_debt -= available;
-                available = 0;
                 self.distribute_loss(shortfall);
             }
 
@@ -275,6 +327,7 @@ mod loan_instance {
         // CROSS-CONTRACT CALLS (trust_oracle)
         // ─────────────────────────────────────────────
 
+        #[cfg(not(test))]
         fn call_oracle_get_score(&self, borrower: H160) -> i32 {
             let selector = Selector::new(ink::selector_bytes!("get_trust_score"));
 
@@ -289,6 +342,12 @@ mod loan_instance {
                 .invoke()
         }
 
+        #[cfg(test)]
+        fn call_oracle_get_score(&self, _borrower: H160) -> i32 {
+            test_helpers::trust_score()
+        }
+
+        #[cfg(not(test))]
         fn call_oracle_event_installment(&self, amount: u128) {
             let selector = Selector::new(ink::selector_bytes!("notify_installment"));
 
@@ -304,6 +363,12 @@ mod loan_instance {
                 .invoke();
         }
 
+        #[cfg(test)]
+        fn call_oracle_event_installment(&self, amount: u128) {
+            test_helpers::record_installment(self.borrower, amount);
+        }
+
+        #[cfg(not(test))]
         fn call_oracle_event_default(&self) {
             let selector = Selector::new(ink::selector_bytes!("notify_default"));
 
@@ -318,10 +383,16 @@ mod loan_instance {
                 .invoke();
         }
 
+        #[cfg(test)]
+        fn call_oracle_event_default(&self) {
+            test_helpers::record_default(self.borrower);
+        }
+
         // ─────────────────────────────────────────────
         // VALUE TRANSFER (ink! 6)
         // ─────────────────────────────────────────────
 
+        #[cfg(not(test))]
         fn transfer_h160(&self, to: H160, amount: u128) {
             let selector = Selector::new(ink::selector_bytes!("transfer"));
 
@@ -331,6 +402,11 @@ mod loan_instance {
                 .exec_input(ExecutionInput::new(selector))
                 .returns::<()>()
                 .invoke();
+        }
+
+        #[cfg(test)]
+        fn transfer_h160(&self, to: H160, amount: u128) {
+            test_helpers::record_transfer(to, amount);
         }
 
         // ─────────────────────────────────────────────
@@ -367,6 +443,115 @@ mod loan_instance {
         #[ink(message)]
         pub fn get_buffer_deposited(&self) -> bool {
             self.buffer_amount > 0
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        use ink::env::{test, DefaultEnvironment};
+        use std::collections::HashMap;
+
+        fn default_accounts() -> test::DefaultAccounts {
+            test::default_accounts()
+        }
+
+        fn contribute_as(contract: &mut LoanInstance, lender: H160, amount: u128) {
+            test::set_caller(lender);
+            test::set_value_transferred(amount.into());
+            contract.contribute();
+        }
+
+        fn activate_with_three_lenders(contract: &mut LoanInstance, accounts: &test::DefaultAccounts) {
+            contribute_as(contract, accounts.bob, 400);
+            contribute_as(contract, accounts.charlie, 400);
+            contribute_as(contract, accounts.django, 400);
+        }
+
+        #[ink::test]
+        fn constructor_sets_defaults() {
+            test_helpers::reset();
+            let accounts = default_accounts();
+            let contract = LoanInstance::new(accounts.alice, 1_000, 12_000, 30, accounts.eve);
+
+            assert_eq!(contract.get_state(), LoanState::Funding);
+            assert_eq!(contract.get_principal(), 1_000);
+            assert_eq!(contract.get_remaining_debt(), 1_000);
+            assert_eq!(contract.trust_oracle, accounts.eve);
+            assert_eq!(contract.total_required, 1_200);
+        }
+
+        #[ink::test]
+        fn funding_goes_active_after_threshold() {
+            test_helpers::reset();
+            let accounts = default_accounts();
+            test_helpers::set_trust_score(800);
+
+            let mut contract = LoanInstance::new(accounts.alice, 1_000, 12_000, 30, accounts.eve);
+            activate_with_three_lenders(&mut contract, &accounts);
+
+            assert_eq!(contract.get_state(), LoanState::Active);
+            assert_eq!(contract.buffer_amount, 200);
+
+            let transfers = test_helpers::transfers();
+            assert_eq!(transfers, vec![(accounts.alice, 1_000)]);
+            assert_eq!(contract.trust_score_at_issuance, 800);
+        }
+
+        #[ink::test]
+        fn full_repayment_completes_loan() {
+            test_helpers::reset();
+            let accounts = default_accounts();
+            test_helpers::set_trust_score(820);
+
+            let mut contract = LoanInstance::new(accounts.alice, 1_000, 12_000, 30, accounts.eve);
+            activate_with_three_lenders(&mut contract, &accounts);
+
+            test::set_caller(accounts.alice);
+            test::set_value_transferred(1_000.into());
+            contract.repay();
+
+            assert_eq!(contract.get_state(), LoanState::Completed);
+            assert_eq!(contract.get_remaining_debt(), 0);
+            assert_eq!(contract.buffer_amount, 0);
+
+            let installments = test_helpers::installments();
+            assert_eq!(installments.last().unwrap().1, 1_000);
+
+            let transfers = test_helpers::transfers();
+            assert_eq!(transfers[0], (accounts.alice, 1_000));
+
+            let mut payouts: HashMap<H160, u128> = HashMap::new();
+            for (to, amount) in transfers.into_iter().skip(1) {
+                *payouts.entry(to).or_default() += amount;
+            }
+
+            assert_eq!(payouts.len(), 3);
+            for lender in [accounts.bob, accounts.charlie, accounts.django] {
+                assert!(payouts.get(&lender).copied().unwrap_or(0) > 0);
+            }
+
+            let total: u128 = payouts.values().copied().sum();
+            assert!(total <= contract.total_required);
+            assert!(total >= contract.total_required - 5);
+        }
+
+        #[ink::test]
+        fn default_path_emits_events() {
+            test_helpers::reset();
+            let accounts = default_accounts();
+            test_helpers::set_trust_score(790);
+
+            let mut contract = LoanInstance::new(accounts.alice, 1_000, 12_000, 30, accounts.eve);
+            activate_with_three_lenders(&mut contract, &accounts);
+
+            contract.last_payment_at = 0;
+            test::set_block_timestamp::<DefaultEnvironment>(100);
+            contract.check_default(10);
+
+            assert_eq!(contract.get_state(), LoanState::Defaulted);
+            assert_eq!(contract.buffer_amount, 0);
+            assert!(!test_helpers::defaults().is_empty());
         }
     }
 }

@@ -31,13 +31,6 @@ mod loan_registry {
         new: H160,
     }
 
-    /// Evento: se actualiza la dirección del Hydration Adapter.
-    #[ink(event)]
-    pub struct HydrationAdapterUpdated {
-        old: H160,
-        new: H160,
-    }
-
     #[ink(storage)]
     pub struct LoanRegistry {
         /// Admin del contrato.
@@ -45,9 +38,6 @@ mod loan_registry {
 
         /// Dirección del contrato TrustOracle.
         trust_oracle: H160,
-
-        /// Dirección del Hydration Buffer Adapter.
-        hydration_adapter: H160,
 
         /// Lista global de todos los loans creados.
         loans: Vec<H160>,
@@ -62,6 +52,31 @@ mod loan_registry {
         min_trust_score: i32,
     }
 
+    #[cfg(test)]
+    mod test_helpers {
+        use super::*;
+        use std::cell::RefCell;
+        use std::collections::HashMap;
+
+        thread_local! {
+            static TRUST_SCORES: RefCell<HashMap<H160, i32>> = RefCell::new(HashMap::new());
+        }
+
+        pub fn set_trust_score(borrower: H160, score: i32) {
+            TRUST_SCORES.with(|scores| {
+                scores.borrow_mut().insert(borrower, score);
+            });
+        }
+
+        pub fn get_trust_score(borrower: &H160) -> Option<i32> {
+            TRUST_SCORES.with(|scores| scores.borrow().get(borrower).copied())
+        }
+
+        pub fn reset() {
+            TRUST_SCORES.with(|scores| scores.borrow_mut().clear());
+        }
+    }
+
     impl LoanRegistry {
         // ─────────────────────────────
         // Helpers internos
@@ -72,6 +87,7 @@ mod loan_registry {
         }
 
         /// Llama a `trust_oracle.get_trust_score(borrower)` vía cross-contract call.
+        #[cfg(not(test))]
         fn fetch_trust_score(&self, borrower: &H160) -> i32 {
             use ink::env::{
                 call::{build_call, ExecutionInput, Selector},
@@ -93,6 +109,12 @@ mod loan_registry {
                 .invoke()
         }
 
+            #[cfg(test)]
+            fn fetch_trust_score(&self, borrower: &H160) -> i32 {
+                test_helpers::get_trust_score(borrower)
+                .unwrap_or(self.min_trust_score)
+            }
+
         /// Genera una dirección pseudo-única de loan mientras no tenemos el contrato instanciable.
         /// (Se puede reemplazar más adelante por la dirección real del `loan_instance`).
         fn next_pseudo_loan_address(&self) -> H160 {
@@ -110,19 +132,16 @@ mod loan_registry {
         /// Crea un nuevo LoanRegistry.
         ///
         /// - `trust_oracle`: dirección del contrato TrustOracle.
-        /// - `hydration_adapter`: dirección del adapter hacia Hydration.
         /// - `min_trust_score`: mínimo score requerido para crear loans.
         #[ink(constructor)]
         pub fn new(
             trust_oracle: H160,
-            hydration_adapter: H160,
             min_trust_score: i32,
         ) -> Self {
             let caller = Self::env().caller();
             Self {
                 owner: caller,
                 trust_oracle,
-                hydration_adapter,
                 loans: Vec::new(),
                 borrower_loans: Mapping::default(),
                 lender_loans: Mapping::default(),
@@ -156,18 +175,6 @@ mod loan_registry {
             let old = self.trust_oracle;
             self.trust_oracle = addr;
             self.env().emit_event(TrustOracleUpdated { old, new: addr });
-        }
-
-        /// Actualiza la dirección del Hydration Adapter.
-        /// Solo el owner puede cambiarla.
-        #[ink(message)]
-        pub fn set_hydration_adapter(&mut self, addr: H160) {
-            if !self.ensure_owner() {
-                return;
-            }
-            let old = self.hydration_adapter;
-            self.hydration_adapter = addr;
-            self.env().emit_event(HydrationAdapterUpdated { old, new: addr });
         }
 
         // ─────────────────────────────
@@ -242,7 +249,7 @@ mod loan_registry {
         }
 
         /// Devuelve todos los loans donde una cuenta actúa como lender.
-        ///
+        /// 
         /// Nota: por ahora este mapping no se mantiene;
         /// se dejará para integración futura desde loan_instance.
         #[ink(message)]
@@ -256,12 +263,6 @@ mod loan_registry {
             self.trust_oracle
         }
 
-        /// Dirección actual del Hydration Adapter.
-        #[ink(message)]
-        pub fn get_hydration_adapter(&self) -> H160 {
-            self.hydration_adapter
-        }
-
         /// Trust score mínimo requerido para crear loans.
         #[ink(message)]
         pub fn get_min_trust_score(&self) -> i32 {
@@ -272,6 +273,79 @@ mod loan_registry {
         #[ink(message)]
         pub fn get_owner(&self) -> H160 {
             self.owner
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        use ink::env::test;
+
+        fn default_accounts() -> test::DefaultAccounts {
+            test::default_accounts()
+        }
+
+        #[ink::test]
+        fn new_sets_owner_and_config() {
+            test_helpers::reset();
+            let accounts = default_accounts();
+            test::set_caller(accounts.alice);
+            let registry = LoanRegistry::new(accounts.eve, 650);
+
+            assert_eq!(registry.get_owner(), accounts.alice);
+            assert_eq!(registry.get_trust_oracle(), accounts.eve);
+            assert_eq!(registry.get_min_trust_score(), 650);
+            assert!(registry.get_all_loans().is_empty());
+        }
+
+        #[ink::test]
+        fn owner_controls_admin_updates() {
+            test_helpers::reset();
+            let accounts = default_accounts();
+            test::set_caller(accounts.alice);
+            let mut registry = LoanRegistry::new(accounts.eve, 600);
+
+            registry.set_min_trust_score(700);
+            assert_eq!(registry.get_min_trust_score(), 700);
+
+            registry.set_trust_oracle(accounts.charlie);
+            assert_eq!(registry.get_trust_oracle(), accounts.charlie);
+
+            test::set_caller(accounts.bob);
+            registry.set_min_trust_score(400);
+            registry.set_trust_oracle(accounts.django);
+
+            assert_eq!(registry.get_min_trust_score(), 700);
+            assert_eq!(registry.get_trust_oracle(), accounts.charlie);
+        }
+
+        #[ink::test]
+        fn create_loan_records_indices() {
+            test_helpers::reset();
+            let accounts = default_accounts();
+            test::set_caller(accounts.alice);
+            let mut registry = LoanRegistry::new(accounts.eve, 500);
+            test_helpers::set_trust_score(accounts.alice, 700);
+
+            test::set_caller(accounts.alice);
+            let loan = registry.create_loan(1_000, 12_000, 100);
+
+            assert_eq!(registry.get_all_loans(), vec![loan]);
+            assert_eq!(registry.get_loans_by_borrower(accounts.alice), vec![loan]);
+            assert!(registry.get_loans_by_lender(accounts.bob).is_empty());
+        }
+
+        #[ink::test]
+        #[should_panic(expected = "Insufficient trust score to create loan")]
+        fn create_loan_enforces_trust_score() {
+            test_helpers::reset();
+            let accounts = default_accounts();
+            test::set_caller(accounts.alice);
+            let mut registry = LoanRegistry::new(accounts.eve, 750);
+            test_helpers::set_trust_score(accounts.alice, 500);
+
+            test::set_caller(accounts.alice);
+            let _ = registry.create_loan(1_000, 12_000, 100);
         }
     }
 }
