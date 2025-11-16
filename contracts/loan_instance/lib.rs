@@ -6,17 +6,17 @@ mod loan_instance {
         call::{build_call, ExecutionInput, Selector},
         DefaultEnvironment,
     };
-use ink::{H160, U256};
-use scale_info::prelude::vec::Vec;
-use ink::storage::traits::StorageLayout;
+    use ink::{H160, U256};
+    use ink::storage::traits::StorageLayout;
+    use scale_info::prelude::vec::Vec;
 
     // ─────────────────────────────────────────────
     // DATA TYPES
     // ─────────────────────────────────────────────
 
-#[derive(scale::Encode, scale::Decode, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "std", derive(scale_info::TypeInfo, StorageLayout))]
-pub enum LoanState {
+    #[derive(scale::Encode, scale::Decode, Clone, Copy, PartialEq, Eq)]
+    #[cfg_attr(feature = "std", derive(scale_info::TypeInfo, StorageLayout))]
+    pub enum LoanState {
         Funding,
         Active,
         Defaulted,
@@ -53,10 +53,9 @@ pub enum LoanState {
         last_payment_at: u64,
 
         trust_oracle: H160,
-        hydration_adapter: H160,
 
-        buffer_deposited: bool,
-        buffer_shares: u128,
+        /// Monto del buffer ( (α - 1)L ) que queda retenido en este contrato.
+        buffer_amount: u128,
 
         trust_score_at_issuance: i32,
     }
@@ -71,9 +70,9 @@ pub enum LoanState {
             borrower: H160,
             principal: u128,
             overfactor_bps: u32,
-            max_duration: u64,        // parámetro estilo registry
+            _max_duration: u64,        // parámetro estilo registry, no usado aún
             trust_oracle: H160,
-            hydration_adapter: H160,
+            _hydration_adapter: H160,  // se mantiene para compat con registry, pero NO se usa
         ) -> Self {
             let total_required = principal * overfactor_bps as u128 / 10_000;
             let now = Self::env().block_timestamp();
@@ -95,10 +94,8 @@ pub enum LoanState {
                 last_payment_at: now,
 
                 trust_oracle,
-                hydration_adapter,
 
-                buffer_deposited: false,
-                buffer_shares: 0,
+                buffer_amount: 0,
 
                 trust_score_at_issuance: 0,
             }
@@ -141,12 +138,10 @@ pub enum LoanState {
             // 1. Transfer principal to borrower
             self.transfer_h160(self.borrower, principal_out);
 
-            // 2. Deposit buffer into Hydration
-            let shares = self.call_hydration_deposit(buffer_amount);
-            self.buffer_shares = shares;
-            self.buffer_deposited = true;
+            // 2. Guardar buffer internamente (ya está en el balance del contrato)
+            self.buffer_amount = buffer_amount;
 
-            // 3. Read trust score at issuance
+            // 3. Leer trust score al momento de emisión
             self.trust_score_at_issuance =
                 self.call_oracle_get_score(self.borrower);
 
@@ -206,28 +201,45 @@ pub enum LoanState {
         fn finalize_success(&mut self) {
             assert!(self.remaining_debt == 0, "Debt not zero");
 
-            let (buffer_p, buffer_y) = self.call_hydration_withdraw();
+            // Suposición simple:
+            // - El borrower devolvió todo el principal.
+            // - El contrato tiene: principal + buffer_amount.
+            // Usamos `principal` como "buffer_principal" y `buffer_amount` como "extra/yield".
+            let buffer_p = self.principal;
+            let buffer_y = self.buffer_amount;
 
             self.distribute_pro_rata(buffer_p, buffer_y);
+            self.buffer_amount = 0;
             self.state = LoanState::Completed;
         }
 
         fn finalize_default(&mut self) {
             self.state = LoanState::Defaulted;
 
-            let (buffer_p, buffer_y) = self.call_hydration_withdraw();
-
-            let mut available = buffer_p;
+            // En default:
+            // - El buffer se usa primero para cubrir la deuda restante.
+            // - Si sobra algo, se reparte pro-rata (como pequeño salvavidas).
+            // - Si falta, se registra una pérdida implícita.
+            let mut available = self.buffer_amount;
 
             if available >= self.remaining_debt {
+                // Buffer cubre toda la deuda
                 available -= self.remaining_debt;
                 self.remaining_debt = 0;
-                self.distribute_pro_rata(available, buffer_y);
+
+                if available > 0 {
+                    // Lo que queda de buffer se reparte (sin yield extra)
+                    self.distribute_pro_rata(available, 0);
+                }
             } else {
+                // Buffer no alcanza para cubrir la deuda
                 let shortfall = self.remaining_debt - available;
+                self.remaining_debt -= available;
+                available = 0;
                 self.distribute_loss(shortfall);
             }
 
+            self.buffer_amount = 0;
             self.call_oracle_event_default();
         }
 
@@ -236,6 +248,10 @@ pub enum LoanState {
         // ─────────────────────────────────────────────
 
         fn distribute_pro_rata(&self, p: u128, y: u128) {
+            if self.total_contributed == 0 {
+                return;
+            }
+
             for c in &self.contributions {
                 let share = c.amount * 1_000_000_000 / self.total_contributed;
 
@@ -252,11 +268,12 @@ pub enum LoanState {
         }
 
         fn distribute_loss(&self, _shortfall: u128) {
-            // Lenders simply do not receive some repayments
+            // Las pérdidas se reflejan en que los lenders no recuperan todo.
+            // Aquí podrías loguear o notificar, pero no hay transferencia.
         }
 
         // ─────────────────────────────────────────────
-        // CROSS-CONTRACT CALLS (ink! 6 format)
+        // CROSS-CONTRACT CALLS (trust_oracle)
         // ─────────────────────────────────────────────
 
         fn call_oracle_get_score(&self, borrower: H160) -> i32 {
@@ -300,34 +317,6 @@ pub enum LoanState {
                 )
                 .returns::<()>()
                 .invoke();
-        }
-
-        fn call_hydration_deposit(&self, amount: u128) -> u128 {
-            let selector = Selector::new(ink::selector_bytes!("deposit_for_loan"));
-
-            build_call::<DefaultEnvironment>()
-                .call(self.hydration_adapter)
-                .transferred_value(amount.into())
-                .exec_input(
-                    ExecutionInput::new(selector)
-                        .push_arg(self.borrower)
-                )
-                .returns::<u128>()
-                .invoke()
-        }
-
-        fn call_hydration_withdraw(&self) -> (u128, u128) {
-            let selector = Selector::new(ink::selector_bytes!("withdraw_for_loan"));
-
-            build_call::<DefaultEnvironment>()
-                .call(self.hydration_adapter)
-                .transferred_value(U256::from(0))
-                .exec_input(
-                    ExecutionInput::new(selector)
-                        .push_arg(self.borrower)
-                )
-                .returns::<(u128, u128)>()
-                .invoke()
         }
 
         // ─────────────────────────────────────────────
@@ -374,9 +363,11 @@ pub enum LoanState {
             self.principal
         }
 
+        /// Antes era un flag de si el buffer fue depositado en Hydration.
+        /// Ahora simplemente indica si hay buffer retenido en el contrato.
         #[ink(message)]
         pub fn get_buffer_deposited(&self) -> bool {
-            self.buffer_deposited
+            self.buffer_amount > 0
         }
     }
 }
