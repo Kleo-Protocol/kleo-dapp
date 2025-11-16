@@ -31,22 +31,6 @@ export default function DashboardPage() {
   return (
     <div>
       <TypinkIntro />
-
-      <div className='mx-auto px-4 pb-16'>
-        <BalanceInsufficientAlert />
-        <NonMappedAccountAlert />
-
-        <div className='grid grid-cols-1 gap-6 lg:grid-cols-2 mx-auto'>
-          <div>
-            <ChainInfo className='h-full' />
-          </div>
-
-          <div className='flex flex-col gap-6'>
-            <AccountInfo />
-            <FlipperBoard />
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
