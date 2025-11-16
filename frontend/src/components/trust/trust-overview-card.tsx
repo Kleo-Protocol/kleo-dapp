@@ -31,7 +31,7 @@ export function TrustOverviewCard({ address }: TrustOverviewCardProps) {
   }, [address]);
 
   const borrower = borrowerAddress?.h160 as H160 | undefined;
-  const borrowerDisplay = borrowerAddress?.ss58;
+  const borrowerDisplay = borrowerAddress?.ss58.slice(0, 10) + '...' + borrowerAddress?.ss58.slice(-6);
 
   const trustScoreQuery = useContractQuery(
     trustOracle && borrower

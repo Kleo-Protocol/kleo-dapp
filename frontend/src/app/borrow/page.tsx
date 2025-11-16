@@ -28,7 +28,6 @@ interface LocalRequestNote {
   durationDays: number;
 }
 
-const DEFAULT_OVERFACTOR = 120; // 1.20x
 const DEFAULT_DURATION = 30; // days
 
 function formatBigInt(value?: bigint | number, suffix = '') {
@@ -59,7 +58,6 @@ export default function BorrowPage() {
   const [principal, setPrincipal] = useState('');
   const [asset, setAsset] = useState('DOT');
   const [message, setMessage] = useState('');
-  const [overfactor, setOverfactor] = useState(String(DEFAULT_OVERFACTOR));
   const [durationDays, setDurationDays] = useState(String(DEFAULT_DURATION));
   const [requestNotes, setRequestNotes] = useState<LocalRequestNote[]>([]);
   const [loanSnapshot, setLoanSnapshot] = useState<LoanInstance | null>(null);
@@ -180,13 +178,7 @@ export default function BorrowPage() {
       return;
     }
 
-    const overfactorNumber = Number(overfactor);
-    if (!Number.isFinite(overfactorNumber) || overfactorNumber < 100) {
-      toast.error('Overfactor should be at least 100 (1.00x).');
-      return;
-    }
-
-    const overfactorBps = Math.round(overfactorNumber * 100);
+    const overfactorBps = 15_000; // enforced 1.5x
     const durationNumber = Number(durationDays);
     if (!Number.isFinite(durationNumber) || durationNumber <= 0) {
       toast.error('Provide a positive duration in days.');
@@ -264,18 +256,10 @@ export default function BorrowPage() {
             </div>
 
             <div className='grid gap-4 md:grid-cols-2'>
-              <div>
-                <Label htmlFor='overfactor'>Overcollateral factor (x100)</Label>
-                <Input
-                  id='overfactor'
-                  type='number'
-                  inputMode='decimal'
-                  min={100}
-                  step={1}
-                  value={overfactor}
-                  onChange={(event) => setOverfactor(event.target.value)}
-                />
-                <p className='text-xs text-muted-foreground mt-1'>120 = 1.20x requirement. Registry enforces final buffer internally.</p>
+              <div className='rounded-xl border border-gray-200/60 bg-white/60 p-4 dark:border-gray-800 dark:bg-gray-950/60'>
+                <p className='text-xs uppercase tracking-wide text-muted-foreground'>Overcollateral factor</p>
+                <p className='text-2xl font-semibold text-foreground'>1.50x</p>
+                <p className='text-xs text-muted-foreground mt-1'>Registry enforces a fixed 150% buffer for every request.</p>
               </div>
               <div>
                 <Label htmlFor='duration'>Max duration (days)</Label>

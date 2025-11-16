@@ -208,9 +208,10 @@ export function TrustActionsCard() {
 
         {!isAuthorized && (
           <div className='flex items-start gap-2 rounded-lg border border-amber-400/50 bg-amber-500/5 p-3 text-sm text-amber-600 dark:text-amber-400'>
-            <ShieldAlertIcon className='mt-0.5 h-4 w-4' />
-            <div>
-              Only owner/authorized callers can push trust events. Ask an admin to authorize <span className='font-mono text-xs'>{callerSs58 ?? 'your account'}</span>.
+            <ShieldAlertIcon className='mt-0.5 h-4 w-4 shrink-0' />
+            <div className='space-y-1 text-left'>
+              <p className='leading-snug'>Only owner/authorized callers can push trust events. Ask an admin to authorize you.</p>
+              <p className='font-mono text-xs break-all text-amber-700/80 dark:text-amber-300/80'>{callerSs58 ?? 'No SS58 detected'}</p>
             </div>
           </div>
         )}
@@ -232,16 +233,35 @@ export function TrustActionsCard() {
         )}
 
         <div className='grid gap-3 md:grid-cols-2'>
-          <Button onClick={handleRecordPayment} disabled={!canSubmit || installerTx.inBestBlockProgress}>
+          <Button
+            className='h-auto min-h-12 whitespace-normal text-left py-3'
+            onClick={handleRecordPayment}
+            disabled={!canSubmit || installerTx.inBestBlockProgress}
+          >
             {installerTx.inBestBlockProgress ? 'Recording...' : 'Record installment paid'}
           </Button>
-          <Button variant='secondary' onClick={handleMissedPayment} disabled={!canSubmit || penaltyTx.inBestBlockProgress}>
+          <Button
+            variant='secondary'
+            className='h-auto min-h-12 whitespace-normal text-left py-3'
+            onClick={handleMissedPayment}
+            disabled={!canSubmit || penaltyTx.inBestBlockProgress}
+          >
             {penaltyTx.inBestBlockProgress ? 'Submitting...' : 'Mark missed payment'}
           </Button>
-          <Button variant='outline' onClick={handleGuarantor} disabled={!canSubmit || guarantorTx.inBestBlockProgress}>
+          <Button
+            variant='outline'
+            className='h-auto min-h-12 whitespace-normal text-left py-3'
+            onClick={handleGuarantor}
+            disabled={!canSubmit || guarantorTx.inBestBlockProgress}
+          >
             {guarantorTx.inBestBlockProgress ? 'Submitting...' : 'Add guarantor credit'}
           </Button>
-          <Button variant='outline' onClick={handleIdentity} disabled={!canSubmit || identityTx.inBestBlockProgress}>
+          <Button
+            variant='outline'
+            className='h-auto min-h-12 whitespace-normal text-left py-3'
+            onClick={handleIdentity}
+            disabled={!canSubmit || identityTx.inBestBlockProgress}
+          >
             {identityTx.inBestBlockProgress ? 'Submitting...' : 'Identity verified'}
           </Button>
         </div>

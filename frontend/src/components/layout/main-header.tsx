@@ -11,7 +11,7 @@ import { usePathname } from 'next/navigation';
 export function MainHeader() {
   const { accounts } = useTypink();
   const pathname = usePathname();
-  const showDashboardActions = pathname?.startsWith('/dashboard') || pathname?.startsWith('/trust');
+  const showDashboardActions = pathname?.startsWith('/dashboard') || pathname?.startsWith('/trust') || pathname?.startsWith('/borrow') || pathname?.startsWith('/lend') || pathname?.startsWith('/pay-loan');
 
   return (
     <div className='border-b border-gray-200 dark:border-gray-800'>
