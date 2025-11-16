@@ -3,20 +3,27 @@
 import { Props } from '@/lib/types';
 import Image from 'next/image';
 
-export const RESOURCE_BASE_URL = 'https://raw.githubusercontent.com/dedotdev/typink/refs/heads/main/assets/typink';
-
 interface TypinkLogoProps {
   width?: number;
   height?: number;
 }
 
 export function TypinkLogo({ width = 30, height = 33 }: TypinkLogoProps) {
-  return <Image width={width} height={height} src={`${RESOURCE_BASE_URL}/typink-pink-logo.svg`} alt='Typink Logo' />;
+  return <Image width={width} height={height} src={'/kleo_white.svg'} alt='Kleo Logo' />;
 }
 
 export function TypinkTextLogo({ width = 250, height = 70 }: TypinkLogoProps) {
+  const markWidth = Math.round(width * 0.4);
+  const markHeight = Math.round(height * 0.7);
+  const textSize = Math.max(height, 48);
+
   return (
-    <Image width={width} height={height} src={`${RESOURCE_BASE_URL}/typink-text-pink-logo.svg`} alt='Typink Logo' />
+    <div className='flex items-center justify-center gap-5' style={{ minHeight: height }}>
+      <Image width={markWidth} height={markHeight} src={'/kleo_white.svg'} alt='Kleo Logo' />
+      <h1 className='text-white font-bold' style={{ fontSize: `${textSize}px` }}>
+        Kleo
+      </h1>
+    </div>
   );
 }
 

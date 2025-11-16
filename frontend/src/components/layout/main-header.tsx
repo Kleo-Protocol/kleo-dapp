@@ -2,7 +2,6 @@
 
 import { AccountSelection } from '@/components/shared/account-selection';
 import { WalletSelection } from '@/components/shared/wallet-selection';
-import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { useTypink } from 'typink';
 import Link from 'next/link';
 import { TypinkLogo } from '@/components/shared/icons';
@@ -18,7 +17,6 @@ export function MainHeader() {
         </Link>
         <div className='flex items-center gap-3'>
           {accounts.length > 0 ? <AccountSelection /> : <WalletSelection />}
-          <ThemeToggle />
         </div>
       </div>
     </div>
