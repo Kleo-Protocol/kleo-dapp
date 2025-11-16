@@ -14,7 +14,7 @@ export function TypinkIntro() {
           The ultimate toolkit for dapp development on Polkadot
         </h1>
 
-        <p className='text-4xl font-medium bg-gradient-to-r from-[#DE21A6] via-[#DE21A6] to-[#FD6F8E] bg-clip-text text-transparent'>
+        <p className='text-4xl font-medium bg-gradient-to-r from-[#FFB175] via-[#FF7B2D] to-[#F24B0F] bg-clip-text text-transparent drop-shadow-[0_6px_25px_rgba(242,75,15,0.35)]'>
           Powered by Dedot!
         </p>
 
@@ -22,7 +22,7 @@ export function TypinkIntro() {
         <div className='flex flex-col sm:flex-row gap-4 justify-center items-center pt-8'>
           <Button
             size='xl'
-            className='min-w-[184px] rounded-[14px] bg-gradient-to-r from-[#DE21A6] to-[#FD6F8E] text-white border-0 transition-all hover:shadow-lg hover:shadow-pink-500/25'
+            className='min-w-[184px] rounded-[14px] bg-gradient-to-r from-[#FFB175] via-[#FF7B2D] to-[#C43A08] text-white border-0 transition-all hover:shadow-[0_15px_35px_rgba(242,75,15,0.4)]'
             asChild>
             <a
               href='https://docs.dedot.dev/typink/getting-started'
@@ -37,7 +37,7 @@ export function TypinkIntro() {
           <Button
             variant='outline'
             size='xl'
-            className='min-w-[184px] rounded-[14px] transition-all hover:shadow-lg hover:shadow-pink-500/25'
+            className='min-w-[184px] rounded-[14px] border-border/40 transition-all hover:border-orange-400/70 hover:shadow-[0_12px_30px_rgba(255,123,45,0.35)]'
             asChild>
             <a
               href='https://github.com/dedotdev/typink'

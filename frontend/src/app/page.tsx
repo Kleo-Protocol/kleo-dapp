@@ -1,30 +1,32 @@
-import { TypinkIntro } from '@/components/shared/typink-intro';
-import { ChainInfo } from '@/components/chain-info';
-import { AccountInfo } from '@/components/account-info';
-import { FlipperBoard } from '@/components/flipper-board';
-import { BalanceInsufficientAlert } from '@/components/shared/balance-insufficient-alert';
-import { NonMappedAccountAlert } from '@/components/shared/non-mapped-account-alert';
+'use client';
 
-export default function Home() {
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { WalletSelection } from '@/components/shared/wallet-selection';
+import { TypinkTextLogo } from '@/components/shared/icons';
+import { useTypink } from 'typink';
+
+export default function LandingPage() {
+  const router = useRouter();
+  const { accounts } = useTypink();
+
+  useEffect(() => {
+    if (accounts.length > 0) {
+      router.replace('/dashboard');
+    }
+  }, [accounts.length, router]);
+
   return (
-    <div className=''>
-      <TypinkIntro />
-
-      <div className='mx-auto px-4 pb-16'>
-        <BalanceInsufficientAlert />
-        <NonMappedAccountAlert />
-
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mx-auto'>
-          <div>
-            <ChainInfo className='h-full' />
-          </div>
-
-          <div className='flex flex-col gap-6'>
-            <AccountInfo />
-            <FlipperBoard />
-          </div>
-        </div>
+    <section className='flex flex-col items-center justify-center gap-8 px-4 py-24 text-center min-h-[60vh]'>
+      <TypinkTextLogo width={240} height={60} />
+      <div className='space-y-3 max-w-2xl'>
+        <h1 className='text-3xl font-semibold tracking-tight'>Welcome to Kleo</h1>
+        <p className='text-muted-foreground text-lg'>
+          Connect your wallet to manage on-chain loans, monitor trust scores, and access your personalized dashboard.
+        </p>
       </div>
-    </div>
+      <WalletSelection buttonLabel='Connect Wallet' buttonClassName='text-base px-8 py-6 rounded-2xl' />
+      {accounts.length > 0 && <p className='text-sm text-muted-foreground'>Redirecting to dashboard...</p>}
+    </section>
   );
 }
