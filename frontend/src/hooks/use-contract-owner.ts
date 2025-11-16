@@ -1,5 +1,34 @@
 import { useEffect, useState } from 'react';
 import { AddressConverter } from '@/lib/address-converter';
+import type { ContractCallResult, GenericContractCallResult } from '@dedot/contracts';
+import type { GenericSubstrateApi } from 'dedot/types';
+
+type LegacyOwnerQueryResult = {
+  result?: { isErr?: boolean };
+  output?: unknown;
+};
+
+type DedotOwnerQueryResult = GenericContractCallResult<unknown, ContractCallResult<GenericSubstrateApi>>;
+
+type OwnerQueryResult = LegacyOwnerQueryResult | DedotOwnerQueryResult;
+
+function isDedotOwnerResult(value: unknown): value is DedotOwnerQueryResult {
+  if (!value || typeof value !== 'object') return false;
+  return 'data' in value && 'raw' in value;
+}
+
+function normalizeOwnerResponse(response: OwnerQueryResult) {
+  if (isDedotOwnerResult(response)) {
+    const dedotResult = (response.raw as ContractCallResult<GenericSubstrateApi> | undefined)?.result;
+    const hasError = Boolean(dedotResult && typeof dedotResult === 'object' && 'isErr' in dedotResult && dedotResult.isErr);
+    return { ownerPayload: response.data, hasError } as const;
+  }
+
+  return {
+    ownerPayload: response.output,
+    hasError: Boolean(response.result?.isErr),
+  } as const;
+}
 
 function extractOwnerString(output: unknown): string | null {
   if (!output) return null;
@@ -62,10 +91,7 @@ function extractOwnerString(output: unknown): string | null {
 
 type ContractLike = {
   query: {
-    getOwner: (
-      caller: string,
-      options?: any,
-    ) => Promise<{ result: { isErr?: boolean }; output: unknown }>;
+    getOwner: (...args: any[]) => Promise<OwnerQueryResult>;
   };
   api?: {
     registry?: {
@@ -118,16 +144,21 @@ export function useContractOwner(contract?: ContractLike | null, userAccount?: A
         });
 
         const queryOptions = gasLimit ? { gasLimit } : undefined;
-        const { output, result } = await contract.query.getOwner(userAccount.address, queryOptions);
+        const expectsCaller = contract.query.getOwner.length > 1;
+        const queryResponse = (expectsCaller
+          ? await contract.query.getOwner(userAccount.address, queryOptions)
+          : await contract.query.getOwner(queryOptions)) as OwnerQueryResult;
 
-        if (result?.isErr) {
+        const { ownerPayload, hasError } = normalizeOwnerResponse(queryResponse);
+
+        if (hasError) {
           throw new Error('Error querying contract owner');
         }
 
-        const rawOwner = extractOwnerString(output);
+        const rawOwner = extractOwnerString(ownerPayload);
 
         if (!rawOwner) {
-          console.warn('Owner query returned empty response', output);
+          console.warn('Owner query returned empty response', ownerPayload);
           updateState(() => {
             setOwnerH160(null);
             setOwnerSS58(null);
