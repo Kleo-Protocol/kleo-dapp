@@ -72,7 +72,6 @@ mod loan_instance {
             overfactor_bps: u32,
             _max_duration: u64,        // parámetro estilo registry, no usado aún
             trust_oracle: H160,
-            _hydration_adapter: H160,  // se mantiene para compat con registry, pero NO se usa
         ) -> Self {
             let total_required = principal * overfactor_bps as u128 / 10_000;
             let now = Self::env().block_timestamp();
