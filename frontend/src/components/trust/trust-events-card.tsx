@@ -2,9 +2,9 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { shortenAddress } from '@/lib/utils';
 import { PendingText } from '@/components/shared/pending-text';
 import type { TrustEventItem } from '@/hooks/use-trust-events';
+import { AddressConverter } from '@/lib/address-converter';
 
 interface TrustEventsCardProps {
   events: TrustEventItem[];
@@ -12,6 +12,15 @@ interface TrustEventsCardProps {
 }
 
 export function TrustEventsCard({ events, contractAddress }: TrustEventsCardProps) {
+  const formattedContractAddress = (() => {
+    if (!contractAddress) return null;
+    try {
+      return AddressConverter.format(contractAddress).ss58;
+    } catch {
+      return contractAddress;
+    }
+  })();
+
   return (
     <Card className='bg-gray-200/70 dark:bg-white/5 border-none shadow-none'>
       <CardHeader>
@@ -25,10 +34,18 @@ export function TrustEventsCard({ events, contractAddress }: TrustEventsCardProp
           </div>
         ) : (
           <div className='space-y-3'>
-            {events.map((event) => (
-              <div
-                key={event.id}
-                className='rounded-xl border border-gray-200/60 bg-white/60 p-4 text-sm dark:border-gray-800 dark:bg-gray-950/60'>
+                {events.map((event) => {
+                  let borrowerLabel = event.borrower;
+                  try {
+                    borrowerLabel = AddressConverter.format(event.borrower).short;
+                  } catch {
+                    // ignore formatting errors
+                  }
+
+                  return (
+                    <div
+                      key={event.id}
+                      className='rounded-xl border border-gray-200/60 bg-white/60 p-4 text-sm dark:border-gray-800 dark:bg-gray-950/60'>
                 <div className='flex flex-wrap items-center justify-between gap-2'>
                   <div className='font-semibold'>{event.kind}</div>
                   <div className='text-xs text-muted-foreground'>
@@ -37,7 +54,7 @@ export function TrustEventsCard({ events, contractAddress }: TrustEventsCardProp
                 </div>
                 <div className='mt-2 grid gap-2 text-xs text-muted-foreground md:grid-cols-3'>
                   <div>
-                    Borrower: <span className='font-mono text-foreground'>{shortenAddress(event.borrower)}</span>
+                          Borrower: <span className='font-mono text-foreground'>{borrowerLabel}</span>
                   </div>
                   <div>
                     Amount:{' '}
@@ -47,12 +64,13 @@ export function TrustEventsCard({ events, contractAddress }: TrustEventsCardProp
                     New score: <span className='text-foreground font-semibold'>{event.newScore}</span>
                   </div>
                 </div>
-              </div>
-            ))}
+                    </div>
+                  );
+                })}
           </div>
         )}
-        <PendingText isLoading={!contractAddress} className='text-xs text-muted-foreground'>
-          Watching address: {contractAddress ?? 'loading...'}
+        <PendingText isLoading={!formattedContractAddress} className='text-xs text-muted-foreground'>
+          Watching address: {formattedContractAddress ?? 'loading...'}
         </PendingText>
       </CardContent>
     </Card>

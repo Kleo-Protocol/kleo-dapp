@@ -5,7 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ContractId } from '@/contracts/deployments';
 import { LoanRegistryContractApi } from '@/contracts/types/loan-registry';
 import { TrustOracleContractApi } from '@/contracts/types/trust-oracle';
-import { addressToH160, formatScore, normalizeHexAddress } from '@/lib/trust';
+import { AddressConverter } from '@/lib/address-converter';
+import { formatScore } from '@/lib/trust';
+import type { H160 } from 'dedot/codecs';
 import { useMemo } from 'react';
 import { ShieldCheckIcon, ShieldXIcon } from 'lucide-react';
 import { useContract, useContractQuery } from 'typink';
@@ -18,7 +20,18 @@ export function TrustOverviewCard({ address }: TrustOverviewCardProps) {
   const { contract: trustOracle } = useContract<TrustOracleContractApi>(ContractId.TRUST_ORACLE);
   const { contract: loanRegistry } = useContract<LoanRegistryContractApi>(ContractId.LOAN_REGISTRY);
 
-  const borrower = useMemo(() => addressToH160(address), [address]);
+  const borrowerAddress = useMemo(() => {
+    if (!address) return null;
+    try {
+      return AddressConverter.format(address);
+    } catch (error) {
+      console.warn('Unable to normalize borrower address', error);
+      return null;
+    }
+  }, [address]);
+
+  const borrower = borrowerAddress?.h160 as H160 | undefined;
+  const borrowerDisplay = borrowerAddress?.ss58;
 
   const trustScoreQuery = useContractQuery(
     trustOracle && borrower
@@ -62,7 +75,7 @@ export function TrustOverviewCard({ address }: TrustOverviewCardProps) {
       : undefined,
   );
 
-  const trustScoreLoading = borrower ? trustScoreQuery.isLoading : false;
+  const trustScoreLoading = borrower ? trustScoreQuery?.isLoading : false;
   const trustScore = borrower ? trustScoreQuery?.data ?? 0 : 0;
   const minTrustScore = minTrustScoreQuery?.data ?? 0;
   const role = roleQuery?.data;
@@ -130,7 +143,7 @@ export function TrustOverviewCard({ address }: TrustOverviewCardProps) {
             </div>
             <div>
               <dt className='text-muted-foreground'>Watched Address</dt>
-              <dd className='font-mono text-xs'>{normalizeHexAddress(address) ?? 'N/A'}</dd>
+              <dd className='font-mono text-xs'>{borrowerDisplay ?? 'N/A'}</dd>
             </div>
             <div>
               <dt className='text-muted-foreground'>Positive weights</dt>

@@ -21,7 +21,7 @@ export const deployments: ContractDeployment[] = [
   {
     id: ContractId.TRUST_ORACLE,
     metadata: trustOracle,
-    address: '0xb129b9633d3855171dfd2a4e7b0b309f99cfb5c5',
+    address: '0x899d7f073aa66fd8af651c82af99d7ec2677a997',
     network: passetHub.id,
   },
   {

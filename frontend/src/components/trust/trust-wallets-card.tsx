@@ -2,8 +2,8 @@
 
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { shortenAddress } from '@/lib/utils';
 import { formatScore } from '@/lib/trust';
+import { AddressConverter } from '@/lib/address-converter';
 import type { TrustEventItem } from '@/hooks/use-trust-events';
 
 interface TrustWalletsCardProps {
@@ -48,16 +48,25 @@ export function TrustWalletsCard({ events, maxWallets = 8 }: TrustWalletsCardPro
                 </tr>
               </thead>
               <tbody className='divide-y divide-gray-200/60 dark:divide-gray-800/60'>
-                {wallets.map((wallet) => (
-                  <tr key={wallet.id} className='align-top'>
-                    <td className='py-2 font-mono text-xs text-foreground'>{shortenAddress(wallet.borrower)}</td>
+                {wallets.map((wallet) => {
+                  let shortAddress = wallet.borrower;
+                  try {
+                    shortAddress = AddressConverter.format(wallet.borrower).short;
+                  } catch {
+                    // keep fallback
+                  }
+
+                  return (
+                    <tr key={wallet.id} className='align-top'>
+                      <td className='py-2 font-mono text-xs text-foreground'>{shortAddress}</td>
                     <td className='py-2 text-foreground'>{wallet.kind}</td>
                     <td className='py-2 font-semibold text-foreground'>{formatScore(wallet.newScore)}</td>
                     <td className='py-2 text-xs text-muted-foreground'>
                       {wallet.timestamp ? new Date(wallet.timestamp).toLocaleString() : 'pending'}
                     </td>
-                  </tr>
-                ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

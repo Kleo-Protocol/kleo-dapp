@@ -5,23 +5,49 @@ import { toast } from 'sonner';
 import { txToaster, useContract, useContractQuery, useContractTx, useTypink } from 'typink';
 import { ContractId } from '@/contracts/deployments';
 import { TrustOracleContractApi } from '@/contracts/types/trust-oracle';
-import { addressToH160, normalizeHexAddress } from '@/lib/trust';
+import { AddressConverter } from '@/lib/address-converter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ShieldAlertIcon, ShieldPlusIcon } from 'lucide-react';
 import type { ISubmittableResult } from 'dedot/types';
+import { useContractOwner } from '@/hooks/use-contract-owner';
+import type { H160 } from 'dedot/codecs';
 
 export function TrustActionsCard() {
   const { connectedAccount } = useTypink();
   const { contract: trustOracle } = useContract<TrustOracleContractApi>(ContractId.TRUST_ORACLE);
 
-  const caller = useMemo(() => addressToH160(connectedAccount?.address), [connectedAccount?.address]);
+  const caller = useMemo(() => {
+    if (!connectedAccount?.address) return undefined;
+    try {
+      return AddressConverter.ss58ToH160(connectedAccount.address) as H160;
+    } catch (error) {
+      console.warn('Unable to convert connected account to H160', error);
+      return undefined;
+    }
+  }, [connectedAccount?.address]);
+
+  const callerSs58 = useMemo(() => {
+    if (!connectedAccount?.address) return undefined;
+    try {
+      return AddressConverter.format(connectedAccount.address).ss58;
+    } catch {
+      return connectedAccount.address;
+    }
+  }, [connectedAccount?.address]);
   const [target, setTarget] = useState('');
   const [amount, setAmount] = useState('');
 
-  const borrower = useMemo(() => addressToH160(target), [target]);
+  const borrower = useMemo(() => {
+    if (!target) return undefined;
+    try {
+      return AddressConverter.ss58ToH160(target) as H160;
+    } catch {
+      return undefined;
+    }
+  }, [target]);
 
   const callerRoleQuery = useContractQuery(
     caller && trustOracle
@@ -34,16 +60,7 @@ export function TrustActionsCard() {
       : undefined,
   );
 
-  const ownerQuery = useContractQuery(
-    trustOracle
-      ? {
-          contract: trustOracle,
-          fn: 'getOwner',
-          watch: true,
-        }
-      : undefined,
-  );
-  console.log('Owner address:', ownerQuery?.data);
+  const { isOwner } = useContractOwner(trustOracle, connectedAccount);
 
   const installerTx = useContractTx(trustOracle, 'recordInstallmentPaid');
   const penaltyTx = useContractTx(trustOracle, 'recordMissedPayment');
@@ -52,7 +69,6 @@ export function TrustActionsCard() {
   const authorizeTx = useContractTx(trustOracle, 'authorizeCaller');
 
   const isAuthorized = callerRoleQuery?.data === 'Owner' || callerRoleQuery?.data === 'Authorized';
-  const isOwner = ownerQuery?.data && normalizeHexAddress(ownerQuery.data) === normalizeHexAddress(connectedAccount?.address);
 
   const canSubmit = !!trustOracle && !!borrower && isAuthorized;
 
@@ -60,7 +76,7 @@ export function TrustActionsCard() {
 
   const runTx = async (tx: ContractTxRunner, args: unknown[], successMessage: string) => {
     if (!trustOracle || !borrower) {
-      toast.error('Enter a valid borrower address (0x...)');
+      toast.error('Enter a valid SS58 borrower address.');
       return;
     }
 
@@ -86,7 +102,7 @@ export function TrustActionsCard() {
 
   const handleRecordPayment = async () => {
     if (!borrower) {
-      toast.error('Enter a valid borrower address.');
+      toast.error('Enter a valid borrower SS58 address.');
       return;
     }
 
@@ -101,7 +117,7 @@ export function TrustActionsCard() {
 
   const handleMissedPayment = async () => {
     if (!borrower) {
-      toast.error('Enter a valid borrower address.');
+      toast.error('Enter a valid borrower SS58 address.');
       return;
     }
     await runTx(penaltyTx, [borrower], 'Missed payment recorded');
@@ -109,7 +125,7 @@ export function TrustActionsCard() {
 
   const handleGuarantor = async () => {
     if (!borrower) {
-      toast.error('Enter a valid borrower address.');
+      toast.error('Enter a valid borrower SS58 address.');
       return;
     }
     await runTx(guarantorTx, [borrower], 'Guarantor added');
@@ -117,7 +133,7 @@ export function TrustActionsCard() {
 
   const handleIdentity = async () => {
     if (!borrower) {
-      toast.error('Enter a valid borrower address.');
+      toast.error('Enter a valid borrower SS58 address.');
       return;
     }
     await runTx(identityTx, [borrower], 'Identity verification recorded');
@@ -129,9 +145,15 @@ export function TrustActionsCard() {
       return;
     }
 
-    const targetAddress = addressToH160(target);
+    let targetAddress: H160 | undefined;
+    try {
+      targetAddress = AddressConverter.ss58ToH160(target) as H160;
+    } catch {
+      targetAddress = undefined;
+    }
+
     if (!targetAddress) {
-      toast.error('Provide a valid borrower address to authorize.');
+      toast.error('Provide a valid SS58 address to authorize.');
       return;
     }
 
@@ -164,11 +186,11 @@ export function TrustActionsCard() {
             id='borrower'
             value={target}
             onChange={(event) => setTarget(event.target.value)}
-            placeholder='0x...'
+            placeholder='5F... (SS58)'
             className='font-mono'
             autoComplete='off'
           />
-          {showBorrowerHint && <p className='text-xs text-amber-500'>Provide a 0x-prefixed 20-byte address.</p>}
+          {showBorrowerHint && <p className='text-xs text-amber-500'>Provide a valid SS58 address.</p>}
         </div>
 
         <div className='space-y-2'>
@@ -188,7 +210,7 @@ export function TrustActionsCard() {
           <div className='flex items-start gap-2 rounded-lg border border-amber-400/50 bg-amber-500/5 p-3 text-sm text-amber-600 dark:text-amber-400'>
             <ShieldAlertIcon className='mt-0.5 h-4 w-4' />
             <div>
-              Only owner/authorized callers can push trust events. Ask an admin to authorize <span className='font-mono text-xs'>{normalizeHexAddress(connectedAccount?.address) ?? 'your account'}</span>.
+              Only owner/authorized callers can push trust events. Ask an admin to authorize <span className='font-mono text-xs'>{callerSs58 ?? 'your account'}</span>.
             </div>
           </div>
         )}

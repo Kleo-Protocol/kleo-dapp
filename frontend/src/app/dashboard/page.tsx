@@ -3,11 +3,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { TypinkIntro } from '@/components/shared/typink-intro';
-import { ChainInfo } from '@/components/chain-info';
-import { AccountInfo } from '@/components/account-info';
-import { FlipperBoard } from '@/components/flipper-board';
-import { BalanceInsufficientAlert } from '@/components/shared/balance-insufficient-alert';
-import { NonMappedAccountAlert } from '@/components/shared/non-mapped-account-alert';
 import { useTypink } from 'typink';
 
 export default function DashboardPage() {
