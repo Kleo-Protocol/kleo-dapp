@@ -11,7 +11,7 @@ import { usePathname } from 'next/navigation';
 export function MainHeader() {
   const { accounts } = useTypink();
   const pathname = usePathname();
-  const showDashboardActions = pathname?.startsWith('/dashboard');
+  const showDashboardActions = pathname?.startsWith('/dashboard') || pathname?.startsWith('/trust');
 
   return (
     <div className='border-b border-gray-200 dark:border-gray-800'>
@@ -22,15 +22,17 @@ export function MainHeader() {
         <div className='flex items-center gap-3'>
           {showDashboardActions && (
             <div className='flex flex-wrap items-center gap-2 mr-2 sm:mr-4 lg:mr-6'>
-              <Button size='sm' variant='ghost' className='text-foreground border border-border/50 hover:border-border'>Trust Wallet</Button>
-              <Button size='sm' variant='ghost' className='text-foreground border border-border/50 hover:border-border'>
-                Borrow
+              <Button asChild size='sm' variant='ghost' className='text-foreground border border-border/50 hover:border-border'>
+                <Link href='/trust'>Trust Wallet</Link>
               </Button>
-              <Button size='sm' variant='ghost' className='text-foreground border border-border/50 hover:border-border'>
-                Lend
+              <Button asChild size='sm' variant='ghost' className='text-foreground border border-border/50 hover:border-border'>
+                <Link href='/borrow'>Borrow</Link>
               </Button>
-              <Button size='sm' variant='ghost' className='text-foreground border border-border/50 hover:border-border'>
-                Pay Loan
+              <Button asChild size='sm' variant='ghost' className='text-foreground border border-border/50 hover:border-border'>
+                <Link href='/lend'>Lend</Link>
+              </Button>
+              <Button asChild size='sm' variant='ghost' className='text-foreground border border-border/50 hover:border-border'>
+                <Link href='/pay-loan'>Pay Loan</Link>
               </Button>
             </div>
           )}

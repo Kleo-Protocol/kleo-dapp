@@ -5,7 +5,7 @@ export default function NotFound() {
     <div className='container mx-auto px-4 py-16 flex flex-col items-center justify-center'>
       <div className='text-center space-y-8 max-w-md'>
         <div className='space-y-4'>
-          <h1 className='text-9xl font-bold bg-gradient-to-r from-gray-400 to-gray-600 bg-clip-text text-transparent'>
+          <h1 className='text-9xl font-bold text-white'>
             404
           </h1>
           <div className='space-y-2'>
