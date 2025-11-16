@@ -1,4 +1,4 @@
-import { Send } from 'lucide-react';
+import { NotebookText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { GithubSvgIcon, TypinkTextLogo } from '@/components/shared/icons';
 
@@ -11,39 +11,38 @@ export function TypinkIntro() {
         </div>
 
         <h1 className='text-4xl font-medium tracking-tight text-foreground'>
-          The ultimate toolkit for dapp development on Polkadot
+          Microloans using a decentralized DeFi protocol built on trust
         </h1>
 
         <p className='text-4xl font-medium bg-gradient-to-r from-[#FFB175] via-[#FF7B2D] to-[#F24B0F] bg-clip-text text-transparent drop-shadow-[0_6px_25px_rgba(242,75,15,0.35)]'>
-          Powered by Dedot!
+          Powered by the Kleo Mechanism!
         </p>
 
         {/* Action Buttons */}
         <div className='flex flex-col sm:flex-row gap-4 justify-center items-center pt-8'>
           <Button
             size='xl'
-            className='min-w-[184px] rounded-[14px] bg-gradient-to-r from-[#FFB175] via-[#FF7B2D] to-[#C43A08] text-white border-0 transition-all hover:shadow-[0_15px_35px_rgba(242,75,15,0.4)]'
+            className='min-w-[184px] rounded-[14px] border-border/40 transition-all hover:border-orange-400/70 hover:shadow-[0_12px_30px_rgba(255,123,45,0.35)]'
             asChild>
             <a
-              href='https://docs.dedot.dev/typink/getting-started'
+              href='https://docs.google.com/document/d/1cprLlST7alIFdnsflJ7I-The5Y79KM5TBG_fvv-QDZk/edit?usp=sharing'
               target='_blank'
               rel='noopener noreferrer'
-              className='flex items-center gap-2'>
-              Getting Started
-              <Send className='h-5 w-5' />
+              className='flex items-center gap-2 text-white'>
+              Whitepaper
+              <NotebookText className='h-5 w-5 text-white' />
             </a>
           </Button>
 
           <Button
-            variant='outline'
             size='xl'
             className='min-w-[184px] rounded-[14px] border-border/40 transition-all hover:border-orange-400/70 hover:shadow-[0_12px_30px_rgba(255,123,45,0.35)]'
             asChild>
             <a
-              href='https://github.com/dedotdev/typink'
+              href='https://github.com/Kleo-Protocol'
               target='_blank'
               rel='noopener noreferrer'
-              className='flex items-center gap-2'>
+              className='flex items-center gap-2 text-white'>
               Github
               <GithubSvgIcon />
             </a>

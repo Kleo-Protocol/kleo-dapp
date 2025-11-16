@@ -89,22 +89,6 @@
       linear-gradient(140deg, #080200 0%, #1b0602 35%, #5c1a06 60%, #0b0200 100%);
     position: relative;
     overflow-x: hidden;
-    isolation: isolate;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background:
-      radial-gradient(circle at 30% 40%, rgba(255, 138, 70, 0.5) 0%, transparent 60%),
-      radial-gradient(circle at 70% 30%, rgba(255, 99, 43, 0.35) 0%, transparent 50%),
-      radial-gradient(circle at 60% 80%, rgba(255, 222, 186, 0.15) 0%, transparent 55%);
-    mix-blend-mode: screen;
-    opacity: 0.65;
-    animation: aurora-glow 16s ease-in-out infinite alternate;
   }
 
   html.light body,
@@ -113,20 +97,5 @@
       radial-gradient(circle at 18% 20%, rgba(255, 141, 61, 0.45) 0%, transparent 55%),
       radial-gradient(circle at 80% 75%, rgba(163, 54, 9, 0.5) 0%, transparent 45%),
       linear-gradient(140deg, #080200 0%, #1b0602 35%, #5c1a06 60%, #050100 100%);
-  }
-}
-
-@keyframes aurora-glow {
-  0% {
-    opacity: 0.35;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: translate3d(-2%, -1%, 0) scale(1.05);
-  }
-  100% {
-    opacity: 0.45;
-    transform: translate3d(1%, 2%, 0) scale(0.98);
   }
 }

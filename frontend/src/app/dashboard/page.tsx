@@ -3,11 +3,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { TypinkIntro } from '@/components/shared/typink-intro';
-import { ChainInfo } from '@/components/chain-info';
-import { AccountInfo } from '@/components/account-info';
-import { FlipperBoard } from '@/components/flipper-board';
-import { BalanceInsufficientAlert } from '@/components/shared/balance-insufficient-alert';
-import { NonMappedAccountAlert } from '@/components/shared/non-mapped-account-alert';
 import { useTypink } from 'typink';
 
 export default function DashboardPage() {
@@ -31,22 +26,6 @@ export default function DashboardPage() {
   return (
     <div>
       <TypinkIntro />
-
-      <div className='mx-auto px-4 pb-16'>
-        <BalanceInsufficientAlert />
-        <NonMappedAccountAlert />
-
-        <div className='grid grid-cols-1 gap-6 lg:grid-cols-2 mx-auto'>
-          <div>
-            <ChainInfo className='h-full' />
-          </div>
-
-          <div className='flex flex-col gap-6'>
-            <AccountInfo />
-            <FlipperBoard />
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

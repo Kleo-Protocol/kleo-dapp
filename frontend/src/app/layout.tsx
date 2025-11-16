@@ -7,8 +7,8 @@ import { MainFooter } from '@/components/layout/main-footer';
 import { Figtree } from 'next/font/google';
 
 export const metadata: Metadata = {
-  title: 'Typink Template',
-  description: 'Next.js template with ShadCN UI and Typink integration',
+  title: 'Kleo Protocol - DApp',
+  description: 'Kleo Protocol gives LATAM people access to micro loans through trust-based DeFi solutions.',
 };
 
 const figtree = Figtree({
