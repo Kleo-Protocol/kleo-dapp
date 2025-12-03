@@ -17,16 +17,4 @@ export const deployments: ContractDeployment[] = [
     address: '0x899d7f073aa66fd8af651c82af99d7ec2677a997',
     network: passetHub.id,
   },
-  {
-    id: ContractId.LOAN_REGISTRY,
-    metadata: loanRegistry,
-    address: '0x7eca749c9a303458a743fc019def1abf26d0e315',
-    network: passetHub.id,
-  },
-  {
-    id: ContractId.LOAN_INSTANCE,
-    metadata: loanInstance,
-    address: '0xc6d7f618aceb4189dfd7a2fb703efb3811b8ecf0',
-    network: passetHub.id,
-  },
 ];
