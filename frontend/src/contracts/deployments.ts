@@ -5,19 +5,12 @@ import loanRegistry from './artifacts/loan_registry/loan_registry.json';
 import loanInstance from './artifacts/loan_instance/loan_instance.json';
 
 export enum ContractId {
-  FLIPPER = 'flipper',
   TRUST_ORACLE = 'trust_oracle',
   LOAN_REGISTRY = 'loan_registry',
   LOAN_INSTANCE = 'loan_instance',
 }
 
 export const deployments: ContractDeployment[] = [
-  {
-    id: ContractId.FLIPPER,
-    metadata: flipper,
-    network: passetHub.id,
-    address: '0xad70e3fa83a3d8340e87226c54f1ac6171cd0d85',
-  },
   {
     id: ContractId.TRUST_ORACLE,
     metadata: trustOracle,
