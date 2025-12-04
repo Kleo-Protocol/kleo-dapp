@@ -1,23 +1,21 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
-use ink::primitives::Address;
-
-#[ink::contract(env = ink::env::DefaultEnvironment)]
+#[ink::contract]
 mod config {
     /// All information that needs to be stored in the contract
     #[ink(storage)]
     pub struct Config {
-        min_lenders: u32,
-        overfunding_factor: u128,
-        base_interest_rate: u128,
-        late_penalty_rate: u128,
-        max_loan_duration: u128,
+        min_lenders: u32, // Minimum number of lenders required for a loan
+        overfunding_factor: u64, // Percentage overfunding allowed (e.g., 150 means 150%)
+        base_interest_rate: u64, // Base interest rate for loans (e.g., 5 means 5%)
+        late_penalty_rate: u64, // Penalty rate for late payments (e.g., 2 means 2%)
+        max_loan_duration: u64, // Maximum duration for a loan in minutes
         admin: Address,
     }
 
     // Custom error types for the contract
     #[derive(Debug, PartialEq, Eq)]
-    #[ink::scale_derive(Encode, Decode, TypeInfo)]
+    #[ink::scale_derive(Encode, Decode, TypeInfo)]  
     pub enum Error {
         NotAdmin,
     }
@@ -30,10 +28,10 @@ mod config {
         #[ink(constructor)]
         pub fn new(
             min_lenders: u32,
-            overfunding_factor: u128,
-            base_interest_rate: u128,
-            late_penalty_rate: u128,
-            max_loan_duration: u128,
+            overfunding_factor: u64,
+            base_interest_rate: u64,
+            late_penalty_rate: u64,
+            max_loan_duration: u64,
         ) -> Self {
             let caller = Self::env().caller();
             Self {
@@ -66,28 +64,28 @@ mod config {
         }
 
         #[ink(message)]
-        pub fn set_overfunding_factor(&mut self, new_factor: u128) -> ConfigResult<()> {
+        pub fn set_overfunding_factor(&mut self, new_factor: u64) -> ConfigResult<()> {
             self.ensure_admin()?;
             self.overfunding_factor = new_factor;
             Ok(())
         }
 
         #[ink(message)]
-        pub fn set_base_interest_rate(&mut self, new_rate: u128) -> ConfigResult<()> {
+        pub fn set_base_interest_rate(&mut self, new_rate: u64) -> ConfigResult<()> {
             self.ensure_admin()?;
             self.base_interest_rate = new_rate;
             Ok(())
         }
 
         #[ink(message)]
-        pub fn set_late_penalty_rate(&mut self, new_rate: u128) -> ConfigResult<()> {
+        pub fn set_late_penalty_rate(&mut self, new_rate: u64) -> ConfigResult<()> {
             self.ensure_admin()?;
             self.late_penalty_rate = new_rate;
             Ok(())
         }
 
         #[ink(message)]
-        pub fn set_max_loan_duration(&mut self, new_duration: u128) -> ConfigResult<()> {
+        pub fn set_max_loan_duration(&mut self, new_duration: u64) -> ConfigResult<()> {
             self.ensure_admin()?;
             self.max_loan_duration = new_duration;
             Ok(())
@@ -96,7 +94,7 @@ mod config {
         /// Getter function for configuration parameters
 
         #[ink(message)]
-        pub fn get_protocol_info(&self) -> (u32, u128, u128, u128, u128, Address) {
+        pub fn get_protocol_info(&self) -> (u32, u64, u64, u64, u64, Address) {
             (
                 self.min_lenders,
                 self.overfunding_factor,
@@ -115,9 +113,10 @@ mod config {
 
         /// Helper function to set the caller in tests
         pub fn set_caller(caller: Address) {
-            test::set_caller::<DefaultEnvironment>(caller);
+            test::set_caller(caller);
         }
 
+        /// This will be the default admin address for tests
         fn default_admin() -> Address {
             // Example test address (H160)
             "d43593c715fdd31c61141abd04a99fd6822c8558"
@@ -130,6 +129,7 @@ mod config {
         fn saves_data_correctly() {
             let admin = default_admin();
             set_caller(admin);
+
             let config = Config::new(3, 150, 4, 2, 525960);
             assert_eq!(config.get_protocol_info(), (3, 150, 4, 2, 525960, admin));
         }
@@ -139,6 +139,7 @@ mod config {
         fn changes_data_correctly() {
             let admin = default_admin();
             set_caller(admin);
+
             let mut config = Config::new(3, 150, 4, 2, 525960);
             config.set_overfunding_factor(200).unwrap();
             assert_eq!(config.get_protocol_info(), (3, 200, 4, 2, 525960, admin));
