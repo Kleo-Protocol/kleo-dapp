@@ -2,103 +2,114 @@
 
 #[ink::contract]
 mod trust_graph {
+    use ink::storage::Mapping;
+    use ink::storage::StorageVec;
 
-    /// Defines the storage of your contract.
-    /// Add new fields to the below struct in order
-    /// to add new static storage fields to your contract.
+    /// All information that needs to be stored in the contract
+    /// In this case, a mapping of trusted addresses
     #[ink(storage)]
     pub struct TrustGraph {
-        /// Stores a single `bool` value on the storage.
-        value: bool,
+        trusted: Mapping<Address, StorageVec<Address>>,
     }
+
+    // Custom error types for the contract
+    #[derive(Debug, PartialEq, Eq)]
+    #[ink::scale_derive(Encode, Decode, TypeInfo)]  
+    pub enum Error {
+        NotTrusted,
+        NoTrustedAddresses
+    }
+
+    // Custom result type for the contract
+    pub type TrustGraphResult<T> = core::result::Result<T, Error>;
 
     impl TrustGraph {
-        /// Constructor that initializes the `bool` value to the given `init_value`.
+        /// Constructor that initializes configuration of the Kleo Protocol
         #[ink(constructor)]
-        pub fn new(init_value: bool) -> Self {
-            Self { value: init_value }
+        pub fn new() -> Self {
+            let trusted = Mapping::default();
+            Self { trusted }
         }
 
-        /// A message that can be called on instantiated contracts.
-        /// This one flips the value of the stored `bool` from `true`
-        /// to `false` and vice versa.
+        /// Setter functions for adding/deleting trusted addresses
+
         #[ink(message)]
-        pub fn flip(&mut self) {
-            self.value = !self.value;
+        pub fn set_new_trusted(&mut self, new_trusted: Address) -> TrustGraphResult<()> {
+            if 
         }
 
-        /// Simply returns the current value of our `bool`.
+
+        /// Getter function for getting trusted addresses
+
         #[ink(message)]
-        pub fn get(&self) -> bool {
-            self.value
+        pub fn get_all_trusted(&self) -> TrustGraphResult<StorageVec<Address>> {
+            let caller = self.env().caller();
+            self.trusted.get(caller);
+        }
+
+        #[ink(message)]
+        pub fn is_trusted(&self, addr: Address) -> bool {
+            let caller = self.env().caller();
+            let trusted_addresses = self.trusted.get(caller);
+            trusted_addresses.map(|addrs| addrs.contains(&addr)).unwrap_or(false)
+        }
+
         }
     }
 
-    /// Unit tests in Rust are normally defined within such a `#[cfg(test)]`
-    /// module and test functions are marked with a `#[test]` attribute.
-    /// The below code is technically just normal Rust code.
     #[cfg(test)]
     mod tests {
-        /// Imports all the definitions from the outer scope so we can use them here.
         use super::*;
+        use ink::env::{test, DefaultEnvironment};
 
-        /// We test a simple use case of our contract.
-        #[ink::test]
-        fn it_works() {
-            let mut trust_graph = TrustGraph::new(false);
-            assert_eq!(trust_graph.get(), false);
-            trust_graph.flip();
-            assert_eq!(trust_graph.get(), true);
+        /// Helper function to set the caller in tests
+        pub fn set_caller(caller: Address) {
+            test::set_caller(caller);
         }
-    }
 
+        /// This will be the default admin address for tests
+        fn default_admin() -> Address {
+            // Example test address (H160)
+            "d43593c715fdd31c61141abd04a99fd6822c8558"
+                .parse()
+                .expect("valid H160")
+        }
 
-    /// This is how you'd write end-to-end (E2E) or integration tests for ink! contracts.
-    ///
-    /// When running these you need to make sure that you:
-    /// - Compile the tests with the `e2e-tests` feature flag enabled (`--features e2e-tests`)
-    /// - Are running a Substrate node which contains `pallet-contracts` in the background
-    #[cfg(all(test, feature = "e2e-tests"))]
-    mod e2e_tests {
-        /// Imports all the definitions from the outer scope so we can use them here.
-        use super::*;
+        /// Test to make sure contract saves data correctly
+        #[ink::test]
+        fn saves_data_correctly() {
+            let admin = default_admin();
+            set_caller(admin);
 
-        /// A helper function used for calling contract messages.
-        use ink_e2e::ContractsBackend;
+            let config = Config::new(3, 150, 4, 2, 525960);
+            assert_eq!(config.get_protocol_info(), (3, 150, 4, 2, 525960, admin));
+        }
 
-        /// The End-to-End test `Result` type.
-        type E2EResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+        /// Test to make sure changing data works correctly
+        #[ink::test]
+        fn changes_data_correctly() {
+            let admin = default_admin();
+            set_caller(admin);
 
-        /// We test that we can read and write a value from the on-chain contract.
-        #[ink_e2e::test]
-        async fn it_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
-            // Given
-            let mut constructor = TrustGraphRef::new(false);
-            let contract = client
-                .instantiate("trust_graph", &ink_e2e::bob(), &mut constructor)
-                .submit()
-                .await
-                .expect("instantiate failed");
-            let mut call_builder = contract.call_builder::<TrustGraph>();
+            let mut config = Config::new(3, 150, 4, 2, 525960);
+            config.set_overfunding_factor(200).unwrap();
+            assert_eq!(config.get_protocol_info(), (3, 200, 4, 2, 525960, admin));
+        }
 
-            let get = call_builder.get();
-            let get_result = client.call(&ink_e2e::bob(), &get).dry_run().await?;
-            assert!(matches!(get_result.return_value(), false));
+        /// Test to make sure non admins can't change data
+        #[ink::test]
+        fn non_admin_cant_change_data() {
+            let admin = default_admin();
+            let non_admin: Address = "1111111111111111111111111111111111111111"
+                .parse()
+                .expect("valid H160");
 
-            // When
-            let flip = call_builder.flip();
-            let _flip_result = client
-                .call(&ink_e2e::bob(), &flip)
-                .submit()
-                .await
-                .expect("flip failed");
+            set_caller(admin);
+            let mut config = Config::new(3, 150, 4, 2, 525960);
 
-            // Then
-            let get = call_builder.get();
-            let get_result = client.call(&ink_e2e::bob(), &get).dry_run().await?;
-            assert!(matches!(get_result.return_value(), true));
-
-            Ok(())
+            set_caller(non_admin);
+            let result = config.set_overfunding_factor(200);
+            assert_eq!(result, Err(Error::NotAdmin));
         }
     }
 }
