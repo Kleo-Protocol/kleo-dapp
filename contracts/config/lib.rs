@@ -1,104 +1,163 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
-#[ink::contract]
-mod config {
+use ink::primitives::Address;
 
-    /// Defines the storage of your contract.
-    /// Add new fields to the below struct in order
-    /// to add new static storage fields to your contract.
+#[ink::contract(env = ink::env::DefaultEnvironment)]
+mod config {
+    /// All information that needs to be stored in the contract
     #[ink(storage)]
     pub struct Config {
-        /// Stores a single `bool` value on the storage.
-        value: bool,
+        min_lenders: u32,
+        overfunding_factor: u128,
+        base_interest_rate: u128,
+        late_penalty_rate: u128,
+        max_loan_duration: u128,
+        admin: Address,
     }
+
+    // Custom error types for the contract
+    #[derive(Debug, PartialEq, Eq)]
+    #[ink::scale_derive(Encode, Decode, TypeInfo)]
+    pub enum Error {
+        NotAdmin,
+    }
+
+    // Custom result type for the contract
+    pub type ConfigResult<T> = core::result::Result<T, Error>;
 
     impl Config {
-        /// Constructor that initializes the `bool` value to the given `init_value`.
+        /// Constructor that initializes configuration of the Kleo Protocol
         #[ink(constructor)]
-        pub fn new(init_value: bool) -> Self {
-            Self { value: init_value }
+        pub fn new(
+            min_lenders: u32,
+            overfunding_factor: u128,
+            base_interest_rate: u128,
+            late_penalty_rate: u128,
+            max_loan_duration: u128,
+        ) -> Self {
+            let caller = Self::env().caller();
+            Self {
+                admin: caller,
+                min_lenders,
+                overfunding_factor,
+                base_interest_rate,
+                late_penalty_rate,
+                max_loan_duration,
+            }
         }
 
-        /// A message that can be called on instantiated contracts.
-        /// This one flips the value of the stored `bool` from `true`
-        /// to `false` and vice versa.
-        #[ink(message)]
-        pub fn flip(&mut self) {
-            self.value = !self.value;
+        /// Ensure that the caller of other functions is the admin
+        /// Not meant to be called externally, so private
+        fn ensure_admin(&self) -> ConfigResult<()> {
+            let caller = self.env().caller();
+            if caller != self.admin {
+                return Err(Error::NotAdmin);
+            }
+            Ok(())
         }
 
-        /// Simply returns the current value of our `bool`.
+        /// Setter functions for configuration parameters
+
         #[ink(message)]
-        pub fn get(&self) -> bool {
-            self.value
+        pub fn set_min_lenders(&mut self, new_min: u32) -> ConfigResult<()> {
+            self.ensure_admin()?;
+            self.min_lenders = new_min;
+            Ok(())
+        }
+
+        #[ink(message)]
+        pub fn set_overfunding_factor(&mut self, new_factor: u128) -> ConfigResult<()> {
+            self.ensure_admin()?;
+            self.overfunding_factor = new_factor;
+            Ok(())
+        }
+
+        #[ink(message)]
+        pub fn set_base_interest_rate(&mut self, new_rate: u128) -> ConfigResult<()> {
+            self.ensure_admin()?;
+            self.base_interest_rate = new_rate;
+            Ok(())
+        }
+
+        #[ink(message)]
+        pub fn set_late_penalty_rate(&mut self, new_rate: u128) -> ConfigResult<()> {
+            self.ensure_admin()?;
+            self.late_penalty_rate = new_rate;
+            Ok(())
+        }
+
+        #[ink(message)]
+        pub fn set_max_loan_duration(&mut self, new_duration: u128) -> ConfigResult<()> {
+            self.ensure_admin()?;
+            self.max_loan_duration = new_duration;
+            Ok(())
+        }
+
+        /// Getter function for configuration parameters
+
+        #[ink(message)]
+        pub fn get_protocol_info(&self) -> (u32, u128, u128, u128, u128, Address) {
+            (
+                self.min_lenders,
+                self.overfunding_factor,
+                self.base_interest_rate,
+                self.late_penalty_rate,
+                self.max_loan_duration,
+                self.admin
+            )
         }
     }
 
-    /// Unit tests in Rust are normally defined within such a `#[cfg(test)]`
-    /// module and test functions are marked with a `#[test]` attribute.
-    /// The below code is technically just normal Rust code.
     #[cfg(test)]
     mod tests {
-        /// Imports all the definitions from the outer scope so we can use them here.
         use super::*;
+        use ink::env::{test, DefaultEnvironment};
 
-        /// We test a simple use case of our contract.
-        #[ink::test]
-        fn it_works() {
-            let mut config = Config::new(false);
-            assert_eq!(config.get(), false);
-            config.flip();
-            assert_eq!(config.get(), true);
+        /// Helper function to set the caller in tests
+        pub fn set_caller(caller: Address) {
+            test::set_caller::<DefaultEnvironment>(caller);
         }
-    }
 
+        fn default_admin() -> Address {
+            // Example test address (H160)
+            "d43593c715fdd31c61141abd04a99fd6822c8558"
+                .parse()
+                .expect("valid H160")
+        }
 
-    /// This is how you'd write end-to-end (E2E) or integration tests for ink! contracts.
-    ///
-    /// When running these you need to make sure that you:
-    /// - Compile the tests with the `e2e-tests` feature flag enabled (`--features e2e-tests`)
-    /// - Are running a Substrate node which contains `pallet-contracts` in the background
-    #[cfg(all(test, feature = "e2e-tests"))]
-    mod e2e_tests {
-        /// Imports all the definitions from the outer scope so we can use them here.
-        use super::*;
+        /// Test to make sure contract saves data correctly
+        #[ink::test]
+        fn saves_data_correctly() {
+            let admin = default_admin();
+            set_caller(admin);
+            let config = Config::new(3, 150, 4, 2, 525960);
+            assert_eq!(config.get_protocol_info(), (3, 150, 4, 2, 525960, admin));
+        }
 
-        /// A helper function used for calling contract messages.
-        use ink_e2e::ContractsBackend;
+        /// Test to make sure changing data works correctly
+        #[ink::test]
+        fn changes_data_correctly() {
+            let admin = default_admin();
+            set_caller(admin);
+            let mut config = Config::new(3, 150, 4, 2, 525960);
+            config.set_overfunding_factor(200).unwrap();
+            assert_eq!(config.get_protocol_info(), (3, 200, 4, 2, 525960, admin));
+        }
 
-        /// The End-to-End test `Result` type.
-        type E2EResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+        /// Test to make sure non admins can't change data
+        #[ink::test]
+        fn non_admin_cant_change_data() {
+            let admin = default_admin();
+            let non_admin: Address = "1111111111111111111111111111111111111111"
+                .parse()
+                .expect("valid H160");
 
-        /// We test that we can read and write a value from the on-chain contract.
-        #[ink_e2e::test]
-        async fn it_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
-            // Given
-            let mut constructor = ConfigRef::new(false);
-            let contract = client
-                .instantiate("config", &ink_e2e::bob(), &mut constructor)
-                .submit()
-                .await
-                .expect("instantiate failed");
-            let mut call_builder = contract.call_builder::<Config>();
+            set_caller(admin);
+            let mut config = Config::new(3, 150, 4, 2, 525960);
 
-            let get = call_builder.get();
-            let get_result = client.call(&ink_e2e::bob(), &get).dry_run().await?;
-            assert!(matches!(get_result.return_value(), false));
-
-            // When
-            let flip = call_builder.flip();
-            let _flip_result = client
-                .call(&ink_e2e::bob(), &flip)
-                .submit()
-                .await
-                .expect("flip failed");
-
-            // Then
-            let get = call_builder.get();
-            let get_result = client.call(&ink_e2e::bob(), &get).dry_run().await?;
-            assert!(matches!(get_result.return_value(), true));
-
-            Ok(())
+            set_caller(non_admin);
+            let result = config.set_overfunding_factor(200);
+            assert_eq!(result, Err(Error::NotAdmin));
         }
     }
 }

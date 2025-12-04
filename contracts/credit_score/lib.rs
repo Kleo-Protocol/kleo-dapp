@@ -2,14 +2,11 @@
 
 #[ink::contract]
 mod credit_score {
-
-    /// Defines the storage of your contract.
-    /// Add new fields to the below struct in order
-    /// to add new static storage fields to your contract.
     #[ink(storage)]
     pub struct CreditScore {
-        /// Stores a single `bool` value on the storage.
-        value: bool,
+        min_lenders: u8,
+        overfunding_factor: u16,
+
     }
 
     impl CreditScore {
