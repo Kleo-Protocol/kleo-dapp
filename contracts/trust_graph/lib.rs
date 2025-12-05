@@ -3,21 +3,22 @@
 #[ink::contract]
 mod trust_graph {
     use ink::storage::Mapping;
-    use ink::storage::StorageVec;
+    use ink::prelude::vec::Vec;
 
     /// All information that needs to be stored in the contract
     /// In this case, a mapping of trusted addresses
     #[ink(storage)]
     pub struct TrustGraph {
-        trusted: Mapping<Address, StorageVec<Address>>,
+        /// Asigning a Vector of Addresses to each Address that calls the contract
+        trusted: Mapping<Address, Vec<Address>>,
     }
 
     // Custom error types for the contract
     #[derive(Debug, PartialEq, Eq)]
     #[ink::scale_derive(Encode, Decode, TypeInfo)]  
     pub enum Error {
-        NotTrusted,
-        NoTrustedAddresses
+        NoTrustedAddresses,
+        NotTrusted
     }
 
     // Custom result type for the contract
@@ -35,16 +36,36 @@ mod trust_graph {
 
         #[ink(message)]
         pub fn set_new_trusted(&mut self, new_trusted: Address) -> TrustGraphResult<()> {
-            if 
+            let caller = self.env().caller();
+            let mut trusted_addresses = self.trusted.get(caller).unwrap_or_default();
+            trusted_addresses.push(new_trusted);
+            self.trusted.insert(&caller, &trusted_addresses);
+            Ok(())
+        }
+
+        #[ink(message)]
+        pub fn delete_trusted(&mut self, to_delete: Address) -> TrustGraphResult<()> {
+            let caller = self.env().caller();
+            let mut trusted_addresses = self.trusted.get(caller).unwrap_or_default();
+            if trusted_addresses.contains(&to_delete) {
+                trusted_addresses.retain(|addr| addr != &to_delete);
+                self.trusted.insert(&caller, &trusted_addresses);
+                Ok(())
+            } else {
+                Err(Error::NotTrusted)
+            }
         }
 
 
         /// Getter function for getting trusted addresses
 
         #[ink(message)]
-        pub fn get_all_trusted(&self) -> TrustGraphResult<StorageVec<Address>> {
+        pub fn get_all_trusted(&self) -> TrustGraphResult<Vec<Address>> {
             let caller = self.env().caller();
-            self.trusted.get(caller);
+            match self.trusted.get(caller) {
+                Some(addrs) if !addrs.is_empty() => Ok(addrs),
+                _ => Err(Error::NoTrustedAddresses),
+            }
         }
 
         #[ink(message)]
@@ -54,62 +75,168 @@ mod trust_graph {
             trusted_addresses.map(|addrs| addrs.contains(&addr)).unwrap_or(false)
         }
 
-        }
+         }
     }
-
     #[cfg(test)]
     mod tests {
         use super::*;
         use ink::env::{test, DefaultEnvironment};
 
         /// Helper function to set the caller in tests
-        pub fn set_caller(caller: Address) {
+        fn set_caller(caller: Address) {
             test::set_caller(caller);
         }
 
-        /// This will be the default admin address for tests
-        fn default_admin() -> Address {
-            // Example test address (H160)
+        /// Default test addresses
+        fn alice() -> Address {
             "d43593c715fdd31c61141abd04a99fd6822c8558"
                 .parse()
                 .expect("valid H160")
         }
 
-        /// Test to make sure contract saves data correctly
-        #[ink::test]
-        fn saves_data_correctly() {
-            let admin = default_admin();
-            set_caller(admin);
-
-            let config = Config::new(3, 150, 4, 2, 525960);
-            assert_eq!(config.get_protocol_info(), (3, 150, 4, 2, 525960, admin));
-        }
-
-        /// Test to make sure changing data works correctly
-        #[ink::test]
-        fn changes_data_correctly() {
-            let admin = default_admin();
-            set_caller(admin);
-
-            let mut config = Config::new(3, 150, 4, 2, 525960);
-            config.set_overfunding_factor(200).unwrap();
-            assert_eq!(config.get_protocol_info(), (3, 200, 4, 2, 525960, admin));
-        }
-
-        /// Test to make sure non admins can't change data
-        #[ink::test]
-        fn non_admin_cant_change_data() {
-            let admin = default_admin();
-            let non_admin: Address = "1111111111111111111111111111111111111111"
+        fn bob() -> Address {
+            "8eaf04151687736326c9fea17e25fc5287613693"
                 .parse()
-                .expect("valid H160");
-
-            set_caller(admin);
-            let mut config = Config::new(3, 150, 4, 2, 525960);
-
-            set_caller(non_admin);
-            let result = config.set_overfunding_factor(200);
-            assert_eq!(result, Err(Error::NotAdmin));
+                .expect("valid H160")
         }
-    }
+
+        fn charlie() -> Address {
+            "306721211d5404bd9da88e0204360a1a9ab8b87c"
+                .parse()
+                .expect("valid H160")
+        }
+
+        /// Test adding a new trusted address
+        #[ink::test]
+        fn test_set_new_trusted() {
+            let mut graph = TrustGraph::new();
+            let alice_addr = alice();
+            let bob_addr = bob();
+
+            set_caller(alice_addr);
+            let result = graph.set_new_trusted(bob_addr);
+            
+            assert_eq!(result, Ok(()));
+            assert!(graph.is_trusted(bob_addr).unwrap());
+        }
+
+        /// Test adding multiple trusted addresses
+        #[ink::test]
+        fn test_set_multiple_trusted() {
+            let mut graph = TrustGraph::new();
+            let alice_addr = alice();
+            let bob_addr = bob();
+            let charlie_addr = charlie();
+
+            set_caller(alice_addr);
+            graph.set_new_trusted(bob_addr).unwrap();
+            graph.set_new_trusted(charlie_addr).unwrap();
+
+            assert!(graph.is_trusted(bob_addr).unwrap());
+            assert!(graph.is_trusted(charlie_addr).unwrap());
+        }
+
+        /// Test deleting a trusted address
+        #[ink::test]
+        fn test_delete_trusted() {
+            let mut graph = TrustGraph::new();
+            let alice_addr = alice();
+            let bob_addr = bob();
+
+            set_caller(alice_addr);
+            graph.set_new_trusted(bob_addr).unwrap();
+            assert!(graph.is_trusted(bob_addr).unwrap());
+
+            let result = graph.delete_trusted(bob_addr);
+            assert_eq!(result, Ok(()));
+            assert!(!graph.is_trusted(bob_addr).unwrap());
+        }
+
+        /// Test deleting a non-existent trusted address returns error
+        #[ink::test]
+        fn test_delete_non_trusted() {
+            let mut graph = TrustGraph::new();
+            let alice_addr = alice();
+            let bob_addr = bob();
+
+            set_caller(alice_addr);
+            let result = graph.delete_trusted(bob_addr);
+            
+            assert_eq!(result, Err(Error::NotTrusted));
+        }
+
+        /// Test is_trusted returns false for non-trusted address
+        #[ink::test]
+        fn test_is_trusted_false() {
+            let graph = TrustGraph::new();
+            let alice_addr = alice();
+            let bob_addr = bob();
+
+            set_caller(alice_addr);
+            assert!(!graph.is_trusted(bob_addr).unwrap());
+        }
+
+        /// Test is_trusted returns false when caller has no trusted list
+        #[ink::test]
+        fn test_is_trusted_empty_list() {
+            let graph = TrustGraph::new();
+            let alice_addr = alice();
+            let bob_addr = bob();
+
+            set_caller(alice_addr);
+            assert!(!graph.is_trusted(bob_addr).unwrap());
+        }
+
+        /// Test get_all_trusted returns correct addresses
+        #[ink::test]
+        fn test_get_all_trusted() {
+            let mut graph = TrustGraph::new();
+            let alice_addr = alice();
+            let bob_addr = bob();
+            let charlie_addr = charlie();
+
+            set_caller(alice_addr);
+            graph.set_new_trusted(bob_addr).unwrap();
+            graph.set_new_trusted(charlie_addr).unwrap();
+
+            let trusted = graph.get_all_trusted().unwrap();
+            assert_eq!(trusted.len(), 2);
+        }
+
+        /// Test get_all_trusted returns error when no trusted addresses
+        #[ink::test]
+        fn test_get_all_trusted_empty() {
+            let graph = TrustGraph::new();
+            let alice_addr = alice();
+
+            set_caller(alice_addr);
+            let result = graph.get_all_trusted();
+
+            assert_eq!(result, Err(Error::NoTrustedAddresses));
+        }
+
+        /// Test different callers have independent trusted lists
+        #[ink::test]
+        fn test_independent_trusted_lists() {
+            let mut graph = TrustGraph::new();
+            let alice_addr = alice();
+            let bob_addr = bob();
+            let charlie_addr = charlie();
+
+            // Alice trusts Bob
+            set_caller(alice_addr);
+            graph.set_new_trusted(bob_addr).unwrap();
+            assert!(graph.is_trusted(bob_addr).unwrap());
+
+            // Bob trusts Charlie (not Alice)
+            set_caller(bob_addr);
+            graph.set_new_trusted(charlie_addr).unwrap();
+            assert!(graph.is_trusted(charlie_addr).unwrap());
+            assert!(!graph.is_trusted(alice_addr).unwrap());
+
+            // Alice still only trusts Bob
+            set_caller(alice_addr);
+            assert!(graph.is_trusted(bob_addr).unwrap());
+            assert!(!graph.is_trusted(charlie_addr).unwrap());
+        }
 }
