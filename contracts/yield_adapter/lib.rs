@@ -1,18 +1,18 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 #[ink::contract]
-mod change {
+mod yield_adapter {
 
     /// Defines the storage of your contract.
     /// Add new fields to the below struct in order
     /// to add new static storage fields to your contract.
     #[ink(storage)]
-    pub struct Change {
+    pub struct YieldAdapter {
         /// Stores a single `bool` value on the storage.
         value: bool,
     }
 
-    impl Change {
+    impl YieldAdapter {
         /// Constructor that initializes the `bool` value to the given `init_value`.
         #[ink(constructor)]
         pub fn new(init_value: bool) -> Self {
@@ -45,10 +45,10 @@ mod change {
         /// We test a simple use case of our contract.
         #[ink::test]
         fn it_works() {
-            let mut change = Change::new(false);
-            assert_eq!(change.get(), false);
-            change.flip();
-            assert_eq!(change.get(), true);
+            let mut yield_adapter = YieldAdapter::new(false);
+            assert_eq!(yield_adapter.get(), false);
+            yield_adapter.flip();
+            assert_eq!(yield_adapter.get(), true);
         }
     }
 
@@ -73,13 +73,13 @@ mod change {
         #[ink_e2e::test]
         async fn it_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             // Given
-            let mut constructor = ChangeRef::new(false);
+            let mut constructor = YieldAdapterRef::new(false);
             let contract = client
-                .instantiate("change", &ink_e2e::bob(), &mut constructor)
+                .instantiate("yield_adapter", &ink_e2e::bob(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed");
-            let mut call_builder = contract.call_builder::<Change>();
+            let mut call_builder = contract.call_builder::<YieldAdapter>();
 
             let get = call_builder.get();
             let get_result = client.call(&ink_e2e::bob(), &get).dry_run().await?;
