@@ -1,3 +1,8 @@
+/// This is 100% based on microloans, where borrowers can request small loans from multiple lenders.
+/// The loans are managed by the LoanManager contract, which interacts with the Config and TrustGraph
+/// contracts to get configuration parameters and verify trust relationships.
+/// The idea is that the loans have a duration of less than a month, exactly because they are microloans.
+
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 use other_contract::OtherContractRef;
@@ -166,6 +171,7 @@ mod loan_manager {
             }
 
             /// TODO: If users credit score is 0, create here, but if no, just update accourding, here it will change all the time and it is not the idea that after every loan the credit score is reset
+            /// TODO: I don't think we're taking into a count the interest rate when creating the loan (funded to 1.5x + the interest rate of 1x)
             /// Initial credit score when loan is created is number of trusted addresses
             self.credit_score.insert(caller, trusted.len() as u32);
 
@@ -251,6 +257,8 @@ mod loan_manager {
             // Here, divide by 100 as overfunding_factor is the percentage and an extra 0
             let required_funded = loan.requested_amount * overfunding_factor as Balance / 100;
 
+            /// This is the activate loan logic, it was a separate function before
+            /// but since it is only called here, it is integrated
             if loan.funded_amount >= required_funded && loan.lender_count >= min_lenders {
                 loan.status = LoanStatus::Active;
                 loan.start_time = self.env().block_timestamp();
@@ -270,35 +278,7 @@ mod loan_manager {
             Ok(())
         }
 
-        /// tengo que seguir aqui, recordar que el overfunding estaba mal, esto piensa que 50% va de una a la persona lender y no es cierto, todo el 100% va directo a la reserva
-        #[ink(message)]
-        pub fn activate_loan(&mut self, loan_id: Hash) -> Result<()> {
-            let caller = self.env().caller();
-            let mut loan = self.loans.get(loan_id).ok_or(Error::LoanNotFound)?;
-            if loan.borrower != caller {
-                return Err(Error::Unauthorized);
-            }
-            if loan.status != LoanStatus::Pending {
-                return Err(Error::LoanNotPending);
-            }
-
-            let (min_lenders, overfunding_factor, _, _, _, _) = self.get_config()?;
-            let required_funded = loan.requested_amount * overfunding_factor as Balance / 100;
-            if loan.funded_amount < required_funded || loan.lender_count < min_lenders {
-                return Err(Error::InsufficientOverfunding);
-            }
-
-            loan.status = LoanStatus::Active;
-            loan.start_time = self.env().block_timestamp();
-            loan.due_time = loan.start_time + loan.duration * 1000;
-            let overfund = loan.funded_amount - loan.requested_amount;
-            loan.reserve = overfund / 2;  // Placeholder 0.5x reserve
-            self.env().transfer(loan.borrower, loan.requested_amount).map_err(|_| Error::CrossContractCallFailed)?;
-            self.loans.insert(loan_id, loan);
-            self.env().emit_event(LoanActivated { loan_id, borrower: caller });
-            Ok(())
-        }
-
+        /// Borrower can pay back their loan partially or fully
         #[ink(message, payable)]
         pub fn pay_loan(&mut self, loan_id: Hash) -> Result<()> {
             let caller = self.env().caller();
@@ -308,6 +288,7 @@ mod loan_manager {
             }
 
             let mut loan = self.loans.get(loan_id).ok_or(Error::LoanNotFound)?;
+            /// Make sure only borrower can pay and loan is active
             if loan.borrower != caller {
                 return Err(Error::Unauthorized);
             }
@@ -319,19 +300,22 @@ mod loan_manager {
             let mut total_due = loan.requested_amount + (loan.requested_amount * loan.interest_rate as Balance / 10000);
             if now > loan.due_time {
                 let overdue_time = now - loan.due_time;
-                let penalty = total_due * loan.penalty_rate as Balance / 10000 * (overdue_time / 86400000);  // Per day
+                /// Every 3 days after it is not paid, the penalty is applied to the total_due
+                /// This could be adjusted in the config, this is a good TODO
+               let penalty = total_due * loan.penalty_rate as Balance / 10000 * (overdue_time / (86400000 * 3));
                 total_due += penalty;
             }
 
             loan.repaid_amount += amount;
             self.env().emit_event(LoanRepaid { loan_id, amount });
 
+            /// If with the payment, the loan is fully repaid, end it
             if loan.repaid_amount >= total_due {
                 self.end_loan(loan_id)?;
             } else if amount < (total_due - loan.repaid_amount) {
-                // Partial pay ok, but prompt via event if near due
-                if now > loan.due_time - 86400000 {  // 1 day before due
-                    // Emit custom OverdueWarning event if added
+                // It is okay to pay partially
+                if now > loan.due_time - 86400000 {  // 1 day before due date of the loan
+                    // Here, an overdue event would be a good feature, this is a good TODO
                 }
             }
 
@@ -339,30 +323,36 @@ mod loan_manager {
             Ok(())
         }
 
+        /// Check and mark loan as defaulted if overdue and not repaid
         #[ink(message)]
         pub fn check_default(&mut self, loan_id: Hash) -> Result<()> {
             let mut loan = self.loans.get(loan_id).ok_or(Error::LoanNotFound)?;
             if loan.status != LoanStatus::Active {
                 return Err(Error::AlreadyDefaulted);
             }
+            
             let now = self.env().block_timestamp();
-            if now <= loan.due_time {
-                return Err(Error::Overdue);  // Not yet
+            /// Allow 2 extra months (60 days) after due date before marking as defaulted
+            let default_threshold = loan.due_time + (60 * 86400000);  // 60 days in milliseconds
+            if now <= default_threshold {
+                return Err(Error::Overdue);  // Not yet in default
             }
 
             loan.status = LoanStatus::Defaulted;
-            // Logic: Distribute reserve to lenders proportionally (simplified)
-            // For each lender, transfer share of reserve
+            
+            /// TODO: Implement logic to distribute the reserve funds to lenders in case of default
             self.loans.insert(loan_id, loan);
             self.env().emit_event(LoanDefaulted { loan_id });
             Ok(())
         }
 
+        /// Internal function to end a loan and distribute funds
         fn end_loan(&mut self, loan_id: Hash) -> Result<()> {
             let mut loan = self.loans.get(loan_id).ok_or(Error::LoanNotFound)?;
             if loan.status == LoanStatus::Repaid || loan.status == LoanStatus::Defaulted {
-                // Distribute remaining funds/interest to lenders (simplified: assume done off-chain or add withdraw_lender)
+                // TODO: Distribute remaining funds/interest to lenders
                 self.loans.remove(loan_id);
+
                 // Remove from borrower_loans
                 if let Some(mut loans) = self.borrower_loans.get(loan.borrower) {
                     loans.retain(|&id| id != loan_id);
@@ -375,6 +365,8 @@ mod loan_manager {
             }
         }
 
+        /// Getter functions for frontend
+
         #[ink(message)]
         pub fn get_user_loans(&self, borrower: Address) -> Vec<Hash> {
             self.borrower_loans.get(borrower).unwrap_or_default()
@@ -386,7 +378,13 @@ mod loan_manager {
         }
 
         #[ink(message)]
-        pub fn get_trusted_loans(&self, page: u32, page_size: u32) -> Vec<Loan> {
+        pub fn get_credit_score(&self, addr: Address) -> u32 {
+            self.credit_score.get(addr).unwrap_or(0)
+        }
+
+        /// Get all loans from trusted borrowers that are pending funding
+        #[ink(message)]
+        pub fn get_trusted_loans(&self) -> Vec<Loan> {
             let caller = self.env().caller();
             let trusted = match self.get_all_trusted(caller) {
                 Ok(t) => t,
@@ -405,15 +403,7 @@ mod loan_manager {
                     }
                 }
             }
-            // Paginate (simple slice)
-            let start = (page * page_size) as usize;
-            let end = (start + page_size as usize).min(result.len());
-            result[start..end].to_vec()
-        }
-
-        #[ink(message)]
-        pub fn get_credit_score(&self, addr: Address) -> u32 {
-            self.credit_score.get(addr).unwrap_or(0)
+            result
         }
     }
 }
