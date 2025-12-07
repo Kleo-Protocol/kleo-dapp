@@ -6,7 +6,8 @@ edition = "2024"
 
 [dependencies]
 ink = { version = "6.0.0-beta.1", default-features = false, features = ["unstable-hostfn"] }
-other-contract = { path = "other-contract", default-features = false, features = ["ink-as-dependency"] }
+config = { path = "config", default-features = false, features = ["ink-as-dependency"] }
+trust_graph = { path = "trust_graph", default-features = false, features = ["ink-as-dependency"] }
 
 [dev-dependencies]
 ink_e2e = { version = "6.0.0-beta.1" }
@@ -19,7 +20,8 @@ path = "lib.rs"
 default = ["std"]
 std = [
     "ink/std",
-    "other-contract/std",
+    "config/std",
+    "trust_graph/std",
 ]
 ink-as-dependency = []
 e2e-tests = []
