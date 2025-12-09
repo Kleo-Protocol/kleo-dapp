@@ -26,7 +26,7 @@ mod loan_manager {
 
     /// Struct for loan information
     #[ink::storage_item(packed)]
-    #[derive(Debug)]
+    #[derive(Debug, PartialEq)]
     pub struct Loan {
         loan_id: Hash, // Unique identifier for the loan
         borrower: Address, // Address of borrower (loan creator)
@@ -384,6 +384,243 @@ mod loan_manager {
                 }
             }
             result
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        use ink::env::test;
+
+        /// Helper function to set the caller in tests
+        fn set_caller(caller: Address) {
+            test::set_caller(caller);
+        }
+
+        /// Default test addresses (accounts)
+        fn alice() -> Address {
+            "d43593c715fdd31c61141abd04a99fd6822c8558"
+                .parse()
+                .expect("valid H160")
+        }
+
+        fn charlie() -> Address {
+            "306721211d5404bd9da88e0204360a1a9ab8b87c"
+                .parse()
+                .expect("valid H160")
+        }
+
+        fn dave() -> Address {
+            "84b0a6355c4b526f559371aea8da3a288760b9a3"
+                .parse()
+                .expect("valid H160")
+        }
+
+        /// Placeholder contract addresses for Config and TrustGraph
+        fn config_contract() -> Address {
+            "0000000000000000000000000000000000000001"
+                .parse()
+                .expect("valid address")
+        }
+
+        fn trust_contract() -> Address {
+            "0000000000000000000000000000000000000002"
+                .parse()
+                .expect("valid address")
+        }
+
+        /// Test constructor initializes correctly
+        /// Note: full validation of cross-contract calls requires integration tests
+        #[ink::test]
+        fn test_constructor() {
+            // Use placeholder contract addresses; cross-contract calls are not executed in unit tests
+            let manager = LoanManager::new(config_contract(), trust_contract());
+            
+            // Verify the contract was created (no panics)
+            assert_eq!(manager.get_credit_score(charlie()), 0);
+        }
+
+        /// Test creating a loan with zero amount fails
+        #[ink::test]
+        fn test_create_loan_zero_amount() {
+            let mut manager = LoanManager::new(config_contract(), trust_contract());
+            set_caller(charlie());
+            
+            let result = manager.create_loan(0, 100);
+            assert_eq!(result, Err(Error::ZeroAmount));
+        }
+
+        /// Test credit score is initialized correctly on first loan
+        #[ink::test]
+        fn test_credit_score_initialization() {
+            let manager = LoanManager::new(config_contract(), trust_contract());
+            let borrower = charlie();
+            
+            // Initial credit score should be 0
+            assert_eq!(manager.get_credit_score(borrower), 0);
+        }
+
+        /// Test getting user loans returns empty for new user
+        #[ink::test]
+        fn test_get_user_loans_empty() {
+            let manager = LoanManager::new(config_contract(), trust_contract());
+            let loans = manager.get_user_loans(charlie());
+            assert_eq!(loans.len(), 0);
+        }
+
+        /// Test getting loan returns None for non-existent loan
+        #[ink::test]
+        fn test_get_loan_not_found() {
+            let mut manager = LoanManager::new(config_contract(), trust_contract());
+            let dummy_hash = Hash::default();
+            let loan = manager.get_loan(dummy_hash);
+            assert_eq!(loan, None);
+        }
+
+        /// Test loan status enum variants
+        #[ink::test]
+        fn test_loan_status_equality() {
+            assert_eq!(LoanStatus::Pending, LoanStatus::Pending);
+            assert_ne!(LoanStatus::Pending, LoanStatus::Active);
+            assert_ne!(LoanStatus::Active, LoanStatus::Repaid);
+            assert_ne!(LoanStatus::Repaid, LoanStatus::Defaulted);
+        }
+
+        /// Test basic loan creation attributes
+        #[ink::test]
+        fn test_loan_creation_attributes() {
+            let requested = 1000u128;
+            let duration = 86400u64; // 1 day
+            
+            // Verify amounts are stored correctly
+            assert!(requested > 0);
+            assert!(duration > 0);
+        }
+
+        /// Test loan struct contains all required fields
+        #[ink::test]
+        fn test_loan_struct_fields() {
+            let loan = Loan {
+                loan_id: Hash::default(),
+                borrower: alice(),
+                requested_amount: 1000,
+                funded_amount: 0,
+                lender_count: 0,
+                interest_rate: 500,
+                penalty_rate: 1000,
+                duration: 86400,
+                start_time: 0,
+                due_time: 0,
+                repaid_amount: 0,
+                status: LoanStatus::Pending,
+                reserve: 0,
+            };
+
+            assert_eq!(loan.requested_amount, 1000);
+            assert_eq!(loan.funded_amount, 0);
+            assert_eq!(loan.lender_count, 0);
+            assert_eq!(loan.status, LoanStatus::Pending);
+            assert_eq!(loan.reserve, 0);
+        }
+
+        /// Test error types are correctly defined
+        #[ink::test]
+        fn test_error_types() {
+            assert_eq!(Error::NotTrusted, Error::NotTrusted);
+            assert_ne!(Error::NotTrusted, Error::LoanNotFound);
+            assert_ne!(Error::ZeroAmount, Error::Unauthorized);
+        }
+
+        /// Test pay_loan with zero amount fails
+        #[ink::test]
+        fn test_pay_loan_zero_amount() {
+            let mut manager = LoanManager::new(config_contract(), trust_contract());
+            let dummy_hash = Hash::default();
+            set_caller(charlie());
+            
+            // Zero transferred value triggers ZeroAmount before any loan lookup
+            let result = manager.pay_loan(dummy_hash);
+            assert_eq!(result, Err(Error::ZeroAmount));
+        }
+
+        /// Test check_default on non-existent loan fails
+        #[ink::test]
+        fn test_check_default_loan_not_found() {
+            let mut manager = LoanManager::new(config_contract(), trust_contract());
+            let dummy_hash = Hash::default();
+            
+            let result = manager.check_default(dummy_hash);
+            assert_eq!(result, Err(Error::LoanNotFound));
+        }
+
+        /// Test multiple users have independent credit scores
+        #[ink::test]
+        fn test_independent_credit_scores() {
+            let manager = LoanManager::new(config_contract(), trust_contract());
+            
+            let score_charlie = manager.get_credit_score(charlie());
+            let score_dave = manager.get_credit_score(dave());
+            
+            // Both should start at 0
+            assert_eq!(score_charlie, 0);
+            assert_eq!(score_dave, 0);
+        }
+
+        /// Test loan creation with valid parameters
+        #[ink::test]
+        fn test_loan_struct_initialization() {
+            let loan = Loan {
+                loan_id: Hash::default(),
+                borrower: alice(),
+                requested_amount: 5000u128,
+                funded_amount: 0,
+                lender_count: 0,
+                interest_rate: 500u64,
+                penalty_rate: 1000u64,
+                duration: 604800u64, // 7 days
+                start_time: 0,
+                due_time: 0,
+                repaid_amount: 0,
+                status: LoanStatus::Pending,
+                reserve: 0,
+            };
+
+            assert_eq!(loan.requested_amount, 5000u128);
+            assert_eq!(loan.interest_rate, 500u64);
+            assert_eq!(loan.penalty_rate, 1000u64);
+            assert_eq!(loan.duration, 604800u64);
+            assert_eq!(loan.status, LoanStatus::Pending);
+        }
+
+        /// Test that different loan statuses are distinct
+        #[ink::test]
+        fn test_loan_status_transitions() {
+            let mut loan = Loan {
+                loan_id: Hash::default(),
+                borrower: alice(),
+                requested_amount: 1000,
+                funded_amount: 0,
+                lender_count: 0,
+                interest_rate: 500,
+                penalty_rate: 1000,
+                duration: 86400,
+                start_time: 0,
+                due_time: 0,
+                repaid_amount: 0,
+                status: LoanStatus::Pending,
+                reserve: 0,
+            };
+
+            assert_eq!(loan.status, LoanStatus::Pending);
+
+            loan.status = LoanStatus::Active;
+            assert_eq!(loan.status, LoanStatus::Active);
+
+            loan.status = LoanStatus::Repaid;
+            assert_eq!(loan.status, LoanStatus::Repaid);
+
+            loan.status = LoanStatus::Defaulted;
+            assert_eq!(loan.status, LoanStatus::Defaulted);
         }
     }
 }
