@@ -1,39 +1,31 @@
 import { ContractDeployment, passetHub } from 'typink';
-import flipper from './artifacts/flipper/flipper.json';
-import trustOracle from './artifacts/trust_oracle/trust_oracle.json';
-import loanRegistry from './artifacts/loan_registry/loan_registry.json';
-import loanInstance from './artifacts/loan_instance/loan_instance.json';
+import loanManager from './artifacts/loan_manager/loan_manager.json';
+import trustGraph from './artifacts/trust_graph/trust_graph.json';
+import config from './artifacts/config/config.json';
 
 export enum ContractId {
-  FLIPPER = 'flipper',
-  TRUST_ORACLE = 'trust_oracle',
-  LOAN_REGISTRY = 'loan_registry',
-  LOAN_INSTANCE = 'loan_instance',
+  LOAN_MANAGER = 'loan_manager',
+  TRUST_GRAPH = 'trust_graph',
+  CONFIG = 'config',
 }
 
 export const deployments: ContractDeployment[] = [
   {
-    id: ContractId.FLIPPER,
-    metadata: flipper,
-    network: passetHub.id,
-    address: '0xad70e3fa83a3d8340e87226c54f1ac6171cd0d85',
-  },
-  {
-    id: ContractId.TRUST_ORACLE,
-    metadata: trustOracle,
-    address: '0x899d7f073aa66fd8af651c82af99d7ec2677a997',
+    id: ContractId.LOAN_MANAGER,
+    metadata: loanManager,
+    address: '0x6e1c9a541b9377adec304727136706f53af077e3',
     network: passetHub.id,
   },
   {
-    id: ContractId.LOAN_REGISTRY,
-    metadata: loanRegistry,
-    address: '0x7eca749c9a303458a743fc019def1abf26d0e315',
+    id: ContractId.TRUST_GRAPH,
+    metadata: trustGraph,
+    address: '0x4cc48bfcba936d0cac8d8f3051cb6ade752b4e83',
     network: passetHub.id,
   },
   {
-    id: ContractId.LOAN_INSTANCE,
-    metadata: loanInstance,
-    address: '0xc6d7f618aceb4189dfd7a2fb703efb3811b8ecf0',
+    id: ContractId.CONFIG,
+    metadata: config,
+    address: '0x46bc2b3b3b55e62a1385d91d9985168973457134',
     network: passetHub.id,
-  },
+  }
 ];
