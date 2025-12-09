@@ -142,19 +142,18 @@ mod loan_manager {
                 return Err(Error::ZeroAmount);
             }
 
-            // TODO: The trust graph contract needs to be modified to accept address parameters
-            // For now, this won't work correctly as it gets trusted addresses of the contract itself
-            // let trusted = self.trust_graph_address.get_all_trusted()?;
-            // Placeholder - assuming borrower has trust for now
-            // if trusted.is_empty() {
-            //     return Err(Error::NotTrusted);
-            // }
+            // Check that borrower has at least one trusted address
+            let trusted = self.trust_graph_address.get_all_trusted(caller).ok();
+            if trusted.is_none() || trusted.as_ref().map(|t| t.is_empty()).unwrap_or(true) {
+                return Err(Error::NotTrusted);
+            }
 
-            // TODO: If users credit score is 0, create here, but if no, just update accourding, here it will change all the time and it is not the idea that after every loan the credit score is reset
-            // TODO: I don't think we're taking into a count the interest rate when creating the loan (funded to 1.5x + the interest rate of 1x)
-            // Initial credit score when loan is created - hardcoded to 1 for now
-            self.credit_score.insert(caller, &1u32);
+            if self.credit_score.get(caller).is_none() {
+                self.credit_score.insert(caller, &100u32);
+            }
 
+            // TODO: Credit Score is not being adjusted by every loan activity yet
+            // TODO: Interest rate is not being taken into a count yet
             let (_min_lenders, _overfunding_factor, base_interest_rate, late_penalty_rate, max_loan_duration, _admin) = self.config_address.get_protocol_info();
 
             if duration > max_loan_duration || duration == 0 {
@@ -215,12 +214,10 @@ mod loan_manager {
             // Check if lender trusts borrower
             // In the frontend, users will only see loans from trusted borrowers
             // but this is an extra check
-            // TODO: The trust graph contract needs to be modified to accept two address parameters
-            // For now, this won't work correctly as it checks if the contract trusts the borrower
-            // let is_trusted = self.trust_graph_address.is_trusted(loan.borrower);
-            // if !is_trusted {
-            //     return Err(Error::NotTrusted);
-            // }
+            let is_trusted = self.trust_graph_address.is_trusted(caller, loan.borrower);
+            if !is_trusted {
+                return Err(Error::NotTrusted);
+            }
 
             // Here, we're adding the lender to the loan's lenders mapping
             // and updating the funded amount
@@ -322,6 +319,7 @@ mod loan_manager {
             loan.status = LoanStatus::Defaulted;
 
             // TODO: Implement logic to distribute the reserve funds to lenders in case of default
+            // Do this AFTER the Hydration integration. 
             self.loans.insert(loan_id, &loan);
             self.env().emit_event(LoanDefaulted { loan_id });
             Ok(())
@@ -332,6 +330,7 @@ mod loan_manager {
             let loan = self.loans.get(loan_id).ok_or(Error::LoanNotFound)?;
             if loan.status == LoanStatus::Repaid || loan.status == LoanStatus::Defaulted {
                 // TODO: Distribute remaining funds/interest to lenders
+                // This MUST be done AFTER the Hydration integration
                 self.loans.remove(loan_id);
 
                 // Remove from borrower_loans
@@ -366,11 +365,8 @@ mod loan_manager {
         /// Get all loans from trusted borrowers that are pending funding
         #[ink(message)]
         pub fn get_trusted_loans(&self) -> Vec<Loan> {
-            // TODO: The trust graph contract needs to be modified to accept address parameters
-            // For now, returning empty vec as the cross-contract call won't work correctly
-            /*
             let caller = self.env().caller();
-            let trusted = match self.trust_graph_address.get_all_trusted() {
+            let trusted = match self.trust_graph_address.get_all_trusted(caller) {
                 Ok(t) => t,
                 Err(_) => return vec![],
             };
@@ -388,8 +384,6 @@ mod loan_manager {
                 }
             }
             result
-            */
-            vec![]
         }
     }
 }
