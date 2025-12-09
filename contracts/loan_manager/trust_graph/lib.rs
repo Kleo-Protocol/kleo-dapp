@@ -60,27 +60,27 @@ mod trust_graph {
         /// Getter function for getting trusted addresses
 
         #[ink(message)]
-        pub fn get_all_trusted(&self) -> TrustGraphResult<Vec<Address>> {
-            let caller = self.env().caller();
-            match self.trusted.get(caller) {
+        pub fn get_all_trusted(&self, lender: Address) -> TrustGraphResult<Vec<Address>> {
+            match self.trusted.get(lender) {
                 Some(addrs) if !addrs.is_empty() => Ok(addrs),
                 _ => Err(Error::NoTrustedAddresses),
             }
         }
 
         #[ink(message)]
-        pub fn is_trusted(&self, addr: Address) -> bool {
-            let caller = self.env().caller();
-            let trusted_addresses = self.trusted.get(caller);
-            trusted_addresses.map(|addrs| addrs.contains(&addr)).unwrap_or(false)
+        pub fn is_trusted(&self, lender: Address, borrower: Address) -> bool {
+            let trusted_addresses = self.trusted.get(lender);
+            trusted_addresses.map(|addrs| addrs.contains(&borrower)).unwrap_or(false)
         }
 
          }
     }
     #[cfg(test)]
     mod tests {
-        use super::*;
-        use ink::env::{test, DefaultEnvironment};
+        use ink::env::test;
+        use ink::primitives::Address;
+        use crate::trust_graph::TrustGraph;
+        use crate::trust_graph::Error;
 
         /// Helper function to set the caller in tests
         fn set_caller(caller: Address) {
@@ -117,7 +117,7 @@ mod trust_graph {
             let result = graph.set_new_trusted(bob_addr);
             
             assert_eq!(result, Ok(()));
-            assert!(graph.is_trusted(bob_addr).unwrap());
+            assert!(graph.is_trusted(alice_addr, bob_addr));
         }
 
         /// Test adding multiple trusted addresses
@@ -132,8 +132,8 @@ mod trust_graph {
             graph.set_new_trusted(bob_addr).unwrap();
             graph.set_new_trusted(charlie_addr).unwrap();
 
-            assert!(graph.is_trusted(bob_addr).unwrap());
-            assert!(graph.is_trusted(charlie_addr).unwrap());
+            assert!(graph.is_trusted(alice_addr, bob_addr));
+            assert!(graph.is_trusted(alice_addr, charlie_addr));
         }
 
         /// Test deleting a trusted address
@@ -145,11 +145,11 @@ mod trust_graph {
 
             set_caller(alice_addr);
             graph.set_new_trusted(bob_addr).unwrap();
-            assert!(graph.is_trusted(bob_addr).unwrap());
+            assert!(graph.is_trusted(alice_addr, bob_addr));
 
             let result = graph.delete_trusted(bob_addr);
             assert_eq!(result, Ok(()));
-            assert!(!graph.is_trusted(bob_addr).unwrap());
+            assert!(!graph.is_trusted(alice_addr, bob_addr));
         }
 
         /// Test deleting a non-existent trusted address returns error
@@ -173,7 +173,7 @@ mod trust_graph {
             let bob_addr = bob();
 
             set_caller(alice_addr);
-            assert!(!graph.is_trusted(bob_addr).unwrap());
+            assert!(!graph.is_trusted(alice_addr, bob_addr));
         }
 
         /// Test is_trusted returns false when caller has no trusted list
@@ -184,7 +184,7 @@ mod trust_graph {
             let bob_addr = bob();
 
             set_caller(alice_addr);
-            assert!(!graph.is_trusted(bob_addr).unwrap());
+            assert!(!graph.is_trusted(alice_addr, bob_addr));
         }
 
         /// Test get_all_trusted returns correct addresses
@@ -199,7 +199,7 @@ mod trust_graph {
             graph.set_new_trusted(bob_addr).unwrap();
             graph.set_new_trusted(charlie_addr).unwrap();
 
-            let trusted = graph.get_all_trusted().unwrap();
+            let trusted = graph.get_all_trusted(alice_addr).unwrap();
             assert_eq!(trusted.len(), 2);
         }
 
@@ -210,7 +210,7 @@ mod trust_graph {
             let alice_addr = alice();
 
             set_caller(alice_addr);
-            let result = graph.get_all_trusted();
+            let result = graph.get_all_trusted(alice_addr);
 
             assert_eq!(result, Err(Error::NoTrustedAddresses));
         }
@@ -226,17 +226,17 @@ mod trust_graph {
             // Alice trusts Bob
             set_caller(alice_addr);
             graph.set_new_trusted(bob_addr).unwrap();
-            assert!(graph.is_trusted(bob_addr).unwrap());
+            assert!(graph.is_trusted(alice_addr, bob_addr));
 
             // Bob trusts Charlie (not Alice)
             set_caller(bob_addr);
             graph.set_new_trusted(charlie_addr).unwrap();
-            assert!(graph.is_trusted(charlie_addr).unwrap());
-            assert!(!graph.is_trusted(alice_addr).unwrap());
+            assert!(graph.is_trusted(bob_addr, charlie_addr));
+            assert!(!graph.is_trusted(bob_addr, alice_addr));
 
             // Alice still only trusts Bob
             set_caller(alice_addr);
-            assert!(graph.is_trusted(bob_addr).unwrap());
-            assert!(!graph.is_trusted(charlie_addr).unwrap());
+            assert!(graph.is_trusted(alice_addr, bob_addr));
+            assert!(!graph.is_trusted(alice_addr, charlie_addr));
         }
 }
