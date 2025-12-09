@@ -1,0 +1,743 @@
+{
+  "source": {
+    "hash": "0xb5788edf87d6aba6a3c9a6ac56cf62f120746963ecaf4ed4789daefe746ab6d2",
+    "language": "ink! 6.0.0-beta.1",
+    "compiler": "rustc 1.91.1",
+    "build_info": {
+      "rust_toolchain": "stable-aarch64-apple-darwin",
+      "cargo_contract_version": "6.0.0-beta.1",
+      "build_mode": "Release"
+    }
+  },
+  "contract": {
+    "name": "config",
+    "version": "0.1.0",
+    "authors": [
+      "[your_name] <[your_email]>"
+    ]
+  },
+  "image": null,
+  "version": 6,
+  "types": [
+    {
+      "id": 0,
+      "type": {
+        "def": {
+          "primitive": "u32"
+        }
+      }
+    },
+    {
+      "id": 1,
+      "type": {
+        "def": {
+          "primitive": "u64"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": {
+        "path": [
+          "primitive_types",
+          "H160"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 3,
+                "typeName": "[u8; 20]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": {
+        "def": {
+          "array": {
+            "len": 20,
+            "type": 4
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": {
+        "def": {
+          "primitive": "u8"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": {
+        "path": [
+          "config",
+          "config",
+          "Config"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "min_lenders",
+                "type": 0,
+                "typeName": "<u32 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<2698498024u32, ()>,>>::Type"
+              },
+              {
+                "name": "overfunding_factor",
+                "type": 1,
+                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<3950042074u32, ()>,>>::Type"
+              },
+              {
+                "name": "base_interest_rate",
+                "type": 1,
+                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<724415313u32, ()>,>>::Type"
+              },
+              {
+                "name": "late_penalty_rate",
+                "type": 1,
+                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<306240227u32, ()>,>>::Type"
+              },
+              {
+                "name": "max_loan_duration",
+                "type": 1,
+                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<667040228u32, ()>,>>::Type"
+              },
+              {
+                "name": "admin",
+                "type": 2,
+                "typeName": "<Address as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<455710312u32, ()>,>>::Type"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 7
+          },
+          {
+            "name": "E",
+            "type": 8
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 7
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 8
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 7,
+      "type": {
+        "def": {
+          "tuple": []
+        }
+      }
+    },
+    {
+      "id": 8,
+      "type": {
+        "path": [
+          "ink_primitives",
+          "LangError"
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "CouldNotReadInput",
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 10
+          },
+          {
+            "name": "E",
+            "type": 8
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 10
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 8
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 10,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 7
+          },
+          {
+            "name": "E",
+            "type": 11
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 7
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 11
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 11,
+      "type": {
+        "path": [
+          "config",
+          "config",
+          "Error"
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "NotAdmin",
+                "index": 0
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 12,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 13
+          },
+          {
+            "name": "E",
+            "type": 8
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 13
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 8
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 13,
+      "type": {
+        "def": {
+          "tuple": [
+            0,
+            1,
+            1,
+            1,
+            1,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "id": 14,
+      "type": {
+        "path": [
+          "ink_primitives",
+          "types",
+          "AccountId"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 15,
+                "typeName": "[u8; 32]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 15,
+      "type": {
+        "def": {
+          "array": {
+            "len": 32,
+            "type": 4
+          }
+        }
+      }
+    },
+    {
+      "id": 16,
+      "type": {
+        "def": {
+          "primitive": "u128"
+        }
+      }
+    },
+    {
+      "id": 17,
+      "type": {
+        "path": [
+          "ink_primitives",
+          "types",
+          "Hash"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 15,
+                "typeName": "[u8; 32]"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "storage": {
+    "root": {
+      "root_key": "0x00000000",
+      "layout": {
+        "struct": {
+          "name": "Config",
+          "fields": [
+            {
+              "name": "min_lenders",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 0
+                }
+              }
+            },
+            {
+              "name": "overfunding_factor",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 1
+                }
+              }
+            },
+            {
+              "name": "base_interest_rate",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 1
+                }
+              }
+            },
+            {
+              "name": "late_penalty_rate",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 1
+                }
+              }
+            },
+            {
+              "name": "max_loan_duration",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 1
+                }
+              }
+            },
+            {
+              "name": "admin",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 2
+                }
+              }
+            }
+          ]
+        }
+      },
+      "ty": 5
+    }
+  },
+  "spec": {
+    "constructors": [
+      {
+        "label": "new",
+        "selector": "0x9bae9d5e",
+        "payable": false,
+        "args": [
+          {
+            "label": "min_lenders",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "u32"
+              ]
+            }
+          },
+          {
+            "label": "overfunding_factor",
+            "type": {
+              "type": 1,
+              "displayName": [
+                "u64"
+              ]
+            }
+          },
+          {
+            "label": "base_interest_rate",
+            "type": {
+              "type": 1,
+              "displayName": [
+                "u64"
+              ]
+            }
+          },
+          {
+            "label": "late_penalty_rate",
+            "type": {
+              "type": 1,
+              "displayName": [
+                "u64"
+              ]
+            }
+          },
+          {
+            "label": "max_loan_duration",
+            "type": {
+              "type": 1,
+              "displayName": [
+                "u64"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 6,
+          "displayName": [
+            "ink_primitives",
+            "ConstructorResult"
+          ]
+        },
+        "docs": [
+          "Constructor that initializes configuration of the Kleo Protocol"
+        ],
+        "default": false
+      }
+    ],
+    "messages": [
+      {
+        "label": "set_min_lenders",
+        "selector": "0x438c66d1",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "new_min",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "u32"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 9,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Setter functions for configuration parameters"
+        ],
+        "default": false
+      },
+      {
+        "label": "set_overfunding_factor",
+        "selector": "0x705989b2",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "new_factor",
+            "type": {
+              "type": 1,
+              "displayName": [
+                "u64"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 9,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "set_base_interest_rate",
+        "selector": "0xe7ce83e9",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "new_rate",
+            "type": {
+              "type": 1,
+              "displayName": [
+                "u64"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 9,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "set_late_penalty_rate",
+        "selector": "0x60f39650",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "new_rate",
+            "type": {
+              "type": 1,
+              "displayName": [
+                "u64"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 9,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "set_max_loan_duration",
+        "selector": "0x5eed23cc",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "new_duration",
+            "type": {
+              "type": 1,
+              "displayName": [
+                "u64"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 9,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "get_protocol_info",
+        "selector": "0x54aca0e4",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 12,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Getter function for configuration parameters"
+        ],
+        "default": false
+      }
+    ],
+    "events": [],
+    "docs": [],
+    "lang_error": {
+      "type": 8,
+      "displayName": [
+        "ink",
+        "LangError"
+      ]
+    },
+    "environment": {
+      "accountId": {
+        "type": 14,
+        "displayName": [
+          "AccountId"
+        ]
+      },
+      "balance": {
+        "type": 16,
+        "displayName": [
+          "Balance"
+        ]
+      },
+      "hash": {
+        "type": 17,
+        "displayName": [
+          "Hash"
+        ]
+      },
+      "timestamp": {
+        "type": 1,
+        "displayName": [
+          "Timestamp"
+        ]
+      },
+      "blockNumber": {
+        "type": 0,
+        "displayName": [
+          "BlockNumber"
+        ]
+      },
+      "nativeToEthRatio": 100000000,
+      "trustBackedAssetsPrecompileIndex": 288,
+      "poolAssetsPrecompileIndex": 800,
+      "staticBufferSize": 16384
+    }
+  }
+}
