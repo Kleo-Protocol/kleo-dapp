@@ -8,7 +8,7 @@ import { Figtree } from 'next/font/google';
 
 export const metadata: Metadata = {
   title: 'Kleo Protocol - DApp',
-  description: 'Kleo Protocol gives people access to micro loans through trust-based DeFi solutions, no collateral.',
+  description: 'Kleo Protocol gives people access to micro loans through trust-based DeFi solutions, no collateral needed.',
 };
 
 const figtree = Figtree({
