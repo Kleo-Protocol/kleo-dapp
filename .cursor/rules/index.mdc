@@ -1,0 +1,39 @@
+---
+globs:
+  - "**/*.{ts,tsx,js,jsx}"
+  - "src/**/*"
+  - "tailwind.config.ts"
+  - "next.config.*"
+---
+
+# Project Rules
+
+## Typography
+- Always use Sora font for headings (H1, H2, H3) via `font-sora` class or CSS variable `--font-sora`
+- Always use Inter font for body text, subtitles, and captions via `font-inter` class or CSS variable `--font-inter`
+- Never use Sora for body text
+- Never use Inter for headings
+
+## Design System
+- Never use emojis in any file (code, text, comments)
+- Never use gradients; only solid colors from the specified design system
+- Use only these colors from the palette:
+  - `deep-space-blue`: `#090909`
+  - `atomic-tangerine`: `#ff6b35`
+  - `amber-honey`: `#eca406`
+  - `cetacean-blue`: `#01091C`
+  - `oxford-blue`: `#061A4B`
+  - `anti-flash-white`: `#F2F2F2`
+
+## Project Structure
+- Keep the project as a single Next.js app in the root (no monorepo layout)
+- Do not create `apps/` folder or similar
+- The `app/` directory lives inside `src/` (src/app/)
+- All project files must live in the repo root (standard Next.js structure)
+
+## Styling
+- Prefer consistent components and styling aligned with this design system
+- Use Tailwind utility classes
+- Container max-width should be between 960px-1200px (e.g., `max-w-5xl` or `max-w-6xl`)
+- Maintain vertical spacing between blocks: 40-64px
+- Maintain vertical padding inside blocks: 32-48px
