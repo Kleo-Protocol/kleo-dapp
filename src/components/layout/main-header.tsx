@@ -7,11 +7,20 @@ import Link from 'next/link';
 import { TypinkLogo } from '@/components/shared/icons';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
+import { useSyncWalletState } from '@/hooks/use-sync-wallet-state';
 
 export function MainHeader() {
   const { accounts } = useTypink();
   const pathname = usePathname();
-  const showDashboardActions = pathname?.startsWith('/dashboard') || pathname?.startsWith('/trust') || pathname?.startsWith('/borrow') || pathname?.startsWith('/lend') || pathname?.startsWith('/pay-loan');
+  const showDashboardActions =
+    pathname?.startsWith('/dashboard') ||
+    pathname?.startsWith('/trust') ||
+    pathname?.startsWith('/borrow') ||
+    pathname?.startsWith('/lend') ||
+    pathname?.startsWith('/pay-loan');
+
+  // Sincronizar estado de typink con nuestro store
+  useSyncWalletState();
 
   return (
     <div className='border-b border-gray-200 dark:border-gray-800'>
@@ -22,16 +31,32 @@ export function MainHeader() {
         <div className='flex items-center gap-3'>
           {showDashboardActions && (
             <div className='flex flex-wrap items-center gap-2 mr-2 sm:mr-4 lg:mr-6'>
-              <Button asChild size='sm' variant='ghost' className='text-foreground border border-border/50 hover:border-border'>
+              <Button
+                asChild
+                size='sm'
+                variant='ghost'
+                className='text-foreground border border-border/50 hover:border-border'>
                 <Link href='/trust'>Trust Wallet</Link>
               </Button>
-              <Button asChild size='sm' variant='ghost' className='text-foreground border border-border/50 hover:border-border'>
+              <Button
+                asChild
+                size='sm'
+                variant='ghost'
+                className='text-foreground border border-border/50 hover:border-border'>
                 <Link href='/borrow'>Borrow</Link>
               </Button>
-              <Button asChild size='sm' variant='ghost' className='text-foreground border border-border/50 hover:border-border'>
+              <Button
+                asChild
+                size='sm'
+                variant='ghost'
+                className='text-foreground border border-border/50 hover:border-border'>
                 <Link href='/lend'>Lend</Link>
               </Button>
-              <Button asChild size='sm' variant='ghost' className='text-foreground border border-border/50 hover:border-border'>
+              <Button
+                asChild
+                size='sm'
+                variant='ghost'
+                className='text-foreground border border-border/50 hover:border-border'>
                 <Link href='/pay-loan'>Pay Loan</Link>
               </Button>
             </div>
