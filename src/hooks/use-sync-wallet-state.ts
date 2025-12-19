@@ -48,4 +48,3 @@ export function useSyncWalletState() {
     }
   }, [accounts.length, connectedAccount, setError]);
 }
-

@@ -9,7 +9,7 @@ interface TypinkLogoProps {
 }
 
 export function TypinkLogo({ width = 30, height = 33 }: TypinkLogoProps) {
-  return <Image width={width} height={height} src={'/kleo_white.svg'} alt='Kleo Logo' />;
+  return <Image width={width} height={height} src={'/logos/v2/kleo_logo_v2_white.png'} alt='Kleo Logo' />;
 }
 
 export function TypinkTextLogo({ width = 250, height = 70 }: TypinkLogoProps) {
@@ -19,7 +19,7 @@ export function TypinkTextLogo({ width = 250, height = 70 }: TypinkLogoProps) {
 
   return (
     <div className='flex items-center justify-center gap-5' style={{ minHeight: height }}>
-      <Image width={markWidth} height={markHeight} src={'/kleo_white.svg'} alt='Kleo Logo' />
+      <Image width={markWidth} height={markHeight} src={'/logos/v2/kleo_logo_v2_white.png'} alt='Kleo Logo' />
       <h1 className='text-white font-bold' style={{ fontSize: `${textSize}px` }}>
         Kleo
       </h1>
