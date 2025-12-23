@@ -17,9 +17,11 @@ const apiClient: AxiosInstance = axios.create({
 });
 
 // Validate API base URL when making requests (not at module load time)
+// Nota: Si no hay API configurada, el servicio userService usará automáticamente el mock
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Validate API base URL when making requests
+    // Solo validar si realmente se está intentando hacer una llamada
+    // El userService ya maneja el caso de API no configurada usando mocks
     if (!API_BASE && typeof window !== 'undefined') {
       throw new Error(
         'API base URL is not configured. Please set NEXT_PUBLIC_API_BASE or VITE_API_BASE environment variable in your .env.local file.',
