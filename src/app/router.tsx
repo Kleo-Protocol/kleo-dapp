@@ -2,10 +2,11 @@
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/app-layout';
+import { LandingPage } from '@/components/pages/landing-page';
 
 // Empty route components - to be implemented later
 function HomePage() {
-  return <div>Home Page</div>;
+  return <LandingPage />;
 }
 
 function DashboardPage() {
@@ -22,6 +23,10 @@ function LendPage() {
 
 function ProfilePage() {
   return <div>Profile Page</div>;
+}
+
+function PoolsPage() {
+  return <div>Pools Page</div>;
 }
 
 function NotFoundPage() {
@@ -52,6 +57,10 @@ const router = createBrowserRouter([
       {
         path: 'profile',
         element: <ProfilePage />,
+      },
+      {
+        path: 'pools',
+        element: <PoolsPage />,
       },
       {
         path: '*',
