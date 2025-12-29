@@ -5,6 +5,7 @@ import { AppLayout } from '@/components/layout/app-layout';
 import { LandingPage } from '@/components/pages/landing-page';
 import { ProfilePage } from '@/components/pages/profile-page';
 import { PoolsPage } from '@/components/pages/pools-page';
+import { PoolDetailPage } from '@/components/pages/pool-detail-page';
 
 // Empty route components - to be implemented later
 function HomePage() {
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: 'pools',
         element: <PoolsPage />,
+      },
+      {
+        path: 'pools/:poolId',
+        element: <PoolDetailPage />,
       },
       {
         path: '*',
