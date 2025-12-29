@@ -1,9 +1,8 @@
 import './globals.css';
 import { AppProvider } from '@/providers/app-provider';
+import { QueryClientProviderWrapper } from '@/providers/query-client-provider';
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
-import { MainHeader } from '@/components/layout/main-header';
-import { MainFooter } from '@/components/layout/main-footer';
 import { Figtree } from 'next/font/google';
 
 export const metadata: Metadata = {
@@ -22,12 +21,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang='en' suppressHydrationWarning className={figtree.variable}>
       <body>
         <AppProvider>
-          <div className='min-h-screen flex flex-col'>
-            <MainHeader />
-            <main className='max-w-5xl mx-auto w-full'>{children}</main>
-            <MainFooter />
-          </div>
-          <Toaster />
+          <QueryClientProviderWrapper>
+            {children}
+            <Toaster />
+          </QueryClientProviderWrapper>
         </AppProvider>
       </body>
     </html>
