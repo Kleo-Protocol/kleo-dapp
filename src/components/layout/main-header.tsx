@@ -17,7 +17,8 @@ export function MainHeader() {
     pathname?.startsWith('/trust') ||
     pathname?.startsWith('/borrow') ||
     pathname?.startsWith('/lend') ||
-    pathname?.startsWith('/pay-loan');
+    pathname?.startsWith('/pay-loan') ||
+    pathname?.startsWith('/profile');
 
   // Sincronizar estado de typink con nuestro store
   useSyncWalletState();
@@ -31,13 +32,6 @@ export function MainHeader() {
         <div className='flex items-center gap-3'>
           {showDashboardActions && (
             <div className='flex flex-wrap items-center gap-2 mr-2 sm:mr-4 lg:mr-6'>
-              <Button
-                asChild
-                size='sm'
-                variant='ghost'
-                className='text-foreground border border-border/50 hover:border-border'>
-                <Link href='/trust'>Trust Wallet</Link>
-              </Button>
               <Button
                 asChild
                 size='sm'
@@ -57,7 +51,7 @@ export function MainHeader() {
                 size='sm'
                 variant='ghost'
                 className='text-foreground border border-border/50 hover:border-border'>
-                <Link href='/pay-loan'>Pay Loan</Link>
+                <Link href='/profile'>Profile</Link>
               </Button>
             </div>
           )}

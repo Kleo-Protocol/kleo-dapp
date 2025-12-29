@@ -39,6 +39,12 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-deep-space-blue: #090909;
+  --color-atomic-tangerine: #ff6b35;
+  --color-amber-honey: #eca406;
+  --color-cetacean-blue: #01091C;
+  --color-oxford-blue: #061A4B;
+  --color-anti-flash-white: #F2F2F2;
 }
 
 :root {
@@ -82,11 +88,11 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-color: #090100;
+    background-color: #01091C;
     background-image:
-      radial-gradient(circle at 20% 25%, rgba(255, 123, 45, 0.45) 0%, transparent 55%),
-      radial-gradient(circle at 75% 70%, rgba(194, 58, 8, 0.4) 0%, transparent 45%),
-      linear-gradient(140deg, #080200 0%, #1b0602 35%, #5c1a06 60%, #0b0200 100%);
+      radial-gradient(circle at 20% 25%, rgba(255, 107, 53, 0.3) 0%, transparent 55%),
+      radial-gradient(circle at 75% 70%, rgba(236, 164, 6, 0.25) 0%, transparent 45%),
+      linear-gradient(140deg, #01091C 0%, #061A4B 35%, #090909 60%, #01091C 100%);
     position: relative;
     overflow-x: hidden;
   }
@@ -94,8 +100,8 @@
   html.light body,
   html.dark body {
     background-image:
-      radial-gradient(circle at 18% 20%, rgba(255, 141, 61, 0.45) 0%, transparent 55%),
-      radial-gradient(circle at 80% 75%, rgba(163, 54, 9, 0.5) 0%, transparent 45%),
-      linear-gradient(140deg, #080200 0%, #1b0602 35%, #5c1a06 60%, #050100 100%);
+      radial-gradient(circle at 18% 20%, rgba(255, 107, 53, 0.3) 0%, transparent 55%),
+      radial-gradient(circle at 80% 75%, rgba(236, 164, 6, 0.25) 0%, transparent 45%),
+      linear-gradient(140deg, #01091C 0%, #061A4B 35%, #090909 60%, #01091C 100%);
   }
 }
