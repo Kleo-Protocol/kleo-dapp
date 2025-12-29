@@ -3,6 +3,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/app-layout';
 import { LandingPage } from '@/components/pages/landing-page';
+import { ProfilePage } from '@/components/pages/profile-page';
 
 // Empty route components - to be implemented later
 function HomePage() {
@@ -21,9 +22,6 @@ function LendPage() {
   return <div>Lend Page</div>;
 }
 
-function ProfilePage() {
-  return <div>Profile Page</div>;
-}
 
 function PoolsPage() {
   return <div>Pools Page</div>;
