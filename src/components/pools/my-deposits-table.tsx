@@ -11,7 +11,9 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Clock, TrendingUp } from 'lucide-react';
+import { Clock, TrendingUp, Inbox } from 'lucide-react';
+import { EmptyState } from '@/components/shared/empty-state';
+import { formatBalance } from '@/utils/format';
 
 interface Deposit {
   id: string;
@@ -52,11 +54,6 @@ const mockDeposits: Deposit[] = [
 ];
 
 export function MyDepositsTable({ deposits = mockDeposits, isLoading = false }: MyDepositsTableProps) {
-  const formatBalance = (balance: bigint) => {
-    const tokens = Number(balance) / 1e18;
-    return tokens.toLocaleString('en-US', { maximumFractionDigits: 2 });
-  };
-
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -86,20 +83,11 @@ export function MyDepositsTable({ deposits = mockDeposits, isLoading = false }: 
 
   if (deposits.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="size-5" />
-            My Deposits
-          </CardTitle>
-          <CardDescription>Your deposit history in this pool</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="py-8 text-center text-slate-600">
-            <p>No deposits yet. Make your first deposit to start earning returns.</p>
-          </div>
-        </CardContent>
-      </Card>
+      <EmptyState
+        icon={<Inbox className="size-12" />}
+        title="No Deposits Yet"
+        description="You haven't made any deposits to this pool. Make your first deposit to start earning returns."
+      />
     );
   }
 

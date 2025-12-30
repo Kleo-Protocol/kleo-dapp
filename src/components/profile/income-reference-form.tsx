@@ -5,8 +5,10 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useUpdateIncomeReference } from '@/hooks/use-profile';
-import { FileText, Save } from 'lucide-react';
+import { FileText, Save, Info } from 'lucide-react';
+import { toast } from 'sonner';
 import type { Profile } from '@/services/mock/profile.mock';
 
 interface IncomeReferenceFormProps {
@@ -27,12 +29,33 @@ export function IncomeReferenceForm({ profile, isLoading, walletAddress }: Incom
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!walletAddress) return;
+    if (!walletAddress) {
+      toast.error('Wallet not connected', {
+        description: 'Please connect your wallet to update income reference',
+      });
+      return;
+    }
 
-    updateIncomeRef.mutate({
-      walletAddress,
-      incomeReference: incomeRef.trim() || null,
-    });
+    updateIncomeRef.mutate(
+      {
+        walletAddress,
+        incomeReference: incomeRef.trim() || null,
+      },
+      {
+        onSuccess: () => {
+          toast.success('Income reference updated', {
+            description: incomeRef.trim()
+              ? 'Your income reference has been saved'
+              : 'Income reference has been removed',
+          });
+        },
+        onError: () => {
+          toast.error('Update failed', {
+            description: 'Failed to update income reference. Please try again.',
+          });
+        },
+      }
+    );
   };
 
   if (isLoading) {
@@ -54,8 +77,20 @@ export function IncomeReferenceForm({ profile, isLoading, walletAddress }: Incom
       <CardHeader>
         <div className="flex items-center gap-2">
           <FileText className="size-5 text-slate-500" />
-          <div>
-            <CardTitle>Income Reference</CardTitle>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <CardTitle>Income Reference</CardTitle>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="size-4 text-slate-400 cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>An income reference helps verify your ability to repay loans and can improve your borrowing capacity.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <CardDescription>Add or update your income reference for loan applications</CardDescription>
           </div>
         </div>

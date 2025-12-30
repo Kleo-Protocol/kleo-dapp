@@ -8,6 +8,7 @@ import { IncomeReferenceForm } from '@/components/profile/income-reference-form'
 import { BorrowerStats } from '@/components/profile/borrower-stats';
 import { LenderStats } from '@/components/profile/lender-stats';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Card } from '@/components/ui/card';
 
 // Mock wallet address - replace with real wallet integration
 const MOCK_WALLET_ADDRESS = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
@@ -32,9 +33,11 @@ export function ProfilePage() {
   if (profileLoading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-48 w-full" />
-        <Skeleton className="h-96 w-full" />
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Skeleton className="h-64 w-full rounded-lg" />
+          <Skeleton className="h-64 w-full rounded-lg" />
+        </div>
+        <Skeleton className="h-96 w-full rounded-lg" />
       </div>
     );
   }
@@ -59,11 +62,14 @@ export function ProfilePage() {
       )}
 
       {stats && stats.totalBorrowed === 0n && stats.totalLent === 0n && (
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-8 text-center">
-          <p className="text-slate-600">
-            No activity yet. Start borrowing or lending to see your statistics here.
-          </p>
-        </div>
+        <Card>
+          <div className="p-12 text-center">
+            <p className="text-slate-600 mb-2">No activity yet.</p>
+            <p className="text-sm text-slate-500">
+              Start borrowing or lending to see your statistics here.
+            </p>
+          </div>
+        </Card>
       )}
     </div>
   );

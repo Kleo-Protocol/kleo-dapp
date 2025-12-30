@@ -64,8 +64,8 @@ export function PoolsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Lending Pools</h1>
-        <p className="mt-2 text-lg text-slate-600">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">Lending Pools</h1>
+        <p className="mt-2 text-lg text-muted-foreground">
           Discover and explore available lending pools to start earning returns
         </p>
       </div>
@@ -78,11 +78,13 @@ export function PoolsPage() {
       />
 
       <div>
-        <div className="mb-4 flex items-center justify-between">
-          <p className="text-sm text-slate-600">
-            {sortedPools.length} {sortedPools.length === 1 ? 'pool' : 'pools'} found
-          </p>
-        </div>
+        {!isLoading && (
+          <div className="mb-4 flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              {sortedPools.length} {sortedPools.length === 1 ? 'pool' : 'pools'} found
+            </p>
+          </div>
+        )}
         <PoolsGrid pools={sortedPools} isLoading={isLoading} />
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type PoolTab = 'overview' | 'lend' | 'borrow' | 'history';
+export type PoolTab = 'overview' | 'lend' | 'borrow' | 'history' | 'analytics';
 
 interface ModalStates {
   [key: string]: boolean;

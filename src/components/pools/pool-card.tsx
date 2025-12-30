@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, Users, DollarSign, ArrowRight } from 'lucide-react';
+import { formatBalance, formatInterestRate } from '@/utils/format';
 import type { Pool } from '@/services/mock/pools.mock';
 
 interface PoolCardProps {
@@ -12,18 +13,6 @@ interface PoolCardProps {
 }
 
 export function PoolCard({ pool }: PoolCardProps) {
-  const formatBalance = (balance: bigint) => {
-    const tokens = Number(balance) / 1e18;
-    if (tokens >= 1000) {
-      return `${(tokens / 1000).toFixed(1)}K`;
-    }
-    return tokens.toLocaleString('en-US', { maximumFractionDigits: 2 });
-  };
-
-  const formatInterestRate = (rate: bigint) => {
-    const percentage = Number(rate) / 100;
-    return `${percentage.toFixed(2)}%`;
-  };
 
   const utilizationRate = pool.totalLiquidity > 0n
     ? Number((pool.totalLiquidity - pool.availableLiquidity) * BigInt(100) / pool.totalLiquidity)
@@ -56,42 +45,42 @@ export function PoolCard({ pool }: PoolCardProps) {
       <CardContent className="flex-1 space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="flex items-center gap-2 text-slate-600 mb-1">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
               <TrendingUp className="size-4" />
               <span className="text-xs">Interest Rate</span>
             </div>
-            <p className="text-lg font-semibold text-slate-900">{formatInterestRate(pool.baseInterestRate)}</p>
+            <p className="text-lg font-semibold text-card-foreground">{formatInterestRate(pool.baseInterestRate)}</p>
           </div>
           <div>
-            <div className="flex items-center gap-2 text-slate-600 mb-1">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
               <DollarSign className="size-4" />
               <span className="text-xs">Available</span>
             </div>
-            <p className="text-lg font-semibold text-slate-900">{formatBalance(pool.availableLiquidity)}</p>
+            <p className="text-lg font-semibold text-card-foreground">{formatBalance(pool.availableLiquidity)}</p>
           </div>
           <div>
-            <div className="flex items-center gap-2 text-slate-600 mb-1">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
               <Users className="size-4" />
               <span className="text-xs">Min Lenders</span>
             </div>
-            <p className="text-lg font-semibold text-slate-900">{pool.minLenders}</p>
+            <p className="text-lg font-semibold text-card-foreground">{pool.minLenders}</p>
           </div>
           <div>
-            <div className="flex items-center gap-2 text-slate-600 mb-1">
+            <div className="flex items-center gap-2 text-muted-foreground mb-1">
               <span className="text-xs">Utilization</span>
             </div>
-            <p className="text-lg font-semibold text-slate-900">{utilizationRate}%</p>
+            <p className="text-lg font-semibold text-card-foreground">{utilizationRate}%</p>
           </div>
         </div>
 
-        <div className="pt-2 border-t border-slate-200">
+        <div className="pt-2 border-t border-border">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-600">Total Liquidity</span>
-            <span className="font-medium text-slate-900">{formatBalance(pool.totalLiquidity)}</span>
+            <span className="text-muted-foreground">Total Liquidity</span>
+            <span className="font-medium text-card-foreground">{formatBalance(pool.totalLiquidity)}</span>
           </div>
           <div className="flex items-center justify-between text-sm mt-1">
-            <span className="text-slate-600">Active Loans</span>
-            <span className="font-medium text-slate-900">{pool.activeLoans}</span>
+            <span className="text-muted-foreground">Active Loans</span>
+            <span className="font-medium text-card-foreground">{pool.activeLoans}</span>
           </div>
         </div>
       </CardContent>

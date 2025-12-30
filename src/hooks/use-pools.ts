@@ -10,14 +10,16 @@ import {
 } from '@/services/mock/pools.mock';
 
 // Query keys
+const poolsBaseKey = ['pools'] as const;
+
 export const poolsKeys = {
-  all: ['pools'] as const,
+  all: poolsBaseKey,
   lists: {
-    all: [...poolsKeys.all, 'list'] as const,
-    available: [...poolsKeys.all, 'list', 'available'] as const,
+    all: [...poolsBaseKey, 'list'] as const,
+    available: [...poolsBaseKey, 'list', 'available'] as const,
   },
-  detail: (poolId: string) => [...poolsKeys.all, poolId] as const,
-  stats: (poolId: string) => [...poolsKeys.detail(poolId), 'stats'] as const,
+  detail: (poolId: string) => [...poolsBaseKey, poolId] as const,
+  stats: (poolId: string) => [...poolsBaseKey, poolId, 'stats'] as const,
 };
 
 /**

@@ -74,26 +74,26 @@ export function LenderStats({ stats, isLoading }: LenderStatsProps) {
         <CardContent>
           <div className='grid grid-cols-2 gap-4 sm:grid-cols-4 mb-6'>
             <div>
-              <p className='text-sm text-slate-600'>Total Lent</p>
-              <p className='text-2xl font-bold text-slate-900'>{formatBalance(stats.totalLent)}</p>
+              <p className='text-sm text-muted-foreground'>Total Lent</p>
+              <p className='text-2xl font-bold text-card-foreground'>{formatBalance(stats.totalLent)}</p>
             </div>
             <div>
-              <p className='text-sm text-slate-600'>Active Loans</p>
-              <p className='text-2xl font-bold text-slate-900'>{stats.activeLoans}</p>
+              <p className='text-sm text-muted-foreground'>Active Loans</p>
+              <p className='text-2xl font-bold text-card-foreground'>{stats.activeLoans}</p>
             </div>
             <div>
-              <p className='text-sm text-slate-600'>Total Returns</p>
-              <p className='text-2xl font-bold text-slate-900'>{totalReturns.toLocaleString()}</p>
+              <p className='text-sm text-muted-foreground'>Total Returns</p>
+              <p className='text-2xl font-bold text-card-foreground'>{totalReturns.toLocaleString()}</p>
             </div>
             <div>
-              <p className='text-sm text-slate-600'>Avg Return Rate</p>
-              <p className='text-2xl font-bold text-slate-900'>{avgReturnRate.toFixed(1)}%</p>
+              <p className='text-sm text-muted-foreground'>Avg Return Rate</p>
+              <p className='text-2xl font-bold text-card-foreground'>{avgReturnRate.toFixed(1)}%</p>
             </div>
           </div>
 
           <div className='grid gap-6 sm:grid-cols-2'>
             <div>
-              <h3 className='text-sm font-semibold text-slate-900 mb-4'>Portfolio Value & Returns</h3>
+              <h3 className='text-sm font-semibold text-card-foreground mb-4'>Portfolio Value & Returns</h3>
               <ResponsiveContainer width='100%' height={200}>
                 <AreaChart data={portfolioValueData}>
                   <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
@@ -113,7 +113,7 @@ export function LenderStats({ stats, isLoading }: LenderStatsProps) {
             </div>
 
             <div>
-              <h3 className='text-sm font-semibold text-slate-900 mb-4'>Return Rate Trend</h3>
+              <h3 className='text-sm font-semibold text-card-foreground mb-4'>Return Rate Trend</h3>
               <ResponsiveContainer width='100%' height={200}>
                 <LineChart data={returnsData}>
                   <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />

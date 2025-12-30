@@ -40,9 +40,9 @@ export default function MapAccountButton({
           }
         })
         .untilFinalized();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error mapping account:', error);
-      toaster.onTxError(error);
+      toaster.onTxError(error as Error);
     } finally {
       setIsLoading(false);
     }

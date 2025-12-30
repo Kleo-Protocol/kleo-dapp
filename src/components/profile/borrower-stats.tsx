@@ -72,26 +72,26 @@ export function BorrowerStats({ stats, isLoading }: BorrowerStatsProps) {
         <CardContent>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 mb-6">
             <div>
-              <p className="text-sm text-slate-600">Total Borrowed</p>
-              <p className="text-2xl font-bold text-slate-900">{formatBalance(stats.totalBorrowed)}</p>
+              <p className="text-sm text-muted-foreground">Total Borrowed</p>
+              <p className="text-2xl font-bold text-card-foreground">{formatBalance(stats.totalBorrowed)}</p>
             </div>
             <div>
-              <p className="text-sm text-slate-600">Total Loans</p>
-              <p className="text-2xl font-bold text-slate-900">{stats.totalLoans}</p>
+              <p className="text-sm text-muted-foreground">Total Loans</p>
+              <p className="text-2xl font-bold text-card-foreground">{stats.totalLoans}</p>
             </div>
             <div>
-              <p className="text-sm text-slate-600">On-Time Rate</p>
-              <p className="text-2xl font-bold text-slate-900">{stats.onTimePaymentRate.toFixed(1)}%</p>
+              <p className="text-sm text-muted-foreground">On-Time Rate</p>
+              <p className="text-2xl font-bold text-card-foreground">{stats.onTimePaymentRate.toFixed(1)}%</p>
             </div>
             <div>
-              <p className="text-sm text-slate-600">Avg Loan</p>
-              <p className="text-2xl font-bold text-slate-900">{formatBalance(stats.averageLoanAmount)}</p>
+              <p className="text-sm text-muted-foreground">Avg Loan</p>
+              <p className="text-2xl font-bold text-card-foreground">{formatBalance(stats.averageLoanAmount)}</p>
             </div>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <h3 className="text-sm font-semibold text-slate-900 mb-4">Loan Status Distribution</h3>
+              <h3 className="text-sm font-semibold text-card-foreground mb-4">Loan Status Distribution</h3>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie
@@ -114,7 +114,7 @@ export function BorrowerStats({ stats, isLoading }: BorrowerStatsProps) {
             </div>
 
             <div>
-              <h3 className="text-sm font-semibold text-slate-900 mb-4">Monthly Borrowing Activity</h3>
+              <h3 className="text-sm font-semibold text-card-foreground mb-4">Monthly Borrowing Activity</h3>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={monthlyData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />

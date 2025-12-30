@@ -3,7 +3,7 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Wallet, TrendingUp, Calendar } from 'lucide-react';
+import { Wallet, TrendingUp, Calendar, Star } from 'lucide-react';
 import type { Profile } from '@/services/mock/profile.mock';
 
 interface ProfileCardProps {
@@ -33,14 +33,25 @@ export function ProfileCard({ profile, isLoading }: ProfileCardProps) {
     return (
       <Card>
         <CardHeader>
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-4 w-32 mt-2" />
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <Skeleton className="h-6 w-48" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+            <Skeleton className="h-6 w-16 rounded-full" />
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-4 w-1/2" />
+          <div className="space-y-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <Skeleton className="h-5 w-5 rounded" />
+                <div className="flex-1 space-y-1">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-3 w-32" />
+                </div>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -50,7 +61,7 @@ export function ProfileCard({ profile, isLoading }: ProfileCardProps) {
   if (!profile) {
     return (
       <Card>
-        <CardContent className="py-8 text-center text-slate-600">
+        <CardContent className="py-8 text-center text-muted-foreground">
           No profile data available
         </CardContent>
       </Card>
@@ -70,36 +81,34 @@ export function ProfileCard({ profile, isLoading }: ProfileCardProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center gap-3">
-          <Wallet className="size-5 text-slate-500" />
+          <Wallet className="size-5 text-muted-foreground" />
           <div>
-            <p className="text-sm font-medium text-slate-900">Wallet Address</p>
-            <p className="text-sm text-slate-600 font-mono">{formatAddress(profile.walletAddress)}</p>
+            <p className="text-sm font-medium text-card-foreground">Wallet Address</p>
+            <p className="text-sm text-muted-foreground font-mono">{formatAddress(profile.walletAddress)}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <TrendingUp className="size-5 text-slate-500" />
+          <TrendingUp className="size-5 text-muted-foreground" />
           <div>
-            <p className="text-sm font-medium text-slate-900">Capital</p>
-            <p className="text-sm text-slate-600">{formatBalance(profile.capital)} tokens</p>
+            <p className="text-sm font-medium text-card-foreground">Capital</p>
+            <p className="text-sm text-muted-foreground">{formatBalance(profile.capital)} tokens</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="size-5 flex items-center justify-center">
-            <span className="text-lg">⭐</span>
-          </div>
+          <Star className="size-5 text-muted-foreground" />
           <div>
-            <p className="text-sm font-medium text-slate-900">Reputation Score</p>
-            <p className="text-sm text-slate-600">{profile.reputation} points</p>
+            <p className="text-sm font-medium text-card-foreground">Reputation Score</p>
+            <p className="text-sm text-muted-foreground">{profile.reputation} points</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <Calendar className="size-5 text-slate-500" />
+          <Calendar className="size-5 text-muted-foreground" />
           <div>
-            <p className="text-sm font-medium text-slate-900">Member Since</p>
-            <p className="text-sm text-slate-600">{formatDate(profile.registeredAt)}</p>
+            <p className="text-sm font-medium text-card-foreground">Member Since</p>
+            <p className="text-sm text-muted-foreground">{formatDate(profile.registeredAt)}</p>
           </div>
         </div>
       </CardContent>

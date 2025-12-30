@@ -2,6 +2,7 @@
 
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useState } from 'react';
 import { Wallet, User, LayoutDashboard, Building2, Menu, X } from 'lucide-react';
 
@@ -28,7 +29,7 @@ export function MainHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white">
+    <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-card/80 backdrop-blur-md shadow-lg">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -40,7 +41,7 @@ export function MainHeader() {
                 className="h-8 w-auto"
               />
             </div>
-            <span className="hidden text-xl font-semibold text-slate-900 sm:block">Kleo</span>
+            <span className="hidden text-xl font-semibold text-foreground sm:block">Kleo</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -67,19 +68,28 @@ export function MainHeader() {
           {/* Wallet State & Mobile Menu Button */}
           <div className="flex items-center gap-3">
             {/* Wallet Connected State */}
-            {MOCK_WALLET_CONNECTED ? (
-              <div className="hidden items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 sm:flex">
-                <Wallet className="size-4 text-slate-600" />
-                <span className="text-sm font-medium text-slate-900">
-                  {formatAddress(MOCK_WALLET_ADDRESS)}
-                </span>
-              </div>
-            ) : (
-              <Button variant="primary" size="sm" className="hidden gap-2 sm:flex">
-                <Wallet className="size-4" />
-                Connect Wallet
-              </Button>
-            )}
+            <TooltipProvider>
+              {MOCK_WALLET_CONNECTED ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="hidden items-center gap-2 rounded-lg border border-border bg-secondary px-3 py-1.5 sm:flex cursor-help hover:bg-secondary/80 transition-colors">
+                      <Wallet className="size-4 text-secondary-foreground" />
+                      <span className="text-sm font-medium text-secondary-foreground">
+                        {formatAddress(MOCK_WALLET_ADDRESS)}
+                      </span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Wallet connected: {MOCK_WALLET_ADDRESS}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <Button variant="primary" size="sm" className="hidden gap-2 sm:flex">
+                  <Wallet className="size-4" />
+                  Connect Wallet
+                </Button>
+              )}
+            </TooltipProvider>
 
             {/* Mobile Menu Button */}
             <Button
@@ -95,7 +105,7 @@ export function MainHeader() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="border-t border-slate-200 py-4 md:hidden">
+          <div className="border-t border-border/50 py-4 md:hidden">
             <nav className="flex flex-col gap-2">
               {navLinks.map((link) => {
                 const Icon = link.icon;
@@ -117,9 +127,9 @@ export function MainHeader() {
               })}
               {/* Mobile Wallet State */}
               {MOCK_WALLET_CONNECTED ? (
-                <div className="mt-2 flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-                  <Wallet className="size-4 text-slate-600" />
-                  <span className="text-sm font-medium text-slate-900">
+                <div className="mt-2 flex items-center gap-2 rounded-lg border border-border bg-secondary px-3 py-2">
+                  <Wallet className="size-4 text-secondary-foreground" />
+                  <span className="text-sm font-medium text-secondary-foreground">
                     {formatAddress(MOCK_WALLET_ADDRESS)}
                   </span>
                 </div>

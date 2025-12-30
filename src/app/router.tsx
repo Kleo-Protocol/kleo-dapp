@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/app-layout';
 import { LandingPage } from '@/components/pages/landing-page';
@@ -24,54 +25,57 @@ function LendPage() {
   return <div>Lend Page</div>;
 }
 
-
-
 function NotFoundPage() {
   return <div>Not Found</div>;
 }
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <AppLayout />,
-    children: [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: 'dashboard',
-        element: <DashboardPage />,
-      },
-      {
-        path: 'borrow',
-        element: <BorrowPage />,
-      },
-      {
-        path: 'lend',
-        element: <LendPage />,
-      },
-      {
-        path: 'profile',
-        element: <ProfilePage />,
-      },
-      {
-        path: 'pools',
-        element: <PoolsPage />,
-      },
-      {
-        path: 'pools/:poolId',
-        element: <PoolDetailPage />,
-      },
-      {
-        path: '*',
-        element: <NotFoundPage />,
-      },
-    ],
-  },
-]);
-
 export function AppRouter() {
+  // Create router inside component to avoid SSR issues
+  const router = useMemo(
+    () =>
+      createBrowserRouter([
+        {
+          path: '/',
+          element: <AppLayout />,
+          children: [
+            {
+              index: true,
+              element: <HomePage />,
+            },
+            {
+              path: 'dashboard',
+              element: <DashboardPage />,
+            },
+            {
+              path: 'borrow',
+              element: <BorrowPage />,
+            },
+            {
+              path: 'lend',
+              element: <LendPage />,
+            },
+            {
+              path: 'profile',
+              element: <ProfilePage />,
+            },
+            {
+              path: 'pools',
+              element: <PoolsPage />,
+            },
+            {
+              path: 'pools/:poolId',
+              element: <PoolDetailPage />,
+            },
+            {
+              path: '*',
+              element: <NotFoundPage />,
+            },
+          ],
+        },
+      ]),
+    []
+  );
+
   return <RouterProvider router={router} />;
 }
 

@@ -3,6 +3,8 @@
 import { PoolCard } from './pool-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
+import { EmptyState } from '@/components/shared/empty-state';
+import { Building2 } from 'lucide-react';
 import type { Pool } from '@/services/mock/pools.mock';
 
 interface PoolsGridProps {
@@ -36,11 +38,11 @@ export function PoolsGrid({ pools, isLoading }: PoolsGridProps) {
 
   if (pools.length === 0) {
     return (
-      <Card>
-        <div className="p-12 text-center">
-          <p className="text-slate-600">No pools found matching your filters.</p>
-        </div>
-      </Card>
+      <EmptyState
+        icon={<Building2 className="size-12" />}
+        title="No Pools Found"
+        description="No pools match your current filters. Try adjusting your search criteria."
+      />
     );
   }
 
