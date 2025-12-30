@@ -2,17 +2,17 @@
 
 import { useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/card';
+import { Badge } from '@/shared/ui/badge';
+import { Button } from '@/shared/ui/button';
 import { Copy, User, Wallet, Shield, TrendingUp, Settings } from 'lucide-react';
 import { formatBalance, useBalances, useTypink } from 'typink';
 import { useMemo } from 'react';
 import { toast } from 'sonner';
 import { shortenAddress } from '@/lib/utils';
-import { AccountAvatar } from '@/components/shared/account-avatar';
+import { AccountAvatar } from '@/shared/components/account-avatar';
 import { useAuthStore } from '@/store/authStore';
-import { useSyncWalletState } from '@/hooks/use-sync-wallet-state';
+import { useSyncWalletState } from '@/features/auth/hooks/use-sync-wallet-state';
 
 function ProfileContent() {
   const router = useRouter();

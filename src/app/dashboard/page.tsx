@@ -1,40 +1,13 @@
 'use client';
 
-import { useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { TypinkIntro } from '@/components/shared/typink-intro';
-import { useTypink } from 'typink';
-import { useAuthStore } from '@/store/authStore';
-import { useSyncWalletState } from '@/hooks/use-sync-wallet-state';
-import type { UserRole } from '@/store/authStore';
+import { Suspense } from 'react';
+import { TypinkIntro } from '@/shared/components/typink-intro';
+import { useDashboard } from '@/features/auth/hooks/use-dashboard';
 
 function DashboardContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { accounts } = useTypink();
-  const { userRole, setUserRole } = useAuthStore();
+  const { userRole, shouldShowContent } = useDashboard();
 
-  // Sincronizar estado de typink con nuestro store
-  useSyncWalletState();
-
-  // Leer rol del query param y guardarlo en el store
-  useEffect(() => {
-    const roleParam = searchParams.get('role');
-    if (roleParam === 'lender' || roleParam === 'borrower') {
-      const role = roleParam as UserRole;
-      if (role !== userRole) {
-        setUserRole(role);
-      }
-    }
-  }, [searchParams, userRole, setUserRole]);
-
-  useEffect(() => {
-    if (accounts.length === 0) {
-      router.replace('/');
-    }
-  }, [accounts.length, router]);
-
-  if (accounts.length === 0) {
+  if (!shouldShowContent) {
     return (
       <div className='py-16 text-center text-muted-foreground'>
         Preparing your dashboard...

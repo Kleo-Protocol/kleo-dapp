@@ -1,7 +1,7 @@
 'use client';
 
-import { AppRouter } from './router';
+import { LandingPage } from '@/features/landing/components/landing-page';
 
 export default function Home() {
-  return <AppRouter />;
+  return <LandingPage />;
 }

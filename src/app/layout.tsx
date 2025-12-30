@@ -1,13 +1,15 @@
 import './globals.css';
 import { AppProvider } from '@/providers/app-provider';
 import { QueryClientProviderWrapper } from '@/providers/query-client-provider';
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from '@/shared/ui/sonner';
+import { ConditionalLayout } from '@/shared/components/conditional-layout';
 import type { Metadata } from 'next';
 import { Figtree } from 'next/font/google';
 
 export const metadata: Metadata = {
   title: 'Kleo Protocol - DApp',
-  description: 'Kleo Protocol gives people access to micro loans through trust-based DeFi solutions, no collateral needed.',
+  description:
+    'Kleo Protocol gives people access to micro loans through trust-based DeFi solutions, no collateral needed.',
 };
 
 const figtree = Figtree({
@@ -22,7 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <AppProvider>
           <QueryClientProviderWrapper>
-            {children}
+            <ConditionalLayout>{children}</ConditionalLayout>
             <Toaster />
           </QueryClientProviderWrapper>
         </AppProvider>

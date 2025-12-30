@@ -3,9 +3,9 @@
 import { useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTypink } from 'typink';
-import { useSyncWalletState } from '@/hooks/use-sync-wallet-state';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useSyncWalletState } from '@/features/auth/hooks/use-sync-wallet-state';
+import { Button } from '@/shared/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card';
 import { TrendingDown, DollarSign, Clock, Shield, Plus } from 'lucide-react';
 
 function BorrowContent() {
