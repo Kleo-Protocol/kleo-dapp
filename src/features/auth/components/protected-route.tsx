@@ -1,9 +1,6 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { Skeleton } from '@/shared/ui/skeleton';
-import { Card, CardContent } from '@/shared/ui/card';
-import { useProtectedRoute } from '@/features/auth/hooks/use-protected-route';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -11,46 +8,13 @@ interface ProtectedRouteProps {
 
 /**
  * Componente que protege las rutas del dapp
- * Solo permite acceso si hay una wallet conectada
- * Redirige a la landing page si no hay wallet
+ * El middleware ya maneja las redirecciones en el servidor
+ * Si llegamos a este componente, el middleware ya verificó que hay una sesión válida
+ * Por lo tanto, mostramos el contenido inmediatamente sin esperar la verificación del cliente
  */
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isChecking, isWalletConnected } = useProtectedRoute();
-
-  // Mostrar loading mientras se verifica el estado inicial
-  if (isChecking) {
-    return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <Card className='w-full max-w-md'>
-          <CardContent className='py-12 text-center'>
-            <div className='space-y-4'>
-              <Skeleton className='h-8 w-48 mx-auto' />
-              <Skeleton className='h-4 w-64 mx-auto' />
-              <Skeleton className='h-4 w-56 mx-auto' />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Si no hay wallet conectada, mostrar loading mientras redirige
-  if (!isWalletConnected) {
-    return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <Card className='w-full max-w-md'>
-          <CardContent className='py-12 text-center'>
-            <div className='space-y-4'>
-              <Skeleton className='h-8 w-48 mx-auto' />
-              <Skeleton className='h-4 w-64 mx-auto' />
-              <Skeleton className='h-4 w-56 mx-auto' />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Si hay wallet conectada, mostrar el contenido
+  // El middleware ya verificó la sesión y redirigió si no hay usuario
+  // Si llegamos aquí, hay una sesión válida, así que mostramos el contenido inmediatamente
+  // El hook useSupabaseUser sincroniza el estado en segundo plano, pero no bloqueamos el render
   return <>{children}</>;
 }
