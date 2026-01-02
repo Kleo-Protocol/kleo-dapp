@@ -69,7 +69,7 @@ export function DashboardHeader({ userRole, profile, isLoading }: DashboardHeade
                   <p className="text-sm text-muted-foreground">Trust Tier</p>
                   <div className="mt-1">
                     <Badge 
-                      variant="outline" 
+                      variant="verde" 
                       className={`${tierColors[profile.tier]} border`}
                     >
                       {tierLabels[profile.tier]}

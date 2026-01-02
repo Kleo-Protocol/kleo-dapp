@@ -24,7 +24,7 @@ interface BackModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function BackModal({ loanId, loan, open, onOpenChange }: BackModalProps) {
+export function BackModal({ loan, open, onOpenChange }: BackModalProps) {
   const { capital, reputation } = useUserStore();
   const [amount, setAmount] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);

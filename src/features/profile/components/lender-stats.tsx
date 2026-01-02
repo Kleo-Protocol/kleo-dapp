@@ -3,7 +3,7 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/card';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
-import { TrendingUp, DollarSign, Percent } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import type { ProfileStats } from '@/services/mock/profile.mock';
 
 interface LenderStatsProps {

@@ -5,8 +5,6 @@ import {
   getPoolStats,
   getAvailablePools,
   updatePoolLiquidity,
-  type Pool,
-  type PoolStats,
 } from '@/services/mock/pools.mock';
 import { QUERY_STALE_TIMES } from '@/lib/constants';
 

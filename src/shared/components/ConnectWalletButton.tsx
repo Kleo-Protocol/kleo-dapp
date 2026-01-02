@@ -47,7 +47,7 @@ export function ConnectWalletButton() {
 
   return (
     <div className='flex flex-col gap-2'>
-      <Button onClick={handleClick} disabled={isDisabled} variant='outline' size='sm'>
+      <Button onClick={handleClick} disabled={isDisabled} variant='secondary' size='sm'>
         {isProcessing && status === 'connecting' ? 'Connecting...' : getButtonText()}
       </Button>
       {error && <p className='text-xs text-destructive'>{error}</p>}

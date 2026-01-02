@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, Suspense } from 'react';
+import { useEffect, Suspense, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { Copy, User, Wallet, Shield, TrendingUp, Settings } from 'lucide-react';
 import { formatBalance, useBalances, useTypink } from 'typink';
-import { useMemo } from 'react';
 import { toast } from 'sonner';
 import { shortenAddress } from '@/lib/utils';
 import { AccountAvatar } from '@/shared/components/account-avatar';
@@ -76,7 +75,7 @@ function ProfileContent() {
           </div>
         </div>
         {userRole && (
-          <Badge variant='outline' className='text-base px-4 py-1.5'>
+          <Badge variant='verde' className='text-base px-4 py-1.5'>
             {userRole === 'lender' ? '💰 Lender' : '📊 Borrower'}
           </Badge>
         )}
@@ -108,7 +107,7 @@ function ProfileContent() {
             </div>
             <div className='flex justify-between items-center py-2'>
               <span className='text-sm text-muted-foreground'>Registration Status</span>
-              <Badge variant={isRegistered ? 'default' : 'outline'}>
+              <Badge variant={isRegistered ? 'verde' : 'amarillo'}>
                 {isRegistered ? 'Registered' : 'Not Registered'}
               </Badge>
             </div>
@@ -182,7 +181,7 @@ function ProfileContent() {
           <CardContent className='space-y-4'>
             <div className='flex justify-between items-center py-2 border-b'>
               <span className='text-sm text-muted-foreground'>User Role</span>
-              <Badge variant='outline' className='capitalize'>
+              <Badge variant='verde' className='capitalize'>
                 {userRole || 'Not Set'}
               </Badge>
             </div>
@@ -210,27 +209,27 @@ function ProfileContent() {
         <CardContent>
           <div className='flex flex-wrap gap-3'>
             <Button
-              variant='outline'
+              variant='secondary'
               onClick={() => router.push('/dashboard')}>
               Go to Dashboard
             </Button>
             {userRole === 'lender' && (
               <Button
-                variant='outline'
+                variant='secondary'
                 onClick={() => router.push('/lend')}>
                 Lend Assets
               </Button>
             )}
             {userRole === 'borrower' && (
               <Button
-                variant='outline'
+                variant='secondary'
                 onClick={() => router.push('/borrow')}>
                 Borrow Assets
               </Button>
             )}
             {!userRole && (
               <Button
-                variant='outline'
+                variant='secondary'
                 onClick={() => router.push('/')}>
                 Select Role
               </Button>

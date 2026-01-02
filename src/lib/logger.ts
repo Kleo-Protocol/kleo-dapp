@@ -18,13 +18,6 @@ class Logger {
     }
 
     const timestamp = new Date().toISOString();
-    const logEntry = {
-      timestamp,
-      level,
-      message,
-      ...(context && { context }),
-      ...(error && { error: { message: error.message, stack: error.stack } }),
-    };
 
     switch (level) {
       case 'debug':

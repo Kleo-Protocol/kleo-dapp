@@ -21,7 +21,7 @@ interface SimulationModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function SimulationModal({ loanId, loan, open, onOpenChange }: SimulationModalProps) {
+export function SimulationModal({ loan, open, onOpenChange }: SimulationModalProps) {
   const [amount, setAmount] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -58,7 +58,6 @@ export function SimulationModal({ loanId, loan, open, onOpenChange }: Simulation
   const riskScore = interestRate > 10 ? 'high' : interestRate > 6 ? 'medium' : 'low';
 
   const maxAmount = Number(loan.remainingAmount) / 1e18;
-  const isValid = amountNum > 0 && amountNum <= maxAmount;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

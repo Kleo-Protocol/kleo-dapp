@@ -114,7 +114,7 @@ function BorrowContent() {
               <p className='text-sm text-muted-foreground'>
                 You don't have any active loans.
               </p>
-              <Button className='w-full' variant='outline'>
+              <Button className='w-full' variant='secondary'>
                 View Loan History
               </Button>
             </div>

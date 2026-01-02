@@ -5,7 +5,7 @@ import { Button } from '@/shared/ui/button';
 import { Badge } from '@/shared/ui/badge';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
 import Link from 'next/link';
-import { ArrowRight, TrendingUp } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import type { Pool } from '@/services/mock/pools.mock';
 import { Skeleton } from '@/shared/ui/skeleton';
 
@@ -64,14 +64,14 @@ export function DashboardPools({ pools, isLoading }: DashboardPoolsProps) {
 
             return (
               <div
-                key={pool.id}
+                key={pool.poolId}
                 className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="font-semibold">{pool.name}</h3>
                     {pool.status === 'active' && (
-                      <Badge variant="outline" className="bg-forest-green/20 text-forest-green border-forest-green/30">
+                      <Badge variant="verde" className="bg-forest-green/20 text-forest-green border-forest-green/30">
                         Active
                       </Badge>
                     )}
@@ -92,7 +92,7 @@ export function DashboardPools({ pools, isLoading }: DashboardPoolsProps) {
                   </div>
                 </div>
                 <Button asChild variant="ghost" size="sm">
-                  <Link href={`/pools/${pool.id}`}>
+                  <Link href={`/pools/${pool.poolId}`}>
                     View
                     <ArrowRight className="ml-2 size-4" />
                   </Link>

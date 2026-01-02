@@ -33,7 +33,7 @@ interface DefaultActionModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function DefaultActionModal({ loanId, loan, open, onOpenChange }: DefaultActionModalProps) {
+export function DefaultActionModal({ loan, open, onOpenChange }: DefaultActionModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
 

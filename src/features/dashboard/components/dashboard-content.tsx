@@ -14,7 +14,6 @@ import { DashboardActivity } from './dashboard-activity';
 import { DashboardQuickActions } from './dashboard-quick-actions';
 import { DashboardPools } from './dashboard-pools';
 import { MOCK_ADDRESSES } from '@/lib/constants';
-import { Skeleton } from '@/shared/ui/skeleton';
 
 export function DashboardContent() {
   const { connectedAccount } = useTypink();

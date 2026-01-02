@@ -21,7 +21,7 @@ export function TypinkIntro() {
         {/* Action Buttons */}
         <div className='flex flex-col sm:flex-row gap-4 justify-center items-center pt-8'>
           <Button
-            size='xl'
+            size='lg'
             className='min-w-[184px] rounded-[14px] border-border/40 transition-all hover:border-atomic-tangerine/70'
             asChild>
             <a
@@ -35,7 +35,7 @@ export function TypinkIntro() {
           </Button>
 
           <Button
-            size='xl'
+            size='lg'
             className='min-w-[184px] rounded-[14px] border-border/40 transition-all hover:border-atomic-tangerine/70'
             asChild>
             <a

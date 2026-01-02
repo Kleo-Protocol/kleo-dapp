@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
@@ -8,7 +9,7 @@ import { Separator } from '@/shared/ui/separator';
 import { useSignInForm } from '@/features/auth/hooks/use-signin-form';
 import { useGoogleAuth } from '@/features/auth/hooks/use-google-auth';
 
-export default function SignInPage() {
+function SignInPageContent() {
   const {
     email,
     password,
@@ -113,5 +114,22 @@ export default function SignInPage() {
         </CardContent>
       </Card>
     </main>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={
+      <main className="flex min-h-screen items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-2xl">Sign In</CardTitle>
+            <CardDescription>Loading...</CardDescription>
+          </CardHeader>
+        </Card>
+      </main>
+    }>
+      <SignInPageContent />
+    </Suspense>
   );
 }

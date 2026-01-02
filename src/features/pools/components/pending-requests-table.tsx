@@ -11,9 +11,8 @@ import {
   TableRow,
 } from '@/shared/ui/table';
 import { Button } from '@/shared/ui/button';
-import { Badge } from '@/shared/ui/badge';
 import { Skeleton } from '@/shared/ui/skeleton';
-import { Users, Clock, TrendingUp, AlertCircle, Inbox } from 'lucide-react';
+import { Users, Clock, TrendingUp, Inbox } from 'lucide-react';
 import { SimulationModal } from './simulation-modal';
 import { BackModal } from './back-modal';
 import { EmptyState } from '@/shared/components/empty-state';

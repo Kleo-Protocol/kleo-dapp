@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent } from '@/shared/ui/card';
-import { TrendingUp, DollarSign, FileText, Users, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, FileText, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { formatBalance } from '@/shared/utils/format';
 import type { Profile, ProfileStats } from '@/services/mock/profile.mock';
 import { Skeleton } from '@/shared/ui/skeleton';

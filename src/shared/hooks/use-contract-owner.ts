@@ -91,10 +91,10 @@ function extractOwnerString(output: unknown): string | null {
       }
       if (human && typeof human === 'object') {
         if ('Ok' in human && typeof (human as OutputWithOk).Ok === 'string') {
-          return (human as OutputWithOk).Ok;
+          return (human as OutputWithOk).Ok ?? null;
         }
         if ('ok' in human && typeof (human as OutputWithOk).ok === 'string') {
-          return (human as OutputWithOk).ok;
+          return (human as OutputWithOk).ok ?? null;
         }
       }
     }
@@ -115,10 +115,10 @@ function extractOwnerString(output: unknown): string | null {
       }
       if (jsonValue && typeof jsonValue === 'object') {
         if ('Ok' in jsonValue && typeof (jsonValue as OutputWithOk).Ok === 'string') {
-          return (jsonValue as OutputWithOk).Ok;
+          return (jsonValue as OutputWithOk).Ok ?? null;
         }
         if ('ok' in jsonValue && typeof (jsonValue as OutputWithOk).ok === 'string') {
-          return (jsonValue as OutputWithOk).ok;
+          return (jsonValue as OutputWithOk).ok ?? null;
         }
       }
     }

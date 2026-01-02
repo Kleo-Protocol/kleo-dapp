@@ -7,7 +7,7 @@ import { Wallet, TrendingUp, Calendar, Star } from 'lucide-react';
 import type { Profile } from '@/services/mock/profile.mock';
 
 interface ProfileCardProps {
-  profile: Profile | undefined;
+  profile: Profile | null | undefined;
   isLoading: boolean;
 }
 

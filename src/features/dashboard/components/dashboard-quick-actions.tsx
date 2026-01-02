@@ -5,11 +5,9 @@ import { Button } from '@/shared/ui/button';
 import Link from 'next/link';
 import { 
   ArrowRight, 
-  Wallet, 
   TrendingUp, 
   Building2, 
   User,
-  FileText,
   PlusCircle
 } from 'lucide-react';
 
@@ -32,14 +30,14 @@ export function DashboardQuickActions({ userRole }: DashboardQuickActionsProps) 
           description: 'Explore available lending pools',
           href: '/pools',
           icon: Building2,
-          variant: 'outline' as const,
+          variant: 'secondary' as const,
         },
         {
           title: 'My Profile',
           description: 'Manage your profile and settings',
           href: '/profile',
           icon: User,
-          variant: 'outline' as const,
+          variant: 'secondary' as const,
         },
       ]
     : userRole === 'lender'
@@ -56,14 +54,14 @@ export function DashboardQuickActions({ userRole }: DashboardQuickActionsProps) 
           description: 'Discover lending pools',
           href: '/pools',
           icon: Building2,
-          variant: 'outline' as const,
+          variant: 'secondary' as const,
         },
         {
           title: 'My Profile',
           description: 'View your lending statistics',
           href: '/profile',
           icon: User,
-          variant: 'outline' as const,
+          variant: 'secondary' as const,
         },
       ]
     : [
@@ -72,14 +70,14 @@ export function DashboardQuickActions({ userRole }: DashboardQuickActionsProps) 
           description: 'Choose to be a lender or borrower',
           href: '/',
           icon: User,
-          variant: 'default' as const,
+          variant: 'primary' as const,
         },
         {
           title: 'Explore Pools',
           description: 'Browse available lending pools',
           href: '/pools',
           icon: Building2,
-          variant: 'outline' as const,
+          variant: 'secondary' as const,
         },
       ];
 

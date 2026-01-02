@@ -7,9 +7,6 @@ import { Button } from '@/shared/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/ui/tabs';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { ArrowLeft, TrendingUp, DollarSign, Users, Clock } from 'lucide-react';
-import { DepositForm } from '@/features/pools/components/deposit-form';
-import { ApyPreview } from '@/features/pools/components/apy-preview';
-import { MyDepositsTable } from '@/features/pools/components/my-deposits-table';
 import { MaxBorrowInfo } from '@/features/pools/components/max-borrow-info';
 import { BorrowForm } from '@/features/pools/components/borrow-form';
 import { RequestsTable } from '@/features/pools/components/requests-table';
@@ -30,8 +27,6 @@ export function PoolDetailPage() {
     isLoading,
     activePoolTab,
     setActivePoolTab,
-    depositAmount,
-    setDepositAmount,
     isPoolCreator,
     maxBorrow,
     utilizationRate,

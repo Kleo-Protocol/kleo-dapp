@@ -86,7 +86,7 @@ export function DashboardActivity({ userRole, activeLoans, isLoading }: Dashboar
           <div className="py-12 text-center">
             <p className="text-muted-foreground mb-4">No active loans</p>
             {userRole && (
-              <Button asChild variant="outline">
+              <Button asChild variant="secondary">
                 <Link href={userRole === 'borrower' ? '/borrow' : '/lend'}>
                   {userRole === 'borrower' ? 'Request a Loan' : 'Start Lending'}
                   <ArrowRight className="ml-2 size-4" />
@@ -126,7 +126,7 @@ export function DashboardActivity({ userRole, activeLoans, isLoading }: Dashboar
             >
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline" className={`${statusColors[loan.status]} border`}>
+                  <Badge variant="verde" className={`${statusColors[loan.status]} border`}>
                     {statusLabels[loan.status]}
                   </Badge>
                   <span className="text-xs text-muted-foreground font-mono">

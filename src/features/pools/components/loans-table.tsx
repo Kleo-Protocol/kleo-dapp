@@ -13,7 +13,7 @@ import {
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { Skeleton } from '@/shared/ui/skeleton';
-import { AlertCircle, Calendar, DollarSign, Inbox } from 'lucide-react';
+import { Calendar, DollarSign, Inbox } from 'lucide-react';
 import { RepayModal } from './repay-modal';
 import { EmptyState } from '@/shared/components/empty-state';
 import { formatBalance } from '@/shared/utils/format';

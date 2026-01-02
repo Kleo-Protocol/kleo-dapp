@@ -23,7 +23,7 @@ interface RepayModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function RepayModal({ loanId, loan, open, onOpenChange }: RepayModalProps) {
+export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
   const [amount, setAmount] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

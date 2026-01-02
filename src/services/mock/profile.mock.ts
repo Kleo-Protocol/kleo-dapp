@@ -130,9 +130,9 @@ export async function getProfileStats(walletAddress: string): Promise<ProfileSta
       activeLoans: 0,
       completedLoans: 0,
       defaultedLoans: 0,
-      totalLent: 0,
-      totalBorrowed: 0,
-      averageLoanAmount: 0,
+      totalLent: 0n,
+      totalBorrowed: 0n,
+      averageLoanAmount: 0n,
       onTimePaymentRate: 0,
     };
   }
