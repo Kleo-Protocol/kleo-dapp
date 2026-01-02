@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { usePoolDetail, usePoolStats } from '@/features/pools/hooks/use-pools';
 import { useUiStore } from '@/store/ui.store';
 import { useUserStore } from '@/store/user.store';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
 import type { Pool } from '@/services/mock/pools.mock';
+import { TIER_MULTIPLIERS, REPUTATION_CONSTANTS, DEFAULTS } from '@/lib/constants';
 
 export function usePoolDetailLogic() {
   const { poolId } = useParams<{ poolId: string }>();
@@ -20,15 +21,18 @@ export function usePoolDetailLogic() {
   const isPoolCreator = true; // Mock: always true for demo
 
   // Calculate max borrow based on user's reputation and tier
-  const calculateMaxBorrow = (pool: Pool) => {
-    const baseMultiplier = tier === 'verde' ? 10 : tier === 'amarillo' ? 5 : 2;
-    const reputationMultiplier = Math.floor(reputation / 100);
-    const maxBorrow = baseMultiplier * reputationMultiplier * 1000;
-    const poolAvailable = Number(pool.availableLiquidity) / 1e18;
+  const calculateMaxBorrow = useCallback((pool: Pool) => {
+    const baseMultiplier = 
+      tier === 'verde' ? TIER_MULTIPLIERS.VERDE : 
+      tier === 'amarillo' ? TIER_MULTIPLIERS.AMARILLO : 
+      TIER_MULTIPLIERS.DEFAULT;
+    const reputationMultiplier = Math.floor(reputation / DEFAULTS.REPUTATION_DIVISOR);
+    const maxBorrow = baseMultiplier * reputationMultiplier * REPUTATION_CONSTANTS.BASE_MULTIPLIER;
+    const poolAvailable = Number(pool.availableLiquidity) / 10 ** DEFAULTS.DECIMAL_PLACES;
     return Math.min(maxBorrow, poolAvailable);
-  };
+  }, [tier, reputation]);
 
-  const getStatusBadge = (pool: Pool | null | undefined) => {
+  const getStatusBadge = useCallback((pool: Pool | null | undefined) => {
     if (!pool) return null;
     switch (pool.status) {
       case 'active':
@@ -40,7 +44,7 @@ export function usePoolDetailLogic() {
       default:
         return null;
     }
-  };
+  }, []);
 
   const utilizationRate = useMemo(() => {
     if (!pool) return 0;
@@ -52,7 +56,7 @@ export function usePoolDetailLogic() {
   const maxBorrow = useMemo(() => {
     if (!pool) return 0;
     return calculateMaxBorrow(pool);
-  }, [pool, tier, reputation]);
+  }, [pool, calculateMaxBorrow]);
 
   return {
     pool,

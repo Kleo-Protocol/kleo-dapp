@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
 
 export function useSupabaseUser() {
   const [user, setUser] = useState<User | null>(null);
@@ -16,7 +17,7 @@ export function useSupabaseUser() {
     try {
       supabase = createClient();
     } catch (error) {
-      console.error('Error creating Supabase client:', error);
+      logger.error('Error creating Supabase client', { error: error instanceof Error ? error.message : String(error) }, error instanceof Error ? error : undefined);
       if (mounted) {
         setUser(null);
         setLoading(false);
@@ -34,14 +35,14 @@ export function useSupabaseUser() {
         if (!mounted) return;
         
         if (error) {
-          console.error('Error getting user:', error);
+          logger.error('Error getting user', { error: error.message }, error);
           setUser(null);
         } else {
           setUser(user ?? null);
         }
         setLoading(false);
       } catch (error) {
-        console.error('Error getting user:', error);
+        logger.error('Error getting user', { error: error instanceof Error ? error.message : String(error) }, error instanceof Error ? error : undefined);
         if (mounted) {
           setUser(null);
           setLoading(false);

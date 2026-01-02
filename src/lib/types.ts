@@ -1,5 +1,5 @@
 export interface Props {
   className?: string;
   children?: React.ReactNode;
-  [key: string]: any; // Allow additional props
+  [key: string]: unknown; // Allow additional props
 }

@@ -8,13 +8,16 @@ import { LenderStats } from '@/features/profile/components/lender-stats';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { Card } from '@/shared/ui/card';
 import { useProfileSync } from '@/features/profile/hooks/use-profile-sync';
-
-// Mock wallet address - replace with real wallet integration
-const MOCK_WALLET_ADDRESS = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
+import { useTypink } from 'typink';
+import { MOCK_ADDRESSES } from '@/lib/constants';
 
 export function ProfilePage() {
-  const { profile, isLoading: profileLoading } = useProfileSync(MOCK_WALLET_ADDRESS);
-  const { data: stats, isLoading: statsLoading } = useProfileStats(MOCK_WALLET_ADDRESS);
+  const { connectedAccount } = useTypink();
+  // Use connected wallet address or fallback to mock address for development
+  const walletAddress = connectedAccount?.address || MOCK_ADDRESSES.DEFAULT;
+  
+  const { profile, isLoading: profileLoading } = useProfileSync(walletAddress);
+  const { data: stats, isLoading: statsLoading } = useProfileStats(walletAddress);
 
   if (profileLoading) {
     return (
@@ -35,7 +38,7 @@ export function ProfilePage() {
         <IncomeReferenceForm
           profile={profile}
           isLoading={profileLoading}
-          walletAddress={MOCK_WALLET_ADDRESS}
+          walletAddress={walletAddress}
         />
       </div>
 

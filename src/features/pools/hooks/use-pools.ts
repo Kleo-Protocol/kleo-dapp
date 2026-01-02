@@ -8,6 +8,7 @@ import {
   type Pool,
   type PoolStats,
 } from '@/services/mock/pools.mock';
+import { QUERY_STALE_TIMES } from '@/lib/constants';
 
 // Query keys
 const poolsBaseKey = ['pools'] as const;
@@ -29,7 +30,7 @@ export function usePools() {
   return useQuery({
     queryKey: poolsKeys.lists.all,
     queryFn: () => getAllPools(),
-    staleTime: 60000, // 1 minute
+    staleTime: QUERY_STALE_TIMES.POOLS_LIST,
   });
 }
 
@@ -40,7 +41,7 @@ export function useAvailablePools() {
   return useQuery({
     queryKey: poolsKeys.lists.available,
     queryFn: () => getAvailablePools(),
-    staleTime: 30000, // 30 seconds
+    staleTime: QUERY_STALE_TIMES.POOLS_AVAILABLE,
   });
 }
 
@@ -57,7 +58,7 @@ export function usePoolDetail(poolId: string | undefined) {
       return getPool(poolId);
     },
     enabled: !!poolId,
-    staleTime: 30000, // 30 seconds
+    staleTime: QUERY_STALE_TIMES.POOL_DETAIL,
   });
 }
 
@@ -74,7 +75,7 @@ export function usePoolStats(poolId: string | undefined) {
       return getPoolStats(poolId);
     },
     enabled: !!poolId,
-    staleTime: 60000, // 1 minute
+    staleTime: QUERY_STALE_TIMES.POOL_STATS,
   });
 }
 

@@ -72,17 +72,19 @@ export function MainHeader() {
 
           {/* Auth State, Wallet & Mobile Menu Button */}
           <div className="flex items-center gap-3">
+            {/* Wallet Selection (for blockchain transactions) */}
+            <div className="hidden sm:flex">
+              {accounts.length > 0 ? <AccountSelection /> : <WalletSelection />}
+            </div>
+
             {/* Supabase Auth State */}
             {!authLoading && (
               <div className="hidden sm:flex items-center gap-2">
                 {user ? (
-                  <>
-                    <span className="text-sm text-muted-foreground">{user.email}</span>
-                    <Button variant="ghost" size="sm" onClick={handleSignOut} className="gap-2">
-                      <LogOut className="size-4" />
-                      Sign Out
-                    </Button>
-                  </>
+                  <Button variant="ghost" size="sm" onClick={handleSignOut} className="gap-2">
+                    <LogOut className="size-4" />
+                    Sign Out
+                  </Button>
                 ) : (
                   <Button variant="secondary" size="sm" asChild>
                     <Link href="/signin">Sign In</Link>
@@ -90,11 +92,6 @@ export function MainHeader() {
                 )}
               </div>
             )}
-
-            {/* Wallet Selection (for blockchain transactions) */}
-            <div className="hidden sm:flex">
-              {accounts.length > 0 ? <AccountSelection /> : <WalletSelection />}
-            </div>
 
             {/* Mobile Menu Button */}
             <Button
@@ -130,17 +127,18 @@ export function MainHeader() {
                   </Button>
                 );
               })}
+              {/* Mobile Wallet State */}
+              <div className="mt-2">
+                {accounts.length > 0 ? <AccountSelection /> : <WalletSelection />}
+              </div>
               {/* Mobile Auth State */}
               {!authLoading && (
                 <div className="mt-2 border-t border-border/50 pt-2">
                   {user ? (
-                    <div className="flex flex-col gap-2">
-                      <div className="text-sm text-muted-foreground px-2">{user.email}</div>
-                      <Button variant="ghost" size="sm" onClick={handleSignOut} className="justify-start gap-2">
-                        <LogOut className="size-4" />
-                        Sign Out
-                      </Button>
-                    </div>
+                    <Button variant="ghost" size="sm" onClick={handleSignOut} className="justify-start gap-2 w-full">
+                      <LogOut className="size-4" />
+                      Sign Out
+                    </Button>
                   ) : (
                     <Button variant="secondary" size="sm" asChild className="w-full">
                       <Link href="/signin" onClick={() => setMobileMenuOpen(false)}>
@@ -150,10 +148,6 @@ export function MainHeader() {
                   )}
                 </div>
               )}
-              {/* Mobile Wallet State */}
-              <div className="mt-2">
-                {accounts.length > 0 ? <AccountSelection /> : <WalletSelection />}
-              </div>
             </nav>
           </div>
         )}

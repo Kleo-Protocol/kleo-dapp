@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: Request) {
   try {
@@ -9,7 +10,7 @@ export async function GET(request: Request) {
     const next = requestUrl.searchParams.get('next') || '/dashboard';
 
     if (!code) {
-      console.error('No code provided in callback');
+      logger.error('No code provided in callback');
       return NextResponse.redirect(new URL('/signin?error=missing_code', requestUrl.origin));
     }
 
@@ -19,7 +20,7 @@ export async function GET(request: Request) {
     const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
     
     if (exchangeError) {
-      console.error('Error exchanging code for session:', exchangeError);
+      logger.error('Error exchanging code for session', { error: exchangeError.message }, exchangeError);
       return NextResponse.redirect(new URL(`/signin?error=${encodeURIComponent(exchangeError.message)}`, requestUrl.origin));
     }
 
@@ -30,7 +31,7 @@ export async function GET(request: Request) {
     } = await supabase.auth.getUser();
 
     if (userError) {
-      console.error('Error getting user:', userError);
+      logger.error('Error getting user', { error: userError.message }, userError);
       return NextResponse.redirect(new URL(`/signin?error=${encodeURIComponent(userError.message)}`, requestUrl.origin));
     }
 
@@ -61,7 +62,8 @@ export async function GET(request: Request) {
           });
         }
       } catch (prismaError) {
-        console.error('Error creating/updating profile:', prismaError);
+        const error = prismaError instanceof Error ? prismaError : new Error(String(prismaError));
+        logger.error('Error creating/updating profile', { error: error.message }, error);
         // Don't fail the auth flow if profile creation fails
         // User can update profile later
       }
@@ -69,11 +71,12 @@ export async function GET(request: Request) {
 
     return NextResponse.redirect(new URL(next, requestUrl.origin));
   } catch (error) {
-    console.error('Unexpected error in auth callback:', error);
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Unexpected error in auth callback', { error: err.message }, err);
     const requestUrl = new URL(request.url);
     return NextResponse.redirect(
       new URL(
-        `/signin?error=${encodeURIComponent(error instanceof Error ? error.message : 'An unexpected error occurred')}`,
+        `/signin?error=${encodeURIComponent(err.message)}`,
         requestUrl.origin,
       ),
     );

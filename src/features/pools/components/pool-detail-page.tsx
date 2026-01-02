@@ -21,6 +21,7 @@ import { AnalyticsKpiCards } from '@/features/pools/components/analytics-kpi-car
 import { AnalyticsCharts } from '@/features/pools/components/analytics-charts';
 import { AnalyticsLoanHistory } from '@/features/pools/components/analytics-loan-history';
 import { usePoolDetailLogic } from '@/features/pools/hooks/use-pool-detail';
+import { MOCK_VALUES } from '@/lib/constants';
 
 export function PoolDetailPage() {
   const {
@@ -171,9 +172,9 @@ export function PoolDetailPage() {
           {pool && (
             <div className='space-y-6'>
               <LenderPositionCard
-                totalBacked={BigInt(4500000000000000000)} // Mock: 4.5 tokens
-                activeBacks={2}
-                defaultedBacks={0}
+                totalBacked={MOCK_VALUES.TOTAL_BACKED_TOKENS}
+                activeBacks={MOCK_VALUES.ACTIVE_BACKS}
+                defaultedBacks={MOCK_VALUES.DEFAULTED_BACKS}
               />
               <PendingRequestsTable requests={[]} />
               <MyBacksTable backs={[]} />

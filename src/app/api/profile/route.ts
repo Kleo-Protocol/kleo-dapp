@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/utils/supabase/server';
+import { logger } from '@/lib/logger';
 
 async function getUserFromRequest() {
   const supabase = await createClient();
@@ -24,7 +25,8 @@ export async function GET() {
 
     return NextResponse.json({ profile });
   } catch (error) {
-    console.error('Error fetching profile:', error);
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Error fetching profile', { error: err.message }, err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -66,7 +68,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ profile });
   } catch (error) {
-    console.error('Error creating/updating profile:', error);
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Error creating/updating profile', { error: err.message }, err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -97,7 +100,8 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({ profile });
   } catch (error) {
-    console.error('Error updating profile:', error);
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error('Error updating profile', { error: err.message }, err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { useUserStore } from '@/store/user.store';
 import type { Pool } from '@/services/mock/pools.mock';
+import { DEFAULTS, MOCK_DELAYS } from '@/lib/constants';
 
 interface UseBorrowFormProps {
   pool: Pool;
@@ -14,7 +15,7 @@ interface UseBorrowFormProps {
 export function useBorrowForm({ pool, maxBorrow, onRequestCreated }: UseBorrowFormProps) {
   const { incomeReference } = useUserStore();
   const [amount, setAmount] = useState('');
-  const [duration, setDuration] = useState('90');
+  const [duration, setDuration] = useState(String(DEFAULTS.LOAN_DURATION_DAYS));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ amount?: string; duration?: string; incomeRef?: string }>({});
 
@@ -68,18 +69,18 @@ export function useBorrowForm({ pool, maxBorrow, onRequestCreated }: UseBorrowFo
     setTimeout(() => {
       setIsSubmitting(false);
       setAmount('');
-      setDuration('90');
+      setDuration(String(DEFAULTS.LOAN_DURATION_DAYS));
       toast.success('Loan request created', {
         description: `Request for ${amountNum.toLocaleString()} tokens submitted successfully`,
       });
       onRequestCreated?.();
       // In a real app, this would trigger a mutation
-    }, 1000);
+    }, MOCK_DELAYS.LONG);
   };
 
   const amountNum = parseFloat(amount) || 0;
   const interestRate = Number(pool.baseInterestRate) / 100;
-  const durationDays = parseInt(duration) || 90;
+  const durationDays = parseInt(duration) || DEFAULTS.LOAN_DURATION_DAYS;
   
   const estimatedInterest = useMemo(() => {
     return amountNum > 0 

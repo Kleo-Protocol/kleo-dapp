@@ -13,7 +13,7 @@ interface RegisterUserResponse {
 }
 
 /**
- * Verifica si la API está configurada
+ * Checks if the API is configured
  */
 function isApiConfigured(): boolean {
   if (typeof window === 'undefined') {
@@ -24,12 +24,12 @@ function isApiConfigured(): boolean {
 }
 
 export async function checkUserRegistration(address: string): Promise<CheckUserResponse> {
-  // Si no hay API configurada, usar mock
+  // If no API is configured, use mock
   if (!isApiConfigured()) {
     return mockCheckUserRegistration(address);
   }
 
-  // Usar API real
+  // Use real API
   try {
     const response = await apiClient.get<CheckUserResponse>(`/users/check/${address}`);
     return response.data;
@@ -45,12 +45,12 @@ export async function checkUserRegistration(address: string): Promise<CheckUserR
 }
 
 export async function registerUser(address: string, role: 'lender' | 'borrower'): Promise<RegisterUserResponse> {
-  // Si no hay API configurada, usar mock
+  // If no API is configured, use mock
   if (!isApiConfigured()) {
     return mockRegisterUser(address, role);
   }
 
-  // Usar API real
+  // Use real API
   const response = await apiClient.post<RegisterUserResponse>('/users/register', {
     address,
     role,
@@ -59,12 +59,12 @@ export async function registerUser(address: string, role: 'lender' | 'borrower')
 }
 
 export async function registerUserWithoutRole(address: string): Promise<{ success: boolean }> {
-  // Si no hay API configurada, usar mock
+  // If no API is configured, use mock
   if (!isApiConfigured()) {
     return mockRegisterUserWithoutRole(address);
   }
 
-  // Usar API real - registrar sin rol
+  // Use real API - register without role
   const response = await apiClient.post<{ success: boolean }>('/users/register', {
     address,
   });
@@ -84,7 +84,7 @@ export async function verifyAndRegisterUser(
 
     if (checkResult.exists && checkResult.role) {
       setIsRegistered(true);
-      // NO establecer el rol automáticamente - dejar que el usuario elija en el modal
+      // DO NOT set role automatically - let user choose in modal
       // setUserRole(checkResult.role);
       return { isRegistered: true, role: checkResult.role };
     } else {
@@ -92,15 +92,15 @@ export async function verifyAndRegisterUser(
       return { isRegistered: false };
     }
   } catch (error) {
-    // Si el error es sobre API no configurada, usar mock como fallback
+    // If error is about API not configured, use mock as fallback
     const errorMessage = error instanceof Error ? error.message : 'Failed to check user registration';
     if (errorMessage.includes('API base URL is not configured')) {
-      // Intentar con mock como fallback
+      // Try with mock as fallback
       try {
         const mockResult = await mockCheckUserRegistration(address);
         if (mockResult.exists && mockResult.role) {
           setIsRegistered(true);
-          // NO establecer el rol automáticamente - dejar que el usuario elija en el modal
+          // DO NOT set role automatically - let user choose in modal
           // setUserRole(mockResult.role);
           setIsCheckingRegistration(false);
           return { isRegistered: true, role: mockResult.role };
