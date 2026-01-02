@@ -108,7 +108,7 @@ export function RequestsTable({ requests = mockRequests, isLoading = false }: Re
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div className="flex-1 h-2 bg-anti-flash-white/40 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-slate-900 rounded-full"
                         style={{ width: `${request.progress}%` }}

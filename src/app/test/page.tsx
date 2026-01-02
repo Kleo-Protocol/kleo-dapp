@@ -49,7 +49,7 @@ function CustomCard({
   const randomColorClass = useMemo(() => getRandomColorClass(), []);
 
   return (
-    <Card className='bg-white w-fit border-none px-10 py-8 flex flex-col items-start gap-4'>
+    <Card className='bg-anti-flash-white w-fit border-none px-10 py-8 flex flex-col items-start gap-4'>
       {specialBadge && (
         <Badge variant='verde' className={randomColorClass}>
           {specialBadge}
@@ -63,7 +63,7 @@ function CustomCard({
             alt={token}
             width={30}
             height={30}
-            className='relative z-10 border-2 border-white rounded-full'
+            className='relative z-10 border-2 border-anti-flash-white rounded-full'
             style={{ zIndex: tokens.length - index }}
           />
         ))}

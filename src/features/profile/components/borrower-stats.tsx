@@ -122,7 +122,7 @@ export function BorrowerStats({ stats, isLoading }: BorrowerStatsProps) {
                   <YAxis stroke="#64748b" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#fff',
+                      backgroundColor: '#F2F2F2',
                       border: '1px solid #e2e8f0',
                       borderRadius: '6px',
                     }}

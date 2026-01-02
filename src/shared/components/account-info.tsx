@@ -25,7 +25,7 @@ export function AccountInfo() {
   const formattedBalance = balance ? formatBalance(balance.free, network) : '0';
 
   return (
-    <Card className='bg-gray-200/70 dark:bg-white/5 border-none shadow-none gap-4'>
+    <Card className='bg-anti-flash-white/70 dark:bg-white/5 border-none shadow-none gap-4'>
       <CardHeader className='pb-4'>
         <div className='flex items-center justify-between'>
           <CardTitle className='text-2xl font-medium'>Account Info</CardTitle>

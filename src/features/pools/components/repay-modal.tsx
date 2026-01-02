@@ -94,7 +94,7 @@ export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2">
+          <div className="rounded-lg border border-slate-200 bg-anti-flash-white/50 p-4 space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-600">Total Repayment</span>
               <span className="font-semibold text-slate-900">{formatBalance(totalRepayment)} tokens</span>
@@ -146,7 +146,7 @@ export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
           </div>
 
           {amountNum > 0 && (
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <div className="rounded-lg border border-slate-200 bg-anti-flash-white/50 p-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-600">Remaining After Payment</span>
                 <span className="font-semibold text-slate-900">

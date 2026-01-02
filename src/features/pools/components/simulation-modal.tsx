@@ -74,7 +74,7 @@ export function SimulationModal({ loan, open, onOpenChange }: SimulationModalPro
 
         <div className="space-y-6">
           {/* Loan Details */}
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2">
+          <div className="rounded-lg border border-slate-200 bg-anti-flash-white/50 p-4 space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-600">Loan Amount</span>
               <span className="font-semibold text-slate-900">{formatBalance(Number(loan.requestedAmount) / 1e18)} tokens</span>
@@ -127,7 +127,7 @@ export function SimulationModal({ loan, open, onOpenChange }: SimulationModalPro
 
           {/* Returns Preview */}
           {amountNum > 0 && (
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-3">
+            <div className="rounded-lg border border-slate-200 bg-anti-flash-white/50 p-4 space-y-3">
               <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                 <DollarSign className="size-4" />
                 Expected Returns
@@ -151,7 +151,7 @@ export function SimulationModal({ loan, open, onOpenChange }: SimulationModalPro
 
           {/* Risk Assessment */}
           {amountNum > 0 && (
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-3">
+            <div className="rounded-lg border border-slate-200 bg-anti-flash-white/50 p-4 space-y-3">
               <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                 <Shield className="size-4" />
                 Risk Assessment
