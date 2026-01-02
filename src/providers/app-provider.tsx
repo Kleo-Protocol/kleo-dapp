@@ -2,11 +2,11 @@
 
 import { deployments } from '@/contracts/deployments';
 import { Props } from '@/lib/types';
-import { polkadotjs, setupTxToaster, SonnerAdapter, subwallet, talisman, TypinkProvider, passetHub } from 'typink';
+import { polkadotjs, setupTxToaster, SonnerAdapter, subwallet, talisman, TypinkProvider, paseoAssetHub } from 'typink';
 import { toast } from 'sonner';
 
 // Supported networks configuration
-const SUPPORTED_NETWORKS = [passetHub];
+const SUPPORTED_NETWORKS = [paseoAssetHub];
 // Uncomment the following lines to enable the development network: https://github.com/paritytech/substrate-contracts-node
 // if (process.env.NODE_ENV === "development") {
 //   SUPPORTED_NETWORKS.push(development);
@@ -22,10 +22,10 @@ setupTxToaster({
 export function AppProvider({ children }: Props) {
   return (
     <TypinkProvider
-      appName='Typink Template'
+      appName='Kleo Protocol'
       deployments={deployments}
       supportedNetworks={SUPPORTED_NETWORKS}
-      defaultNetworkId={passetHub.id}
+      defaultNetworkId={paseoAssetHub.id}
       cacheMetadata={true}
       wallets={SUPPORTED_WALLETS}>
       {children}
