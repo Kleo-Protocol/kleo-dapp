@@ -12,18 +12,21 @@ import {
 import { poolsKeys, useAvailablePools } from './use-pools';
 import { borrowKeys } from './use-borrow-data';
 
-// Query keys
+// Query keys - base keys to avoid circular reference
+const lendBaseKey = ['lend'] as const;
+const lendLoansBaseKey = [...lendBaseKey, 'loans'] as const;
+
 export const lendKeys = {
-  all: ['lend'] as const,
+  all: lendBaseKey,
   loans: {
-    all: [...lendKeys.all, 'loans'] as const,
-    byLender: (address: string) => [...lendKeys.loans.all, 'lender', address] as const,
-    byPool: (poolId: string) => [...lendKeys.loans.all, 'pool', poolId] as const,
-    byStatus: (status: LoanStatus) => [...lendKeys.loans.all, 'status', status] as const,
-    active: [...lendKeys.loans.all, 'active'] as const,
-    funding: [...lendKeys.loans.all, 'funding'] as const,
+    all: lendLoansBaseKey,
+    byLender: (address: string) => [...lendLoansBaseKey, 'lender', address] as const,
+    byPool: (poolId: string) => [...lendLoansBaseKey, 'pool', poolId] as const,
+    byStatus: (status: LoanStatus) => [...lendLoansBaseKey, 'status', status] as const,
+    active: [...lendLoansBaseKey, 'active'] as const,
+    funding: [...lendLoansBaseKey, 'funding'] as const,
   },
-  detail: (loanId: string) => [...lendKeys.all, 'loan', loanId] as const,
+  detail: (loanId: string) => [...lendBaseKey, 'loan', loanId] as const,
 };
 
 /**

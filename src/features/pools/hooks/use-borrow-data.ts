@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
+  getAllLoans,
   getLoansByBorrower,
   getLoansByStatus,
   getActiveLoans,
@@ -9,17 +10,20 @@ import {
   type LoanStatus,
 } from '@/services/mock/loans.mock';
 
-// Query keys
+// Query keys - base keys to avoid circular reference
+const borrowBaseKey = ['borrow'] as const;
+const loansBaseKey = [...borrowBaseKey, 'loans'] as const;
+
 export const borrowKeys = {
-  all: ['borrow'] as const,
+  all: borrowBaseKey,
   loans: {
-    all: [...borrowKeys.all, 'loans'] as const,
-    byBorrower: (address: string) => [...borrowKeys.loans.all, 'borrower', address] as const,
-    byStatus: (status: LoanStatus) => [...borrowKeys.loans.all, 'status', status] as const,
-    active: [...borrowKeys.loans.all, 'active'] as const,
-    funding: [...borrowKeys.loans.all, 'funding'] as const,
+    all: loansBaseKey,
+    byBorrower: (address: string) => [...loansBaseKey, 'borrower', address] as const,
+    byStatus: (status: LoanStatus) => [...loansBaseKey, 'status', status] as const,
+    active: [...loansBaseKey, 'active'] as const,
+    funding: [...loansBaseKey, 'funding'] as const,
   },
-  detail: (loanId: string) => [...borrowKeys.all, 'loan', loanId] as const,
+  detail: (loanId: string) => [...borrowBaseKey, 'loan', loanId] as const,
 };
 
 /**
