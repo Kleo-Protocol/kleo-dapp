@@ -14,7 +14,7 @@ export function TypinkIntro() {
           Microloans using a decentralized DeFi protocol built on trust
         </h1>
 
-        <p className='text-4xl font-medium bg-gradient-to-r from-[#FFB175] via-[#FF7B2D] to-[#F24B0F] bg-clip-text text-transparent drop-shadow-[0_6px_25px_rgba(242,75,15,0.35)]'>
+        <p className='text-4xl font-medium text-atomic-tangerine'>
           Powered by the Kleo Mechanism!
         </p>
 
@@ -22,7 +22,7 @@ export function TypinkIntro() {
         <div className='flex flex-col sm:flex-row gap-4 justify-center items-center pt-8'>
           <Button
             size='xl'
-            className='min-w-[184px] rounded-[14px] border-border/40 transition-all hover:border-orange-400/70 hover:shadow-[0_12px_30px_rgba(255,123,45,0.35)]'
+            className='min-w-[184px] rounded-[14px] border-border/40 transition-all hover:border-atomic-tangerine/70'
             asChild>
             <a
               href='https://docs.google.com/document/d/1cprLlST7alIFdnsflJ7I-The5Y79KM5TBG_fvv-QDZk/edit?usp=sharing'
@@ -36,7 +36,7 @@ export function TypinkIntro() {
 
           <Button
             size='xl'
-            className='min-w-[184px] rounded-[14px] border-border/40 transition-all hover:border-orange-400/70 hover:shadow-[0_12px_30px_rgba(255,123,45,0.35)]'
+            className='min-w-[184px] rounded-[14px] border-border/40 transition-all hover:border-atomic-tangerine/70'
             asChild>
             <a
               href='https://github.com/Kleo-Protocol'

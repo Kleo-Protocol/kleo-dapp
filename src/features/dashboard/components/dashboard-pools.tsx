@@ -71,7 +71,7 @@ export function DashboardPools({ pools, isLoading }: DashboardPoolsProps) {
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="font-semibold">{pool.name}</h3>
                     {pool.status === 'active' && (
-                      <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
+                      <Badge variant="outline" className="bg-forest-green/20 text-forest-green border-forest-green/30">
                         Active
                       </Badge>
                     )}

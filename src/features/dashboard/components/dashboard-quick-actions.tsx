@@ -25,7 +25,7 @@ export function DashboardQuickActions({ userRole }: DashboardQuickActionsProps) 
           description: 'Create a new loan request',
           href: '/borrow',
           icon: PlusCircle,
-          variant: 'default' as const,
+          variant: 'primary' as const,
         },
         {
           title: 'View Pools',
@@ -49,7 +49,7 @@ export function DashboardQuickActions({ userRole }: DashboardQuickActionsProps) 
           description: 'Browse and fund loan requests',
           href: '/lend',
           icon: TrendingUp,
-          variant: 'default' as const,
+          variant: 'accent' as const,
         },
         {
           title: 'Explore Pools',

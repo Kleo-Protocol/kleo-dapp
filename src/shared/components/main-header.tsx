@@ -59,7 +59,7 @@ export function MainHeader() {
                   asChild
                   variant={isActive(link.path) ? 'secondary' : 'ghost'}
                   size="sm"
-                  className="gap-2"
+                  className={`gap-2 ${isActive(link.path) ? 'text-atomic-tangerine border-atomic-tangerine/30' : ''}`}
                 >
                   <Link href={link.path}>
                     <Icon className="size-4" />

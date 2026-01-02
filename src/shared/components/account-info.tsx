@@ -65,7 +65,7 @@ export function AccountInfo() {
               <span className='text-sm text-muted-foreground'>Balance</span>
               <div className='flex items-center gap-2'>
                 <span className='text-sm font-medium'>{formattedBalance.split(' ')[0]}</span>
-                <span className='text-sm font-semibold text-green-600 dark:text-green-500'>{network.symbol}</span>
+                <span className='text-sm font-semibold text-forest-green'>{network.symbol}</span>
               </div>
             </div>
           </div>

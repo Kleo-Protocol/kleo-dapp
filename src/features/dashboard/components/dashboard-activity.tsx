@@ -16,12 +16,12 @@ interface DashboardActivityProps {
 }
 
 const statusColors = {
-  pending: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
-  funding: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
-  active: 'bg-green-500/10 text-green-600 border-green-500/20',
-  completed: 'bg-gray-500/10 text-gray-600 border-gray-500/20',
-  defaulted: 'bg-red-500/10 text-red-600 border-red-500/20',
-  cancelled: 'bg-gray-500/10 text-gray-600 border-gray-500/20',
+  pending: 'bg-amber-honey/10 text-amber-honey border-amber-honey/20',
+  funding: 'bg-atomic-tangerine/10 text-atomic-tangerine border-atomic-tangerine/20',
+  active: 'bg-forest-green/20 text-forest-green border-forest-green/30',
+  completed: 'bg-forest-green/20 text-forest-green border-forest-green/30',
+  defaulted: 'bg-atomic-tangerine/10 text-atomic-tangerine border-atomic-tangerine/20',
+  cancelled: 'bg-oxford-blue/50 text-anti-flash-white border-oxford-blue/30',
 };
 
 const statusLabels = {
@@ -122,7 +122,7 @@ export function DashboardActivity({ userRole, activeLoans, isLoading }: Dashboar
           {activeLoans.slice(0, 5).map((loan) => (
             <div
               key={loan.loanId}
-              className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+              className="flex items-center justify-between p-4 border rounded-lg hover:bg-atomic-tangerine/5 hover:border-atomic-tangerine/30 transition-colors"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">

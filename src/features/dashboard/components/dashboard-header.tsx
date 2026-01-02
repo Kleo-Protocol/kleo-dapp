@@ -15,9 +15,9 @@ interface DashboardHeaderProps {
 }
 
 const tierColors = {
-  rojo: 'bg-red-500/10 text-red-600 border-red-500/20',
-  amarillo: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
-  verde: 'bg-green-500/10 text-green-600 border-green-500/20',
+  rojo: 'bg-atomic-tangerine/10 text-atomic-tangerine border-atomic-tangerine/20',
+  amarillo: 'bg-amber-honey/10 text-amber-honey border-amber-honey/20',
+  verde: 'bg-amber-honey/10 text-amber-honey border-amber-honey/20',
 };
 
 const tierLabels = {

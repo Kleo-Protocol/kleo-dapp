@@ -167,7 +167,7 @@ export function SimulationModal({ loanId, loan, open, onOpenChange }: Simulation
                     <span className="font-medium text-yellow-600">Medium Risk</span>
                   )}
                   {riskScore === 'low' && (
-                    <span className="font-medium text-green-600">Low Risk</span>
+                    <span className="font-medium text-forest-green">Low Risk</span>
                   )}
                 </div>
                 <div className="flex items-center justify-between text-sm">
