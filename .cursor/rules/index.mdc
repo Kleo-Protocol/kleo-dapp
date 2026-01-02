@@ -1,11 +1,6 @@
 ---
-globs:
-  - "**/*.{ts,tsx,js,jsx}"
-  - "src/**/*"
-  - "tailwind.config.ts"
-  - "next.config.*"
+alwaysApply: true
 ---
-
 # Project Rules
 
 ## Typography
