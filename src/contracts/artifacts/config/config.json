@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0xb5788edf87d6aba6a3c9a6ac56cf62f120746963ecaf4ed4789daefe746ab6d2",
+    "hash": "0x11a60191390ba165466dffc9537253572e9fea5ff333f55b5b206bf78d1afb17",
     "language": "ink! 6.0.0-beta.1",
     "compiler": "rustc 1.91.1",
     "build_info": {
@@ -13,7 +13,7 @@
     "name": "config",
     "version": "0.1.0",
     "authors": [
-      "[your_name] <[your_email]>"
+      "Fabian Sanchez <fabiansanchezd@outlook.com>"
     ]
   },
   "image": null,
@@ -22,32 +22,17 @@
     {
       "id": 0,
       "type": {
-        "def": {
-          "primitive": "u32"
-        }
-      }
-    },
-    {
-      "id": 1,
-      "type": {
-        "def": {
-          "primitive": "u64"
-        }
-      }
-    },
-    {
-      "id": 2,
-      "type": {
         "path": [
-          "primitive_types",
-          "H160"
+          "ink_primitives",
+          "types",
+          "AccountId"
         ],
         "def": {
           "composite": {
             "fields": [
               {
-                "type": 3,
-                "typeName": "[u8; 20]"
+                "type": 1,
+                "typeName": "[u8; 32]"
               }
             ]
           }
@@ -55,13 +40,29 @@
       }
     },
     {
-      "id": 3,
+      "id": 1,
       "type": {
         "def": {
           "array": {
-            "len": 20,
-            "type": 4
+            "len": 32,
+            "type": 2
           }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": {
+        "def": {
+          "primitive": "u8"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": {
+        "def": {
+          "primitive": "u64"
         }
       }
     },
@@ -69,7 +70,7 @@
       "id": 4,
       "type": {
         "def": {
-          "primitive": "u8"
+          "primitive": "u32"
         }
       }
     },
@@ -85,34 +86,59 @@
           "composite": {
             "fields": [
               {
-                "name": "min_lenders",
+                "name": "admin",
                 "type": 0,
-                "typeName": "<u32 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<2698498024u32, ()>,>>::Type"
-              },
-              {
-                "name": "overfunding_factor",
-                "type": 1,
-                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<3950042074u32, ()>,>>::Type"
+                "typeName": "<AccountId as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<455710312u32, ()>,>>::Type"
               },
               {
                 "name": "base_interest_rate",
-                "type": 1,
+                "type": 3,
                 "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<724415313u32, ()>,>>::Type"
               },
               {
-                "name": "late_penalty_rate",
-                "type": 1,
-                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<306240227u32, ()>,>>::Type"
+                "name": "optimal_utilization",
+                "type": 3,
+                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<1939125798u32, ()>,>>::Type"
               },
               {
-                "name": "max_loan_duration",
-                "type": 1,
-                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<667040228u32, ()>,>>::Type"
+                "name": "slope1",
+                "type": 3,
+                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<3313869118u32, ()>,>>::Type"
               },
               {
-                "name": "admin",
+                "name": "slope2",
+                "type": 3,
+                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<261018413u32, ()>,>>::Type"
+              },
+              {
+                "name": "boost",
+                "type": 3,
+                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<3927708557u32, ()>,>>::Type"
+              },
+              {
+                "name": "min_stars_to_vouch",
+                "type": 4,
+                "typeName": "<u32 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<2099216802u32, ()>,>>::Type"
+              },
+              {
+                "name": "cooldown_period",
+                "type": 3,
+                "typeName": "<Timestamp as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<1330102215u32, ()>,>>::Type"
+              },
+              {
+                "name": "exposure_cap",
+                "type": 3,
+                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<1164613506u32, ()>,>>::Type"
+              },
+              {
+                "name": "reserve_factor",
                 "type": 2,
-                "typeName": "<Address as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<455710312u32, ()>,>>::Type"
+                "typeName": "<u8 as::ink::storage::traits::AutoStorableHint<::ink::storage::\ntraits::ManualKey<2246022307u32, ()>,>>::Type"
+              },
+              {
+                "name": "max_rate",
+                "type": 3,
+                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<1664758855u32, ()>,>>::Type"
               }
             ]
           }
@@ -301,7 +327,7 @@
         "params": [
           {
             "name": "T",
-            "type": 13
+            "type": 3
           },
           {
             "name": "E",
@@ -315,7 +341,7 @@
                 "name": "Ok",
                 "fields": [
                   {
-                    "type": 13
+                    "type": 3
                   }
                 ],
                 "index": 0
@@ -337,15 +363,42 @@
     {
       "id": 13,
       "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 4
+          },
+          {
+            "name": "E",
+            "type": 8
+          }
+        ],
         "def": {
-          "tuple": [
-            0,
-            1,
-            1,
-            1,
-            1,
-            2
-          ]
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 4
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 8
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
         }
       }
     },
@@ -353,16 +406,38 @@
       "id": 14,
       "type": {
         "path": [
-          "ink_primitives",
-          "types",
-          "AccountId"
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 2
+          },
+          {
+            "name": "E",
+            "type": 8
+          }
         ],
         "def": {
-          "composite": {
-            "fields": [
+          "variant": {
+            "variants": [
               {
-                "type": 15,
-                "typeName": "[u8; 32]"
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 2
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 8
+                  }
+                ],
+                "index": 1
               }
             ]
           }
@@ -373,23 +448,12 @@
       "id": 15,
       "type": {
         "def": {
-          "array": {
-            "len": 32,
-            "type": 4
-          }
-        }
-      }
-    },
-    {
-      "id": 16,
-      "type": {
-        "def": {
           "primitive": "u128"
         }
       }
     },
     {
-      "id": 17,
+      "id": 16,
       "type": {
         "path": [
           "ink_primitives",
@@ -400,7 +464,7 @@
           "composite": {
             "fields": [
               {
-                "type": 15,
+                "type": 1,
                 "typeName": "[u8; 32]"
               }
             ]
@@ -417,7 +481,7 @@
           "name": "Config",
           "fields": [
             {
-              "name": "min_lenders",
+              "name": "admin",
               "layout": {
                 "leaf": {
                   "key": "0x00000000",
@@ -426,47 +490,92 @@
               }
             },
             {
-              "name": "overfunding_factor",
-              "layout": {
-                "leaf": {
-                  "key": "0x00000000",
-                  "ty": 1
-                }
-              }
-            },
-            {
               "name": "base_interest_rate",
               "layout": {
                 "leaf": {
                   "key": "0x00000000",
-                  "ty": 1
+                  "ty": 3
                 }
               }
             },
             {
-              "name": "late_penalty_rate",
+              "name": "optimal_utilization",
               "layout": {
                 "leaf": {
                   "key": "0x00000000",
-                  "ty": 1
+                  "ty": 3
                 }
               }
             },
             {
-              "name": "max_loan_duration",
+              "name": "slope1",
               "layout": {
                 "leaf": {
                   "key": "0x00000000",
-                  "ty": 1
+                  "ty": 3
                 }
               }
             },
             {
-              "name": "admin",
+              "name": "slope2",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 3
+                }
+              }
+            },
+            {
+              "name": "boost",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 3
+                }
+              }
+            },
+            {
+              "name": "min_stars_to_vouch",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 4
+                }
+              }
+            },
+            {
+              "name": "cooldown_period",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 3
+                }
+              }
+            },
+            {
+              "name": "exposure_cap",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 3
+                }
+              }
+            },
+            {
+              "name": "reserve_factor",
               "layout": {
                 "leaf": {
                   "key": "0x00000000",
                   "ty": 2
+                }
+              }
+            },
+            {
+              "name": "max_rate",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 3
                 }
               }
             }
@@ -482,53 +591,7 @@
         "label": "new",
         "selector": "0x9bae9d5e",
         "payable": false,
-        "args": [
-          {
-            "label": "min_lenders",
-            "type": {
-              "type": 0,
-              "displayName": [
-                "u32"
-              ]
-            }
-          },
-          {
-            "label": "overfunding_factor",
-            "type": {
-              "type": 1,
-              "displayName": [
-                "u64"
-              ]
-            }
-          },
-          {
-            "label": "base_interest_rate",
-            "type": {
-              "type": 1,
-              "displayName": [
-                "u64"
-              ]
-            }
-          },
-          {
-            "label": "late_penalty_rate",
-            "type": {
-              "type": 1,
-              "displayName": [
-                "u64"
-              ]
-            }
-          },
-          {
-            "label": "max_loan_duration",
-            "type": {
-              "type": 1,
-              "displayName": [
-                "u64"
-              ]
-            }
-          }
-        ],
+        "args": [],
         "returnType": {
           "type": 6,
           "displayName": [
@@ -537,24 +600,24 @@
           ]
         },
         "docs": [
-          "Constructor that initializes configuration of the Kleo Protocol"
+          "Constructor that initializes configuration with defaults and admin"
         ],
         "default": false
       }
     ],
     "messages": [
       {
-        "label": "set_min_lenders",
-        "selector": "0x438c66d1",
+        "label": "update_base_interest_rate",
+        "selector": "0x0a857f2e",
         "mutates": true,
         "payable": false,
         "args": [
           {
-            "label": "new_min",
+            "label": "new_rate",
             "type": {
-              "type": 0,
+              "type": 3,
               "displayName": [
-                "u32"
+                "u64"
               ]
             }
           }
@@ -572,17 +635,199 @@
         "default": false
       },
       {
-        "label": "set_overfunding_factor",
-        "selector": "0x705989b2",
+        "label": "update_optimal_utilization",
+        "selector": "0x32e80b05",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "new_optimal",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "u64"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 9,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "update_slope1",
+        "selector": "0x18e98214",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "new_slope",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "u64"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 9,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "update_slope2",
+        "selector": "0x98841c75",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "new_slope",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "u64"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 9,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "update_boost",
+        "selector": "0x5e603b52",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "new_boost",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "u64"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 9,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "update_min_stars_to_vouch",
+        "selector": "0x5bfb3671",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "new_min",
+            "type": {
+              "type": 4,
+              "displayName": [
+                "u32"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 9,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "update_cooldown_period",
+        "selector": "0x1967d257",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "new_period",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "Timestamp"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 9,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "update_exposure_cap",
+        "selector": "0xef1525c5",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "new_cap",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "u64"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 9,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "update_reserve_factor",
+        "selector": "0x325a10c6",
         "mutates": true,
         "payable": false,
         "args": [
           {
             "label": "new_factor",
             "type": {
-              "type": 1,
+              "type": 2,
               "displayName": [
-                "u64"
+                "u8"
               ]
             }
           }
@@ -598,15 +843,15 @@
         "default": false
       },
       {
-        "label": "set_base_interest_rate",
-        "selector": "0xe7ce83e9",
+        "label": "update_max_rate",
+        "selector": "0x79262ca5",
         "mutates": true,
         "payable": false,
         "args": [
           {
-            "label": "new_rate",
+            "label": "new_max",
             "type": {
-              "type": 1,
+              "type": 3,
               "displayName": [
                 "u64"
               ]
@@ -624,60 +869,8 @@
         "default": false
       },
       {
-        "label": "set_late_penalty_rate",
-        "selector": "0x60f39650",
-        "mutates": true,
-        "payable": false,
-        "args": [
-          {
-            "label": "new_rate",
-            "type": {
-              "type": 1,
-              "displayName": [
-                "u64"
-              ]
-            }
-          }
-        ],
-        "returnType": {
-          "type": 9,
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ]
-        },
-        "docs": [],
-        "default": false
-      },
-      {
-        "label": "set_max_loan_duration",
-        "selector": "0x5eed23cc",
-        "mutates": true,
-        "payable": false,
-        "args": [
-          {
-            "label": "new_duration",
-            "type": {
-              "type": 1,
-              "displayName": [
-                "u64"
-              ]
-            }
-          }
-        ],
-        "returnType": {
-          "type": 9,
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ]
-        },
-        "docs": [],
-        "default": false
-      },
-      {
-        "label": "get_protocol_info",
-        "selector": "0x54aca0e4",
+        "label": "get_base_interest_rate",
+        "selector": "0xef7a1277",
         "mutates": false,
         "payable": false,
         "args": [],
@@ -689,8 +882,152 @@
           ]
         },
         "docs": [
-          " Getter function for configuration parameters"
+          " Getter functions for configuration parameters"
         ],
+        "default": false
+      },
+      {
+        "label": "get_optimal_utilization",
+        "selector": "0x4ddf68a4",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 12,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "get_slope1",
+        "selector": "0x9505b812",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 12,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "get_slope2",
+        "selector": "0xcf931887",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 12,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "get_boost",
+        "selector": "0xf5aa3bfa",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 12,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "get_min_stars_to_vouch",
+        "selector": "0x2cc76f21",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 13,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "get_cooldown_period",
+        "selector": "0x7dd6b7d6",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 12,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "get_exposure_cap",
+        "selector": "0x0eea1ead",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 12,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "get_reserve_factor",
+        "selector": "0x7dbf85cf",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 14,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "get_max_rate",
+        "selector": "0xfd33a0f6",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 12,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
         "default": false
       }
     ],
@@ -705,31 +1042,31 @@
     },
     "environment": {
       "accountId": {
-        "type": 14,
+        "type": 0,
         "displayName": [
           "AccountId"
         ]
       },
       "balance": {
-        "type": 16,
+        "type": 15,
         "displayName": [
           "Balance"
         ]
       },
       "hash": {
-        "type": 17,
+        "type": 16,
         "displayName": [
           "Hash"
         ]
       },
       "timestamp": {
-        "type": 1,
+        "type": 3,
         "displayName": [
           "Timestamp"
         ]
       },
       "blockNumber": {
-        "type": 0,
+        "type": 4,
         "displayName": [
           "BlockNumber"
         ]

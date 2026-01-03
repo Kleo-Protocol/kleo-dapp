@@ -1,0 +1,1307 @@
+{
+  "source": {
+    "hash": "0xd7452687fbb5807b5d1158d51491d0c0bfba88000064b9ad69998b53e1502c5b",
+    "language": "ink! 6.0.0-beta.1",
+    "compiler": "rustc 1.91.1",
+    "build_info": {
+      "rust_toolchain": "stable-aarch64-apple-darwin",
+      "cargo_contract_version": "6.0.0-beta.1",
+      "build_mode": "Release"
+    }
+  },
+  "contract": {
+    "name": "lending_pool",
+    "version": "0.1.0",
+    "authors": [
+      "Fabian Sanchez <fabiansanchezd@outlook.com>"
+    ]
+  },
+  "image": null,
+  "version": 6,
+  "types": [
+    {
+      "id": 0,
+      "type": {
+        "path": [
+          "primitive_types",
+          "H160"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 1,
+                "typeName": "[u8; 20]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 1,
+      "type": {
+        "def": {
+          "array": {
+            "len": 20,
+            "type": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": {
+        "def": {
+          "primitive": "u8"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": {
+        "def": {
+          "primitive": "u128"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": {
+        "path": [
+          "ink_storage",
+          "lazy",
+          "Lazy"
+        ],
+        "params": [
+          {
+            "name": "V",
+            "type": 3
+          },
+          {
+            "name": "KeyType",
+            "type": 5
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ResolverKey"
+        ],
+        "params": [
+          {
+            "name": "L",
+            "type": 6
+          },
+          {
+            "name": "R",
+            "type": 7
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "AutoKey"
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 7,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ManualKey"
+        ],
+        "params": [
+          {
+            "name": "ParentKey",
+            "type": 8
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 8,
+      "type": {
+        "def": {
+          "tuple": []
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": {
+        "path": [
+          "ink_storage",
+          "lazy",
+          "Lazy"
+        ],
+        "params": [
+          {
+            "name": "V",
+            "type": 3
+          },
+          {
+            "name": "KeyType",
+            "type": 10
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 10,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ResolverKey"
+        ],
+        "params": [
+          {
+            "name": "L",
+            "type": 6
+          },
+          {
+            "name": "R",
+            "type": 11
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 11,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ManualKey"
+        ],
+        "params": [
+          {
+            "name": "ParentKey",
+            "type": 8
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 12,
+      "type": {
+        "path": [
+          "ink_storage",
+          "lazy",
+          "Lazy"
+        ],
+        "params": [
+          {
+            "name": "V",
+            "type": 3
+          },
+          {
+            "name": "KeyType",
+            "type": 13
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 13,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ResolverKey"
+        ],
+        "params": [
+          {
+            "name": "L",
+            "type": 6
+          },
+          {
+            "name": "R",
+            "type": 14
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 14,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ManualKey"
+        ],
+        "params": [
+          {
+            "name": "ParentKey",
+            "type": 8
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 15,
+      "type": {
+        "path": [
+          "ink_storage",
+          "lazy",
+          "mapping",
+          "Mapping"
+        ],
+        "params": [
+          {
+            "name": "K",
+            "type": 16
+          },
+          {
+            "name": "V",
+            "type": 3
+          },
+          {
+            "name": "KeyType",
+            "type": 18
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 16,
+      "type": {
+        "path": [
+          "ink_primitives",
+          "types",
+          "AccountId"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 17,
+                "typeName": "[u8; 32]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 17,
+      "type": {
+        "def": {
+          "array": {
+            "len": 32,
+            "type": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 18,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ResolverKey"
+        ],
+        "params": [
+          {
+            "name": "L",
+            "type": 6
+          },
+          {
+            "name": "R",
+            "type": 19
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 19,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ManualKey"
+        ],
+        "params": [
+          {
+            "name": "ParentKey",
+            "type": 8
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 20,
+      "type": {
+        "def": {
+          "primitive": "u64"
+        }
+      }
+    },
+    {
+      "id": 21,
+      "type": {
+        "path": [
+          "ink_storage",
+          "lazy",
+          "Lazy"
+        ],
+        "params": [
+          {
+            "name": "V",
+            "type": 20
+          },
+          {
+            "name": "KeyType",
+            "type": 22
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 22,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ResolverKey"
+        ],
+        "params": [
+          {
+            "name": "L",
+            "type": 6
+          },
+          {
+            "name": "R",
+            "type": 23
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 23,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ManualKey"
+        ],
+        "params": [
+          {
+            "name": "ParentKey",
+            "type": 8
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 24,
+      "type": {
+        "path": [
+          "lending_pool",
+          "lending_pool",
+          "LendingPool"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "config",
+                "type": 0,
+                "typeName": "<ConfigRef as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<3673240951u32, ()>,>>::Type"
+              },
+              {
+                "name": "total_liquidity",
+                "type": 4,
+                "typeName": "<Lazy<Balance> as::ink::storage::traits::AutoStorableHint<::ink\n::storage::traits::ManualKey<1201920899u32, ()>,>>::Type"
+              },
+              {
+                "name": "total_borrowed",
+                "type": 9,
+                "typeName": "<Lazy<Balance> as::ink::storage::traits::AutoStorableHint<::ink\n::storage::traits::ManualKey<3565383195u32, ()>,>>::Type"
+              },
+              {
+                "name": "reserved_funds",
+                "type": 12,
+                "typeName": "<Lazy<Balance> as::ink::storage::traits::AutoStorableHint<::ink\n::storage::traits::ManualKey<1123778503u32, ()>,>>::Type"
+              },
+              {
+                "name": "user_deposits",
+                "type": 15,
+                "typeName": "<Mapping<AccountId, Balance> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<2471691496u32,\n()>,>>::Type"
+              },
+              {
+                "name": "last_update",
+                "type": 21,
+                "typeName": "<Lazy<Timestamp> as::ink::storage::traits::AutoStorableHint<::\nink::storage::traits::ManualKey<1812172973u32, ()>,>>::Type"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 25,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 8
+          },
+          {
+            "name": "E",
+            "type": 26
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 8
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 26
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 26,
+      "type": {
+        "path": [
+          "ink_primitives",
+          "LangError"
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "CouldNotReadInput",
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 27,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 28
+          },
+          {
+            "name": "E",
+            "type": 26
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 28
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 26
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 28,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 8
+          },
+          {
+            "name": "E",
+            "type": 29
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 8
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 29
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 29,
+      "type": {
+        "path": [
+          "lending_pool",
+          "lending_pool",
+          "Error"
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "ZeroAmount",
+                "index": 0
+              },
+              {
+                "name": "NegativeAmount",
+                "index": 1
+              },
+              {
+                "name": "Overflow",
+                "index": 2
+              },
+              {
+                "name": "UnavailableFunds",
+                "index": 3
+              },
+              {
+                "name": "TransactionFailed",
+                "index": 4
+              },
+              {
+                "name": "AmountMismatch",
+                "index": 5
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 30,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 20
+          },
+          {
+            "name": "E",
+            "type": 26
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 20
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 26
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 31,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 3
+          },
+          {
+            "name": "E",
+            "type": 26
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 3
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 26
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 32,
+      "type": {
+        "path": [
+          "ink_primitives",
+          "types",
+          "Hash"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 17,
+                "typeName": "[u8; 32]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 33,
+      "type": {
+        "def": {
+          "primitive": "u32"
+        }
+      }
+    }
+  ],
+  "storage": {
+    "root": {
+      "root_key": "0x00000000",
+      "layout": {
+        "struct": {
+          "name": "LendingPool",
+          "fields": [
+            {
+              "name": "config",
+              "layout": {
+                "struct": {
+                  "name": "ConfigRefFor",
+                  "fields": [
+                    {
+                      "name": "inner",
+                      "layout": {
+                        "struct": {
+                          "name": "CallBuilder",
+                          "fields": [
+                            {
+                              "name": "addr",
+                              "layout": {
+                                "leaf": {
+                                  "key": "0x00000000",
+                                  "ty": 0
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "total_liquidity",
+              "layout": {
+                "root": {
+                  "root_key": "0x83dba347",
+                  "layout": {
+                    "leaf": {
+                      "key": "0x83dba347",
+                      "ty": 3
+                    }
+                  },
+                  "ty": 4
+                }
+              }
+            },
+            {
+              "name": "total_borrowed",
+              "layout": {
+                "root": {
+                  "root_key": "0x1b6e83d4",
+                  "layout": {
+                    "leaf": {
+                      "key": "0x1b6e83d4",
+                      "ty": 3
+                    }
+                  },
+                  "ty": 9
+                }
+              }
+            },
+            {
+              "name": "reserved_funds",
+              "layout": {
+                "root": {
+                  "root_key": "0xc77ffb42",
+                  "layout": {
+                    "leaf": {
+                      "key": "0xc77ffb42",
+                      "ty": 3
+                    }
+                  },
+                  "ty": 12
+                }
+              }
+            },
+            {
+              "name": "user_deposits",
+              "layout": {
+                "root": {
+                  "root_key": "0xe8045393",
+                  "layout": {
+                    "leaf": {
+                      "key": "0xe8045393",
+                      "ty": 3
+                    }
+                  },
+                  "ty": 15
+                }
+              }
+            },
+            {
+              "name": "last_update",
+              "layout": {
+                "root": {
+                  "root_key": "0xad90036c",
+                  "layout": {
+                    "leaf": {
+                      "key": "0xad90036c",
+                      "ty": 20
+                    }
+                  },
+                  "ty": 21
+                }
+              }
+            }
+          ]
+        }
+      },
+      "ty": 24
+    }
+  },
+  "spec": {
+    "constructors": [
+      {
+        "label": "new",
+        "selector": "0x9bae9d5e",
+        "payable": false,
+        "args": [
+          {
+            "label": "config_address",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "Address"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 25,
+          "displayName": [
+            "ink_primitives",
+            "ConstructorResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      }
+    ],
+    "messages": [
+      {
+        "label": "deposit",
+        "selector": "0x2d10c9bd",
+        "mutates": true,
+        "payable": true,
+        "args": [],
+        "returnType": {
+          "type": 27,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Deposits to the lending pool"
+        ],
+        "default": false
+      },
+      {
+        "label": "withdraw",
+        "selector": "0x410fcc9d",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "amount",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "Balance"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 27,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Withdraw funds from the lending pool"
+        ],
+        "default": false
+      },
+      {
+        "label": "get_current_rate",
+        "selector": "0x133e6c7c",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 30,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "get_user_yield",
+        "selector": "0xdb8df080",
+        "mutates": true,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 31,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Get user's accrued yield"
+        ],
+        "default": false
+      },
+      {
+        "label": "get_user_deposit",
+        "selector": "0x3ebb50fa",
+        "mutates": false,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 16,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 31,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Get user's deposit balance"
+        ],
+        "default": false
+      },
+      {
+        "label": "get_total_liquidity",
+        "selector": "0xddd7e6c3",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 31,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      },
+      {
+        "label": "disburse",
+        "selector": "0x28217c4a",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "amount",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "Balance"
+              ]
+            }
+          },
+          {
+            "label": "to",
+            "type": {
+              "type": 16,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 27,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Disburse part of liquidity (add a borrow basically)"
+        ],
+        "default": false
+      },
+      {
+        "label": "receive_repayment",
+        "selector": "0x72874674",
+        "mutates": true,
+        "payable": true,
+        "args": [
+          {
+            "label": "amount",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "Balance"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 27,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Repay a loan (reduce borrowed amount)"
+        ],
+        "default": false
+      },
+      {
+        "label": "slash_stake",
+        "selector": "0xd6170b15",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 16,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "Balance"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 27,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Slash part of the position of a voucher"
+        ],
+        "default": false
+      }
+    ],
+    "events": [
+      {
+        "label": "RepaymentReceived",
+        "module_path": "lending_pool::lending_pool",
+        "signature_topic": "0x654b646a1cd4aa283b63883350204bf2108d445e09b97e4ff732aecd8fb07d2b",
+        "args": [
+          {
+            "label": "amount",
+            "indexed": false,
+            "type": {
+              "type": 3,
+              "displayName": [
+                "Balance"
+              ]
+            },
+            "docs": []
+          }
+        ],
+        "docs": []
+      },
+      {
+        "label": "Deposit",
+        "module_path": "lending_pool::lending_pool",
+        "signature_topic": "0xcec721a438a262e1d7866c1b39464ad44a551ab736f11d09127d0b9ac849a16b",
+        "args": [
+          {
+            "label": "depositor",
+            "indexed": false,
+            "type": {
+              "type": 16,
+              "displayName": [
+                "AccountId"
+              ]
+            },
+            "docs": []
+          },
+          {
+            "label": "amount",
+            "indexed": false,
+            "type": {
+              "type": 3,
+              "displayName": [
+                "Balance"
+              ]
+            },
+            "docs": []
+          }
+        ],
+        "docs": [
+          "Events for lending pool actions"
+        ]
+      },
+      {
+        "label": "Withdraw",
+        "module_path": "lending_pool::lending_pool",
+        "signature_topic": "0x246a5b254e2e059ff24e5b754b864041f6e1a0fecc5946a65c1aa051cf8c0148",
+        "args": [
+          {
+            "label": "withdrawer",
+            "indexed": false,
+            "type": {
+              "type": 16,
+              "displayName": [
+                "AccountId"
+              ]
+            },
+            "docs": []
+          },
+          {
+            "label": "amount",
+            "indexed": false,
+            "type": {
+              "type": 3,
+              "displayName": [
+                "Balance"
+              ]
+            },
+            "docs": []
+          }
+        ],
+        "docs": []
+      }
+    ],
+    "docs": [
+      " The lending pool contract is used to manage the pool with auto rate in accruals.",
+      " As Kleo uses a loan manager contract to handle loans, this contract will mainly",
+      " provide the pool where the contracts are created from, and handle certain calculations."
+    ],
+    "lang_error": {
+      "type": 26,
+      "displayName": [
+        "ink",
+        "LangError"
+      ]
+    },
+    "environment": {
+      "accountId": {
+        "type": 16,
+        "displayName": [
+          "AccountId"
+        ]
+      },
+      "balance": {
+        "type": 3,
+        "displayName": [
+          "Balance"
+        ]
+      },
+      "hash": {
+        "type": 32,
+        "displayName": [
+          "Hash"
+        ]
+      },
+      "timestamp": {
+        "type": 20,
+        "displayName": [
+          "Timestamp"
+        ]
+      },
+      "blockNumber": {
+        "type": 33,
+        "displayName": [
+          "BlockNumber"
+        ]
+      },
+      "nativeToEthRatio": 100000000,
+      "trustBackedAssetsPrecompileIndex": 288,
+      "poolAssetsPrecompileIndex": 800,
+      "staticBufferSize": 16384
+    }
+  }
+}
