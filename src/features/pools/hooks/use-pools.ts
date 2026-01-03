@@ -1,12 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useKleoClient } from '@/providers/kleo-client-provider';
-import {
-  getPoolStats,
-  updatePoolLiquidity,
-  type Pool,
-} from '@/services/mock/pools.mock';
 import { useTypink } from 'typink';
 import { QUERY_STALE_TIMES } from '@/lib/constants';
+import type { Pool } from '@/lib/types';
 
 // Query keys
 const poolsBaseKey = ['pools'] as const;
@@ -122,6 +118,7 @@ export function usePoolState(poolId: string | undefined) {
 
 /**
  * Hook to fetch pool statistics
+ * TODO: Implement with real API/SDK
  */
 export function usePoolStats(poolId: string | undefined) {
   return useQuery({
@@ -130,22 +127,24 @@ export function usePoolStats(poolId: string | undefined) {
       if (!poolId) {
         throw new Error('Pool ID is required');
       }
-      return getPoolStats(poolId);
+      throw new Error('Pool stats not implemented - mock removed');
     },
-    enabled: !!poolId,
+    enabled: false, // Disabled until real implementation
     staleTime: QUERY_STALE_TIMES.POOL_STATS,
   });
 }
 
 /**
  * Hook to update pool liquidity
+ * TODO: Implement with real API/SDK
  */
 export function useUpdatePoolLiquidity() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ poolId, liquidityDelta }: { poolId: string; liquidityDelta: bigint }) =>
-      updatePoolLiquidity(poolId, liquidityDelta),
+    mutationFn: ({ poolId, liquidityDelta }: { poolId: string; liquidityDelta: bigint }) => {
+      throw new Error('Update pool liquidity not implemented - mock removed');
+    },
     onSuccess: (_, variables) => {
       // Invalidate pool-related queries
       queryClient.invalidateQueries({ queryKey: poolsKeys.detail(variables.poolId) });

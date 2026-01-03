@@ -6,7 +6,7 @@ import { Button } from '@/shared/ui/button';
 import { Badge } from '@/shared/ui/badge';
 import { TrendingUp, Users, DollarSign, ArrowRight } from 'lucide-react';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
-import type { Pool } from '@/services/mock/pools.mock';
+import type { Pool } from '@/lib/types';
 
 interface PoolCardProps {
   pool: Pool;

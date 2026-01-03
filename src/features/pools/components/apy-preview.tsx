@@ -3,7 +3,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 import { TrendingUp, Info } from 'lucide-react';
-import type { Pool } from '@/services/mock/pools.mock';
+import type { Pool } from '@/lib/types';
 
 interface ApyPreviewProps {
   pool: Pool;

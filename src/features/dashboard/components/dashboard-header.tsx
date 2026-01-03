@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { formatBalance as formatTypinkBalance, useBalances, useTypink } from 'typink';
 import { formatBalance } from '@/shared/utils/format';
-import type { Profile } from '@/services/mock/profile.mock';
+import type { Profile } from '@/lib/types';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { useMemo } from 'react';
 

@@ -6,7 +6,7 @@ import { Badge } from '@/shared/ui/badge';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import type { Pool } from '@/services/mock/pools.mock';
+import type { Pool } from '@/lib/types';
 import { Skeleton } from '@/shared/ui/skeleton';
 
 interface DashboardPoolsProps {

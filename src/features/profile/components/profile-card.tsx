@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/sha
 import { Badge } from '@/shared/ui/badge';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { Wallet, TrendingUp, Calendar, Star } from 'lucide-react';
-import type { Profile } from '@/services/mock/profile.mock';
+import type { Profile } from '@/lib/types';
 
 interface ProfileCardProps {
   profile: Profile | null | undefined;

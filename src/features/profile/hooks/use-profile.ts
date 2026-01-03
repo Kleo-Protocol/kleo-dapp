@@ -1,11 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  getProfile,
-  getProfileStats,
-  updateCapital,
-  updateReputation,
-  updateIncomeReference,
-} from '@/services/mock/profile.mock';
 
 // Query keys
 export const profileKeys = {
@@ -24,9 +17,9 @@ export function useProfile(walletAddress: string | undefined) {
       if (!walletAddress) {
         throw new Error('Wallet address is required');
       }
-      return getProfile(walletAddress);
+      throw new Error('getProfile not implemented - mock removed');
     },
-    enabled: !!walletAddress,
+    enabled: false, // Disabled until real implementation
     staleTime: 30000, // 30 seconds
   });
 }
@@ -41,9 +34,9 @@ export function useProfileStats(walletAddress: string | undefined) {
       if (!walletAddress) {
         throw new Error('Wallet address is required');
       }
-      return getProfileStats(walletAddress);
+      throw new Error('getProfileStats not implemented - mock removed');
     },
-    enabled: !!walletAddress,
+    enabled: false, // Disabled until real implementation
     staleTime: 60000, // 1 minute
   });
 }
@@ -55,8 +48,9 @@ export function useUpdateCapital() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ walletAddress, capital }: { walletAddress: string; capital: bigint }) =>
-      updateCapital(walletAddress, capital),
+    mutationFn: ({ walletAddress, capital }: { walletAddress: string; capital: bigint }) => {
+      throw new Error('updateCapital not implemented - mock removed');
+    },
     onSuccess: (_, variables) => {
       // Invalidate profile queries for this address
       queryClient.invalidateQueries({ queryKey: profileKeys.detail(variables.walletAddress) });
@@ -71,8 +65,9 @@ export function useUpdateReputation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ walletAddress, reputation }: { walletAddress: string; reputation: number }) =>
-      updateReputation(walletAddress, reputation),
+    mutationFn: ({ walletAddress, reputation }: { walletAddress: string; reputation: number }) => {
+      throw new Error('updateReputation not implemented - mock removed');
+    },
     onSuccess: (_, variables) => {
       // Invalidate profile queries for this address
       queryClient.invalidateQueries({ queryKey: profileKeys.detail(variables.walletAddress) });
@@ -93,7 +88,9 @@ export function useUpdateIncomeReference() {
     }: {
       walletAddress: string;
       incomeReference: string | null;
-    }) => updateIncomeReference(walletAddress, incomeReference),
+    }) => {
+      throw new Error('updateIncomeReference not implemented - mock removed');
+    },
     onSuccess: (_, variables) => {
       // Invalidate profile queries for this address
       queryClient.invalidateQueries({ queryKey: profileKeys.detail(variables.walletAddress) });

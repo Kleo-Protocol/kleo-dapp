@@ -14,7 +14,7 @@ import { Skeleton } from '@/shared/ui/skeleton';
 import { Clock, Users, Inbox } from 'lucide-react';
 import { EmptyState } from '@/shared/components/empty-state';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
-import type { LoanDetails } from '@/services/mock/loans.mock';
+import type { LoanDetails } from '@/lib/types';
 
 interface RequestsTableProps {
   requests: LoanDetails[];

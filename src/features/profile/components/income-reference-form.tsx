@@ -7,7 +7,7 @@ import { Skeleton } from '@/shared/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 import { FileText, Save, Info } from 'lucide-react';
 import { useIncomeReferenceForm } from '@/features/profile/hooks/use-income-reference-form';
-import type { Profile } from '@/services/mock/profile.mock';
+import type { Profile } from '@/lib/types';
 
 interface IncomeReferenceFormProps {
   profile: Profile | null | undefined;

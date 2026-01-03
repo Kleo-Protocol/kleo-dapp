@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 import { ArrowDown, AlertCircle } from 'lucide-react';
 import { useBorrowForm } from '@/features/pools/hooks/use-borrow-form';
-import type { Pool } from '@/services/mock/pools.mock';
+import type { Pool } from '@/lib/types';
 
 interface BorrowFormProps {
   pool: Pool;

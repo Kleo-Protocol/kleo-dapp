@@ -6,7 +6,7 @@ import { formatBalance } from '@/shared/utils/format';
 import { Clock, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/shared/ui/button';
-import type { Loan } from '@/services/mock/loans.mock';
+import type { Loan } from '@/lib/types';
 import { Skeleton } from '@/shared/ui/skeleton';
 
 interface DashboardActivityProps {

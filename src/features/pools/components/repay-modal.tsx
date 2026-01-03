@@ -14,7 +14,7 @@ import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { AlertCircle, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
-import type { LoanDetails } from '@/services/mock/loans.mock';
+import type { LoanDetails } from '@/lib/types';
 
 interface RepayModalProps {
   loanId: string;

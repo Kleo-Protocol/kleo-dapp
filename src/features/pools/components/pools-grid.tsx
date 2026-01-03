@@ -5,7 +5,7 @@ import { Skeleton } from '@/shared/ui/skeleton';
 import { Card } from '@/shared/ui/card';
 import { EmptyState } from '@/shared/components/empty-state';
 import { Building2 } from 'lucide-react';
-import type { Pool } from '@/services/mock/pools.mock';
+import type { Pool } from '@/lib/types';
 
 interface PoolsGridProps {
   pools: Pool[];

@@ -17,7 +17,7 @@ import { Calendar, DollarSign, Inbox } from 'lucide-react';
 import { RepayModal } from './repay-modal';
 import { EmptyState } from '@/shared/components/empty-state';
 import { formatBalance } from '@/shared/utils/format';
-import type { LoanDetails } from '@/services/mock/loans.mock';
+import type { LoanDetails } from '@/lib/types';
 
 interface LoansTableProps {
   loans: LoanDetails[];

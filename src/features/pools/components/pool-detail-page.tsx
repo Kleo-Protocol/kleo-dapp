@@ -39,6 +39,12 @@ export function PoolDetailPage() {
     formatInterestRate,
     formatPoolStateValue,
     formatBasisPoints,
+    formatOptimalUtilization,
+    formatMaxRate,
+    formatSlope2,
+    formatCooldownPeriod,
+    formatLargeBasisPoints,
+    formatMediumBasisPoints,
   } = usePoolDetailLogic();
 
   const statusBadge = getStatusBadge();
@@ -134,7 +140,7 @@ export function PoolDetailPage() {
                 <span className='text-sm'>Optimal Utilization</span>
               </div>
               <p className='text-2xl font-bold text-card-foreground'>
-                {formatBasisPoints(poolState.optimalUtilization)}
+                {formatOptimalUtilization(poolState.optimalUtilization)}
               </p>
             </CardContent>
           </Card>
@@ -156,7 +162,7 @@ export function PoolDetailPage() {
                 <span className='text-sm'>Max Rate</span>
               </div>
               <p className='text-2xl font-bold text-card-foreground'>
-                {formatBasisPoints(poolState.maxRate)}
+                {formatMaxRate(poolState.maxRate)}
               </p>
             </CardContent>
           </Card>
@@ -171,7 +177,7 @@ export function PoolDetailPage() {
                 <span className='text-sm'>Slope 1</span>
               </div>
               <p className='text-xl font-bold text-card-foreground'>
-                {formatBasisPoints(poolState.slope1)}
+                {formatMediumBasisPoints(poolState.slope1)}
               </p>
             </CardContent>
           </Card>
@@ -183,7 +189,7 @@ export function PoolDetailPage() {
                 <span className='text-sm'>Slope 2</span>
               </div>
               <p className='text-xl font-bold text-card-foreground'>
-                {formatBasisPoints(poolState.slope2)}
+                {formatSlope2(poolState.slope2)}
               </p>
             </CardContent>
           </Card>
@@ -195,7 +201,7 @@ export function PoolDetailPage() {
                 <span className='text-sm'>Boost</span>
               </div>
               <p className='text-xl font-bold text-card-foreground'>
-                {formatBasisPoints(poolState.boost)}
+                {formatMediumBasisPoints(poolState.boost)}
               </p>
             </CardContent>
           </Card>
@@ -207,7 +213,7 @@ export function PoolDetailPage() {
                 <span className='text-sm'>Cooldown Period</span>
               </div>
               <p className='text-xl font-bold text-card-foreground'>
-                {Math.floor(Number(poolState.cooldownPeriod) / 86400)}d
+                {formatCooldownPeriod(poolState.cooldownPeriod)}
               </p>
             </CardContent>
           </Card>

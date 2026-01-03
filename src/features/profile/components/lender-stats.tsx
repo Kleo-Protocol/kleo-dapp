@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/sha
 import { Skeleton } from '@/shared/ui/skeleton';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { TrendingUp } from 'lucide-react';
-import type { ProfileStats } from '@/services/mock/profile.mock';
+import type { ProfileStats } from '@/lib/types';
 
 interface LenderStatsProps {
   stats: ProfileStats | undefined;

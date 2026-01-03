@@ -1,6 +1,5 @@
 import { apiClient } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
-import { mockCheckUserRegistration, mockRegisterUser, mockRegisterUserWithoutRole } from './mockUserService';
 
 interface CheckUserResponse {
   exists: boolean;
@@ -24,9 +23,8 @@ function isApiConfigured(): boolean {
 }
 
 export async function checkUserRegistration(address: string): Promise<CheckUserResponse> {
-  // If no API is configured, use mock
   if (!isApiConfigured()) {
-    return mockCheckUserRegistration(address);
+    throw new Error('API not configured - mock removed');
   }
 
   // Use real API
@@ -45,9 +43,8 @@ export async function checkUserRegistration(address: string): Promise<CheckUserR
 }
 
 export async function registerUser(address: string, role: 'lender' | 'borrower'): Promise<RegisterUserResponse> {
-  // If no API is configured, use mock
   if (!isApiConfigured()) {
-    return mockRegisterUser(address, role);
+    throw new Error('API not configured - mock removed');
   }
 
   // Use real API
@@ -59,9 +56,8 @@ export async function registerUser(address: string, role: 'lender' | 'borrower')
 }
 
 export async function registerUserWithoutRole(address: string): Promise<{ success: boolean }> {
-  // If no API is configured, use mock
   if (!isApiConfigured()) {
-    return mockRegisterUserWithoutRole(address);
+    throw new Error('API not configured - mock removed');
   }
 
   // Use real API - register without role
@@ -92,28 +88,7 @@ export async function verifyAndRegisterUser(
       return { isRegistered: false };
     }
   } catch (error) {
-    // If error is about API not configured, use mock as fallback
     const errorMessage = error instanceof Error ? error.message : 'Failed to check user registration';
-    if (errorMessage.includes('API base URL is not configured')) {
-      // Try with mock as fallback
-      try {
-        const mockResult = await mockCheckUserRegistration(address);
-        if (mockResult.exists && mockResult.role) {
-          setIsRegistered(true);
-          // DO NOT set role automatically - let user choose in modal
-          // setUserRole(mockResult.role);
-          setIsCheckingRegistration(false);
-          return { isRegistered: true, role: mockResult.role };
-        }
-        setIsRegistered(false);
-        setIsCheckingRegistration(false);
-        return { isRegistered: false };
-      } catch {
-        setIsRegistered(false);
-        setIsCheckingRegistration(false);
-        return { isRegistered: false };
-      }
-    }
     setError(errorMessage);
     setIsCheckingRegistration(false);
     throw error;

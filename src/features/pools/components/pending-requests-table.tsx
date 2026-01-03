@@ -18,7 +18,7 @@ import { BackModal } from './back-modal';
 import { EmptyState } from '@/shared/components/empty-state';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
-import type { LoanDetails } from '@/services/mock/loans.mock';
+import type { LoanDetails } from '@/lib/types';
 
 interface PendingRequestsTableProps {
   requests: LoanDetails[];

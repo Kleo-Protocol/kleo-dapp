@@ -15,7 +15,7 @@ import { Button } from '@/shared/ui/button';
 import { AlertTriangle, DollarSign, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { useUserStore } from '@/store/user.store';
-import type { LoanDetails } from '@/services/mock/loans.mock';
+import type { LoanDetails } from '@/lib/types';
 
 interface BackModalProps {
   loanId: string;

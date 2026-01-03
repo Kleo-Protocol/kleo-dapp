@@ -3,7 +3,7 @@
 import { Card, CardContent } from '@/shared/ui/card';
 import { TrendingUp, FileText, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { formatBalance } from '@/shared/utils/format';
-import type { Profile, ProfileStats } from '@/services/mock/profile.mock';
+import type { Profile, ProfileStats } from '@/lib/types';
 import { Skeleton } from '@/shared/ui/skeleton';
 
 interface DashboardKpisProps {

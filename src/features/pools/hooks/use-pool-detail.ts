@@ -42,7 +42,7 @@ export function usePoolDetailLogic() {
   const error = clientError || poolStateError;
 
   // Mock: Check if user is pool creator (in real app, this would come from backend)
-  const isPoolCreator = true; // Mock: always true for demo
+  const isPoolCreator = true; // Mock : always true for demo
 
   // Calculate max borrow based on user's reputation and tier and pool exposure cap
   const calculateMaxBorrow = (poolState: PoolState | null | undefined) => {
@@ -66,9 +66,41 @@ export function usePoolDetailLogic() {
     return num.toLocaleString(undefined, { maximumFractionDigits: 2 });
   };
 
-  const formatBasisPoints = (value: string): string => {
-    const num = Number(value) / 100;
+  // Format basis points - contract stores with extra precision
+  const formatBasisPoints = (value: string, divisor: number = 100000): string => {
+    const num = Number(value) / divisor;
     return `${num.toFixed(2)}%`;
+  };
+
+  // Format Optimal Utilization: divide by 10000000 * 100 = 1000000000
+  const formatOptimalUtilization = (value: string): string => {
+    return formatBasisPoints(value, 1000000000);
+  };
+
+  // Format Max Rate: divide by 10000000 * 100 = 1000000000
+  const formatMaxRate = (value: string): string => {
+    return formatBasisPoints(value, 1000000000);
+  };
+
+  // Format Slope 2: divide by 10000000 * 100 = 1000000000
+  const formatSlope2 = (value: string): string => {
+    return formatBasisPoints(value, 1000000000);
+  };
+
+  // Format Cooldown Period: divide by 86400 * 1000 = 86400000
+  const formatCooldownPeriod = (value: string): string => {
+    const days = Math.floor(Number(value) / 86400000);
+    return `${days}d`;
+  };
+
+  // Format large basis points (for other fields that need 10000000)
+  const formatLargeBasisPoints = (value: string): string => {
+    return formatBasisPoints(value, 10000000);
+  };
+
+  // Format medium basis points (like Slope 1, Boost)
+  const formatMediumBasisPoints = (value: string): string => {
+    return formatBasisPoints(value, 1000000000);
   };
 
   const maxBorrow = useMemo(() => {
@@ -93,6 +125,12 @@ export function usePoolDetailLogic() {
     formatInterestRate,
     formatPoolStateValue,
     formatBasisPoints,
+    formatOptimalUtilization,
+    formatMaxRate,
+    formatSlope2,
+    formatCooldownPeriod,
+    formatLargeBasisPoints,
+    formatMediumBasisPoints,
   };
 }
 

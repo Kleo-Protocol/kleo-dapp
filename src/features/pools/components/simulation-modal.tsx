@@ -12,7 +12,7 @@ import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { Button } from '@/shared/ui/button';
 import { AlertTriangle, TrendingUp, DollarSign, Shield } from 'lucide-react';
-import type { LoanDetails } from '@/services/mock/loans.mock';
+import type { LoanDetails } from '@/lib/types';
 
 interface SimulationModalProps {
   loanId: string;
