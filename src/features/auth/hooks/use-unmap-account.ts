@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTypink, checkBalanceSufficiency, txToaster } from 'typink';
+import { logger } from '@/lib/logger';
 
 export function useUnmapAccount(onSuccess?: () => void) {
   const { client, connectedAccount } = useTypink();
@@ -29,8 +30,9 @@ export function useUnmapAccount(onSuccess?: () => void) {
         })
         .untilFinalized();
     } catch (error: unknown) {
-      console.error('Error unmapping account:', error);
-      toaster.onTxError(error as Error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error unmapping account', { error: err.message }, err);
+      toaster.onTxError(err);
     } finally {
       setIsLoading(false);
     }

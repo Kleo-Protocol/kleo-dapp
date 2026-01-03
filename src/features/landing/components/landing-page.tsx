@@ -27,7 +27,7 @@ export function LandingPage() {
                 <ArrowRight className="size-5" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="secondary">
+            <Button asChild size="lg" variant="accent">
               <Link href="/pools">Explore Pools</Link>
             </Button>
           </div>
@@ -50,11 +50,11 @@ export function LandingPage() {
             {/* Step 1 */}
             <Card className="flex flex-col">
               <CardHeader>
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary">
-                  <Shield className="size-6 text-secondary-foreground" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-atomic-tangerine/10">
+                  <Shield className="size-6 text-atomic-tangerine" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-muted-foreground">Step 1</span>
+                  <span className="text-sm font-semibold text-atomic-tangerine">Step 1</span>
                 </div>
                 <CardTitle className="text-xl">Build Your Reputation</CardTitle>
               </CardHeader>
@@ -69,11 +69,11 @@ export function LandingPage() {
             {/* Step 2 */}
             <Card className="flex flex-col">
               <CardHeader>
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary">
-                  <Users className="size-6 text-secondary-foreground" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-amber-honey/10">
+                  <Users className="size-6 text-amber-honey" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-muted-foreground">Step 2</span>
+                  <span className="text-sm font-semibold text-amber-honey">Step 2</span>
                 </div>
                 <CardTitle className="text-xl">Join a Lending Pool</CardTitle>
               </CardHeader>
@@ -88,11 +88,11 @@ export function LandingPage() {
             {/* Step 3 */}
             <Card className="flex flex-col">
               <CardHeader>
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-secondary">
-                  <TrendingUp className="size-6 text-secondary-foreground" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-atomic-tangerine/10">
+                  <TrendingUp className="size-6 text-atomic-tangerine" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-muted-foreground">Step 3</span>
+                  <span className="text-sm font-semibold text-atomic-tangerine">Step 3</span>
                 </div>
                 <CardTitle className="text-xl">Access Capital</CardTitle>
               </CardHeader>
@@ -124,7 +124,7 @@ export function LandingPage() {
                   <ArrowRight className="size-5" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="secondary">
+              <Button asChild size="lg" variant="accent">
                 <Link href="/pools">Become a Lender</Link>
               </Button>
             </div>

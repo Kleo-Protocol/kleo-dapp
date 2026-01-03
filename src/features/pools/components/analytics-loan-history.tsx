@@ -188,7 +188,7 @@ export function AnalyticsLoanHistory({ loans = mockLoans, isLoading = false, isC
                   </TableCell>
                   <TableCell>
                     {loan.status === 'completed' ? (
-                      <span className="font-medium text-green-600">
+                      <span className="font-medium text-forest-green">
                         {formatBalance(loan.repaidAmount)} tokens
                       </span>
                     ) : (

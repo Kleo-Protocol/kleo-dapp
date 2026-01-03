@@ -11,9 +11,8 @@ import {
   TableRow,
 } from '@/shared/ui/table';
 import { Button } from '@/shared/ui/button';
-import { Badge } from '@/shared/ui/badge';
 import { Skeleton } from '@/shared/ui/skeleton';
-import { Users, Clock, TrendingUp, AlertCircle, Inbox } from 'lucide-react';
+import { Users, Clock, TrendingUp, Inbox } from 'lucide-react';
 import { SimulationModal } from './simulation-modal';
 import { BackModal } from './back-modal';
 import { EmptyState } from '@/shared/components/empty-state';
@@ -139,7 +138,7 @@ export function PendingRequestsTable({ requests = mockRequests, isLoading = fals
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                      <div className="flex-1 h-2 bg-anti-flash-white/40 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-slate-900 rounded-full"
                           style={{ width: `${request.progress}%` }}

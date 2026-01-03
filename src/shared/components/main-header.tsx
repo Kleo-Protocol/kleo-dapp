@@ -1,18 +1,22 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/shared/ui/button';
 import { useState } from 'react';
-import { User, LayoutDashboard, Building2, Menu, X } from 'lucide-react';
+import { User, LayoutDashboard, Building2, Menu, X, LogOut } from 'lucide-react';
 import { AccountSelection } from '@/shared/components/account-selection';
 import { WalletSelection } from '@/shared/components/wallet-selection';
 import { useTypink } from 'typink';
+import { useSupabaseUser } from '@/hooks/useSupabaseUser';
+import { signOut } from '@/services/authService';
 
 export function MainHeader() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { accounts } = useTypink();
+  const { user, loading: authLoading } = useSupabaseUser();
 
   const isActive = (path: string) => {
     return pathname === path || pathname?.startsWith(path + '/');
@@ -23,6 +27,11 @@ export function MainHeader() {
     { path: '/pools', label: 'Pools', icon: Building2 },
     { path: '/profile', label: 'Profile', icon: User },
   ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/signin');
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-card/80 backdrop-blur-md shadow-lg">
@@ -50,7 +59,7 @@ export function MainHeader() {
                   asChild
                   variant={isActive(link.path) ? 'secondary' : 'ghost'}
                   size="sm"
-                  className="gap-2"
+                  className={`gap-2 ${isActive(link.path) ? 'text-atomic-tangerine border-atomic-tangerine/30' : ''}`}
                 >
                   <Link href={link.path}>
                     <Icon className="size-4" />
@@ -61,12 +70,28 @@ export function MainHeader() {
             })}
           </nav>
 
-          {/* Wallet State & Mobile Menu Button */}
+          {/* Auth State, Wallet & Mobile Menu Button */}
           <div className="flex items-center gap-3">
-            {/* Wallet Selection */}
+            {/* Wallet Selection (for blockchain transactions) */}
             <div className="hidden sm:flex">
               {accounts.length > 0 ? <AccountSelection /> : <WalletSelection />}
             </div>
+
+            {/* Supabase Auth State */}
+            {!authLoading && (
+              <div className="hidden sm:flex items-center gap-2">
+                {user ? (
+                  <Button variant="ghost" size="sm" onClick={handleSignOut} className="gap-2">
+                    <LogOut className="size-4" />
+                    Sign Out
+                  </Button>
+                ) : (
+                  <Button variant="secondary" size="sm" asChild>
+                    <Link href="/signin">Sign In</Link>
+                  </Button>
+                )}
+              </div>
+            )}
 
             {/* Mobile Menu Button */}
             <Button
@@ -106,6 +131,23 @@ export function MainHeader() {
               <div className="mt-2">
                 {accounts.length > 0 ? <AccountSelection /> : <WalletSelection />}
               </div>
+              {/* Mobile Auth State */}
+              {!authLoading && (
+                <div className="mt-2 border-t border-border/50 pt-2">
+                  {user ? (
+                    <Button variant="ghost" size="sm" onClick={handleSignOut} className="justify-start gap-2 w-full">
+                      <LogOut className="size-4" />
+                      Sign Out
+                    </Button>
+                  ) : (
+                    <Button variant="secondary" size="sm" asChild className="w-full">
+                      <Link href="/signin" onClick={() => setMobileMenuOpen(false)}>
+                        Sign In
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              )}
             </nav>
           </div>
         )}

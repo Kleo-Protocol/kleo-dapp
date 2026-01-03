@@ -10,7 +10,7 @@ import { useIncomeReferenceForm } from '@/features/profile/hooks/use-income-refe
 import type { Profile } from '@/services/mock/profile.mock';
 
 interface IncomeReferenceFormProps {
-  profile: Profile | undefined;
+  profile: Profile | null | undefined;
   isLoading: boolean;
   walletAddress: string | undefined;
 }

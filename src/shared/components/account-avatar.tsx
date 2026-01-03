@@ -30,7 +30,7 @@ export function AccountAvatar({ account, size = 32, showWalletIndicator = true, 
       {/* Wallet indicator */}
       {showWalletIndicator && wallet && (
         <div
-          className='absolute bottom-[2px] right-[-1px] flex items-center justify-center bg-white border border-gray-300 rounded-full overflow-hidden'
+          className='absolute bottom-[2px] right-[-1px] flex items-center justify-center bg-anti-flash-white border border-gray-300 rounded-full overflow-hidden'
           style={{
             width: `${indicatorSize}px`,
             height: `${indicatorSize}px`,

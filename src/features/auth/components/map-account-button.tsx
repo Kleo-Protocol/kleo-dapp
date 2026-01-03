@@ -5,7 +5,7 @@ import { useMapAccount } from '@/features/auth/hooks/use-map-account';
 export interface MapAccountButtonProps {
   onSuccess?: () => void;
   size?: 'default' | 'sm' | 'lg' | 'icon';
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?: 'primary' | 'secondary' | 'accent' | 'ghost' | 'danger';
   children?: ReactNode;
   refresh?: () => Promise<void>;
 }
@@ -13,7 +13,7 @@ export interface MapAccountButtonProps {
 export default function MapAccountButton({
   onSuccess,
   size = 'sm',
-  variant = 'default',
+  variant = 'primary',
   children = 'Map Account',
 }: MapAccountButtonProps) {
   const { isLoading, isDisabled, handleMapAccount } = useMapAccount(onSuccess);

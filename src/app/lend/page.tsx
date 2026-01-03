@@ -96,7 +96,7 @@ function LendContent() {
               <p className='text-sm text-muted-foreground'>
                 No loan requests available at the moment.
               </p>
-              <Button className='w-full' variant='outline'>
+              <Button className='w-full' variant='secondary'>
                 Browse Loans
               </Button>
             </div>
@@ -113,7 +113,7 @@ function LendContent() {
               <p className='text-sm text-muted-foreground'>
                 You haven't funded any loans yet.
               </p>
-              <Button className='w-full' variant='outline'>
+              <Button className='w-full' variant='secondary'>
                 View Portfolio
               </Button>
             </div>

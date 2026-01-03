@@ -6,7 +6,7 @@ import { useUpdateIncomeReference } from '@/features/profile/hooks/use-profile';
 import type { Profile } from '@/services/mock/profile.mock';
 
 interface UseIncomeReferenceFormProps {
-  profile: Profile | undefined;
+  profile: Profile | null | undefined;
   walletAddress: string | undefined;
 }
 

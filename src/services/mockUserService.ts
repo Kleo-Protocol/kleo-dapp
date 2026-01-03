@@ -1,9 +1,12 @@
 /**
- * Mock service para simular el backend de usuarios
- * Este servicio usa localStorage para persistir datos
- * Cuando tengas el backend real, simplemente configura NEXT_PUBLIC_API_BASE
- * y este mock será ignorado automáticamente
+ * Mock service to simulate user backend
+ * This service uses localStorage to persist data
+ * When you have the real backend, simply configure NEXT_PUBLIC_API_BASE
+ * and this mock will be automatically ignored
  */
+
+import { logger } from '@/lib/logger';
+import { STORAGE_KEYS, MOCK_DELAYS } from '@/lib/constants';
 
 interface MockUser {
   address: string;
@@ -11,21 +14,19 @@ interface MockUser {
   registeredAt: number;
 }
 
-const STORAGE_KEY = 'kleo_mock_users';
-
 function getMockUsers(): Map<string, MockUser> {
   if (typeof window === 'undefined') {
     return new Map();
   }
 
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(STORAGE_KEYS.MOCK_USERS);
     if (stored) {
       const users = JSON.parse(stored) as MockUser[];
       return new Map(users.map((user) => [user.address, user]));
     }
   } catch (error) {
-    console.warn('Error reading mock users from localStorage:', error);
+    logger.warn('Error reading mock users from localStorage', { error: error instanceof Error ? error.message : String(error) }, error instanceof Error ? error : undefined);
   }
 
   return new Map();
@@ -38,15 +39,15 @@ function saveMockUsers(users: Map<string, MockUser>): void {
 
   try {
     const usersArray = Array.from(users.values());
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(usersArray));
+    localStorage.setItem(STORAGE_KEYS.MOCK_USERS, JSON.stringify(usersArray));
   } catch (error) {
-    console.warn('Error saving mock users to localStorage:', error);
+    logger.warn('Error saving mock users to localStorage', { error: error instanceof Error ? error.message : String(error) }, error instanceof Error ? error : undefined);
   }
 }
 
 export async function mockCheckUserRegistration(address: string): Promise<{ exists: boolean; role?: 'lender' | 'borrower' }> {
-  // Simular delay de red
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, MOCK_DELAYS.SHORT));
 
   const users = getMockUsers();
   const user = users.get(address);
@@ -64,8 +65,8 @@ export async function mockCheckUserRegistration(address: string): Promise<{ exis
 }
 
 export async function mockRegisterUser(address: string, role: 'lender' | 'borrower'): Promise<{ success: boolean; role: 'lender' | 'borrower' }> {
-  // Simular delay de red
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, MOCK_DELAYS.MEDIUM));
 
   const users = getMockUsers();
   
@@ -85,15 +86,15 @@ export async function mockRegisterUser(address: string, role: 'lender' | 'borrow
 }
 
 export async function mockRegisterUserWithoutRole(address: string): Promise<{ success: boolean }> {
-  // Simular delay de red
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, MOCK_DELAYS.MEDIUM));
 
   const users = getMockUsers();
   
-  // Registrar sin rol (el rol se establecerá después)
+  // Register without role (role will be set later)
   const newUser: MockUser = {
     address,
-    role: 'lender', // Rol temporal, se cambiará en el dashboard
+    role: 'lender', // Temporary role, will be changed in dashboard
     registeredAt: Date.now(),
   };
 
@@ -106,11 +107,11 @@ export async function mockRegisterUserWithoutRole(address: string): Promise<{ su
 }
 
 /**
- * Función de utilidad para limpiar los datos mock (útil para testing)
+ * Utility function to clear mock data (useful for testing)
  */
 export function clearMockUsers(): void {
   if (typeof window !== 'undefined') {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEYS.MOCK_USERS);
   }
 }
 

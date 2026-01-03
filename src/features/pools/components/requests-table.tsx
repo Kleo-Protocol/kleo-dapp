@@ -11,7 +11,7 @@ import {
 } from '@/shared/ui/table';
 import { Badge } from '@/shared/ui/badge';
 import { Skeleton } from '@/shared/ui/skeleton';
-import { Clock, TrendingUp, Users, Inbox } from 'lucide-react';
+import { Clock, Users, Inbox } from 'lucide-react';
 import { EmptyState } from '@/shared/components/empty-state';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
 import type { LoanDetails } from '@/services/mock/loans.mock';
@@ -108,7 +108,7 @@ export function RequestsTable({ requests = mockRequests, isLoading = false }: Re
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div className="flex-1 h-2 bg-anti-flash-white/40 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-slate-900 rounded-full"
                         style={{ width: `${request.progress}%` }}

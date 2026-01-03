@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
-import { AlertTriangle, DollarSign, TrendingDown, Shield } from 'lucide-react';
+import { AlertTriangle, TrendingDown, Shield } from 'lucide-react';
 import { formatBalance } from '@/shared/utils/format';
 import { useUserStore } from '@/store/user.store';
 
@@ -13,7 +13,7 @@ interface LenderPositionCardProps {
 }
 
 export function LenderPositionCard({ totalBacked, activeBacks, defaultedBacks }: LenderPositionCardProps) {
-  const { capital, reputation, tier } = useUserStore();
+  const { capital, reputation } = useUserStore();
 
   const capitalAtRisk = Number(totalBacked) / 1e18;
   const capitalPercentage = capital > 0 ? (capitalAtRisk / capital) * 100 : 0;

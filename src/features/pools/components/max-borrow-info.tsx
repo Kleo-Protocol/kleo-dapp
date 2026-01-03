@@ -13,7 +13,7 @@ interface MaxBorrowInfoProps {
 }
 
 export function MaxBorrowInfo({ pool }: MaxBorrowInfoProps) {
-  const { reputation, tier, capital } = useUserStore();
+  const { reputation, tier } = useUserStore();
 
   // Mock calculation: max borrow based on reputation and tier
   const calculateMaxBorrow = () => {

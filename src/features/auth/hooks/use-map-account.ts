@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { txToaster, useTypink, checkBalanceSufficiency } from 'typink';
+import { logger } from '@/lib/logger';
 
 export function useMapAccount(onSuccess?: () => void) {
   const { client, connectedAccount } = useTypink();
@@ -29,8 +30,9 @@ export function useMapAccount(onSuccess?: () => void) {
         })
         .untilFinalized();
     } catch (error: unknown) {
-      console.error('Error mapping account:', error);
-      toaster.onTxError(error as Error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error mapping account', { error: err.message }, err);
+      toaster.onTxError(err);
     } finally {
       setIsLoading(false);
     }

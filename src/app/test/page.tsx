@@ -1,9 +1,9 @@
 'use client';
 import React, { useMemo } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/card';
+import { Card, CardTitle } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
-import { ArrowRight, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 import Image from 'next/image';
 
 const colorClasses = [
@@ -23,7 +23,6 @@ export default function page() {
   return (
     <div className='flex flex-wrap gap-4 p-4'>
       <CustomCard
-        title='Card'
         specialBadge='TOP APY'
         tokens={['KSM', 'USDT', 'DOT']}
         apy={100}
@@ -35,14 +34,12 @@ export default function page() {
 }
 
 function CustomCard({
-  title,
   specialBadge,
   tokens,
   apy,
   poolName,
   totalVolume,
 }: {
-  title: string;
   specialBadge?: string;
   tokens: string[];
   apy: number | string;
@@ -52,9 +49,9 @@ function CustomCard({
   const randomColorClass = useMemo(() => getRandomColorClass(), []);
 
   return (
-    <Card className='bg-white w-fit border-none px-10 py-8 flex flex-col items-start gap-4'>
+    <Card className='bg-anti-flash-white w-fit border-none px-10 py-8 flex flex-col items-start gap-4'>
       {specialBadge && (
-        <Badge variant='outline' className={randomColorClass}>
+        <Badge variant='verde' className={randomColorClass}>
           {specialBadge}
         </Badge>
       )}
@@ -66,7 +63,7 @@ function CustomCard({
             alt={token}
             width={30}
             height={30}
-            className='relative z-10 border-2 border-white rounded-full'
+            className='relative z-10 border-2 border-anti-flash-white rounded-full'
             style={{ zIndex: tokens.length - index }}
           />
         ))}

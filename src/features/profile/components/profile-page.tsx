@@ -9,11 +9,15 @@ import { Skeleton } from '@/shared/ui/skeleton';
 import { Card } from '@/shared/ui/card';
 import { useProfileSync } from '@/features/profile/hooks/use-profile-sync';
 import { useTypink } from 'typink';
+import { MOCK_ADDRESSES } from '@/lib/constants';
 
 export function ProfilePage() {
   const { connectedAccount } = useTypink();
-  const { profile, isLoading: profileLoading } = useProfileSync(connectedAccount.address);
-  const { data: stats, isLoading: statsLoading } = useProfileStats(connectedAccount.address);
+  // Use connected wallet address or fallback to mock address for development
+  const walletAddress = connectedAccount?.address || MOCK_ADDRESSES.DEFAULT;
+  
+  const { profile, isLoading: profileLoading } = useProfileSync(walletAddress);
+  const { data: stats, isLoading: statsLoading } = useProfileStats(walletAddress);
 
   if (profileLoading) {
     return (
@@ -34,7 +38,7 @@ export function ProfilePage() {
         <IncomeReferenceForm
           profile={profile}
           isLoading={profileLoading}
-          walletAddress={connectedAccount.address}
+          walletAddress={walletAddress}
         />
       </div>
 

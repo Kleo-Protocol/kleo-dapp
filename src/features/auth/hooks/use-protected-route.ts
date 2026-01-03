@@ -1,35 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useTypink } from 'typink';
+import { useSupabaseUser } from '@/hooks/useSupabaseUser';
 
+/**
+ * Hook para proteger rutas basado en sesión de Supabase
+ * El middleware ya maneja las redirecciones, este hook solo verifica el estado del usuario
+ */
 export function useProtectedRoute() {
-  const router = useRouter();
-  const { accounts, connectedAccount } = useTypink();
-  const [isChecking, setIsChecking] = useState(true);
+  const { user, loading } = useSupabaseUser();
 
-  const isWalletConnected = accounts.length > 0 && connectedAccount !== null;
-
-  useEffect(() => {
-    // Dar un pequeño delay para permitir que typink se inicialice
-    const timer = setTimeout(() => {
-      setIsChecking(false);
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    // Si no hay wallet conectada, redirigir a la landing page
-    if (!isChecking && !isWalletConnected) {
-      router.replace('/');
-    }
-  }, [isChecking, isWalletConnected, router]);
-
+  // Si está cargando, mostrar loading
+  // Si no está cargando y hay usuario, está autenticado
+  // Si no está cargando y no hay usuario, el middleware debería haber redirigido
   return {
-    isChecking,
-    isWalletConnected,
+    isChecking: loading,
+    isAuthenticated: !!user && !loading,
   };
 }
 

@@ -3,8 +3,6 @@ import { useKleoClient } from '@/providers/kleo-client-provider';
 import {
   getPoolStats,
   updatePoolLiquidity,
-  type Pool,
-  type PoolStats,
 } from '@/services/mock/pools.mock';
 import { useTypink } from 'typink';
 
@@ -130,7 +128,7 @@ export function usePoolStats(poolId: string | undefined) {
       return getPoolStats(poolId);
     },
     enabled: !!poolId,
-    staleTime: 60000, // 1 minute
+    staleTime: QUERY_STALE_TIMES.POOL_STATS,
   });
 }
 

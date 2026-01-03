@@ -1,11 +1,6 @@
 ---
-globs:
-  - "**/*.{ts,tsx,js,jsx}"
-  - "src/**/*"
-  - "tailwind.config.ts"
-  - "next.config.*"
+alwaysApply: true
 ---
-
 # Project Rules
 
 ## Typography
@@ -24,6 +19,7 @@ globs:
   - `cetacean-blue`: `#01091C`
   - `oxford-blue`: `#061A4B`
   - `anti-flash-white`: `#F2F2F2`
+  - `forest-green`: `#00282C`
 
 ## Project Structure
 - Keep the project as a single Next.js app in the root (no monorepo layout)

@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model UserProfile {
+  id            String   @id @default(uuid())
+  userId        String   @unique      // auth.users.id (UUID from Supabase)
+  name          String
+  surname       String
+  email         String   @unique
+  walletAddress String?  // Polkadot/Substrate address (optional)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([walletAddress])
+}

@@ -55,7 +55,7 @@ export function AccountSelection() {
             setConnectedAccount(selectedAccount);
           }
         }}>
-        <SelectTrigger className='bg-white'>
+        <SelectTrigger>
           <SelectValue>
             <div className='flex items-center gap-2'>
               <AccountAvatar account={connectedAccount} className='mt-1' />
@@ -75,7 +75,7 @@ export function AccountSelection() {
             <SelectItem
               key={one.address}
               value={one.address}
-              className='*:[span]:first:hidden *:[span]:last:block *:[span]:last:w-full data-[state=checked]:bg-green-200/30 pr-2'>
+              className='*:[span]:first:hidden *:[span]:last:block *:[span]:last:w-full data-[state=checked]:bg-forest-green/20 pr-2'>
               <div className='flex items-start w-full gap-3 py-1'>
                 <AccountAvatar account={one} size={32} className='mt-1' />
                 <div className='w-full flex flex-col gap-1'>

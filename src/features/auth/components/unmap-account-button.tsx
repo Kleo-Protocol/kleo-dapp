@@ -7,7 +7,7 @@ import { useUnmapAccount } from '@/features/auth/hooks/use-unmap-account';
 export interface UnmapAccountButtonProps {
   onSuccess?: () => void;
   size?: 'default' | 'sm' | 'lg' | 'icon';
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?: 'primary' | 'secondary' | 'accent' | 'ghost' | 'danger';
   children?: ReactNode;
   refresh?: () => Promise<void>;
 }
@@ -15,7 +15,7 @@ export interface UnmapAccountButtonProps {
 export default function UnmapAccountButton({
   onSuccess,
   size = 'sm',
-  variant = 'default',
+  variant = 'primary',
   children = 'Unmap Account',
 }: UnmapAccountButtonProps) {
   const { isLoading, isDisabled, handleUnmapAccount } = useUnmapAccount(onSuccess);

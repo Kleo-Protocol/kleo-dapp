@@ -1,40 +1,32 @@
 'use client';
 
 import { Suspense } from 'react';
-import { TypinkIntro } from '@/shared/components/typink-intro';
-import { useDashboard } from '@/features/auth/hooks/use-dashboard';
+import { DashboardContent } from '@/features/dashboard/components/dashboard-content';
+import { Skeleton } from '@/shared/ui/skeleton';
 
-function DashboardContent() {
-  const { userRole, shouldShowContent } = useDashboard();
-
-  if (!shouldShowContent) {
-    return (
-      <div className='py-16 text-center text-muted-foreground'>
-        Preparing your dashboard...
-      </div>
-    );
-  }
-
-  // Mostrar dashboard normal
+function DashboardLoading() {
   return (
-    <div>
-      <TypinkIntro />
-      {userRole && (
-        <div className='mt-4 text-center text-sm text-muted-foreground'>
-          Role: <span className='font-semibold capitalize'>{userRole}</span>
-        </div>
-      )}
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-6 w-96" />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <Skeleton key={i} className="h-32 rounded-lg" />
+        ))}
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Skeleton className="h-96 rounded-lg" />
+        <Skeleton className="h-96 rounded-lg" />
+      </div>
     </div>
   );
 }
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={
-      <div className='py-16 text-center text-muted-foreground'>
-        Loading dashboard...
-      </div>
-    }>
+    <Suspense fallback={<DashboardLoading />}>
       <DashboardContent />
     </Suspense>
   );
