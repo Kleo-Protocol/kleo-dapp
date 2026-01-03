@@ -3,8 +3,10 @@ import { useKleoClient } from '@/providers/kleo-client-provider';
 import {
   getPoolStats,
   updatePoolLiquidity,
+  type Pool,
 } from '@/services/mock/pools.mock';
 import { useTypink } from 'typink';
+import { QUERY_STALE_TIMES } from '@/lib/constants';
 
 // Query keys
 const poolsBaseKey = ['pools'] as const;
@@ -99,6 +101,9 @@ export function usePoolState(poolId: string | undefined) {
       if (!client) {
         throw new Error('Kleo client is not connected');
       }
+      if (!connectedAccount) {
+        throw new Error('No connected account');
+      }
       console.log('Fetching pool state for poolId:', poolId);
       try {
         const result = await client.getPoolState(poolId, connectedAccount.address);
@@ -109,7 +114,7 @@ export function usePoolState(poolId: string | undefined) {
         throw error;
       }
     },
-    enabled: !!poolId && isConnected && !!client,
+    enabled: !!poolId && isConnected && !!client && !!connectedAccount,
     staleTime: 60000, // 1 minute
     retry: false, // Don't retry on error to see the actual error
   });
