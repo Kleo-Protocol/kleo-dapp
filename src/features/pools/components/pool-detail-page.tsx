@@ -34,6 +34,8 @@ export function PoolDetailPage() {
     setActivePoolTab,
     isPoolCreator,
     maxBorrow,
+    depositAmount,
+    setDepositAmount,
     getStatusBadge,
     formatBalance,
     formatInterestRate,
@@ -177,7 +179,7 @@ export function PoolDetailPage() {
                 <span className='text-sm'>Slope 1</span>
               </div>
               <p className='text-xl font-bold text-card-foreground'>
-                {formatMediumBasisPoints(poolState.slope1)}
+                {formatSlope2(poolState.slope1)}
               </p>
             </CardContent>
           </Card>
@@ -271,11 +273,15 @@ export function PoolDetailPage() {
         <TabsContent value='lend'>
           {pool && (
             <div className='space-y-6'>
+              <div className='grid gap-6 lg:grid-cols-2'>
+                <DepositForm pool={pool} onAmountChange={setDepositAmount} />
+                <ApyPreview pool={pool} depositAmount={depositAmount} />
+              </div>
               <LenderPositionCard
-                totalBacked={MOCK_VALUES.TOTAL_BACKED_TOKENS}
                 activeBacks={MOCK_VALUES.ACTIVE_BACKS}
                 defaultedBacks={MOCK_VALUES.DEFAULTED_BACKS}
               />
+              <MyDepositsTable deposits={[]} />
               <PendingRequestsTable requests={[]} />
               <MyBacksTable backs={[]} />
             </div>

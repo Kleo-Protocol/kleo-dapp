@@ -66,13 +66,6 @@ export function DashboardQuickActions({ userRole }: DashboardQuickActionsProps) 
       ]
     : [
         {
-          title: 'Select Role',
-          description: 'Choose to be a lender or borrower',
-          href: '/',
-          icon: User,
-          variant: 'primary' as const,
-        },
-        {
           title: 'Explore Pools',
           description: 'Browse available lending pools',
           href: '/pools',

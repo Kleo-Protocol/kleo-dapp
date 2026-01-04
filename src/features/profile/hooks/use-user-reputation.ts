@@ -22,7 +22,7 @@ export function useUserReputation(userAddress: string | undefined) {
         const root = await contract.storage.root();
         
         // Access userReps mapping from root storage
-        const userReputation = await root.userReps.get(userAddress);
+        const userReputation = await root.user_reps.get(userAddress);
         
         return userReputation ?? null;
       } catch (error) {

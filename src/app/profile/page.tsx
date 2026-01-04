@@ -35,11 +35,6 @@ function ProfileContent() {
   const loanHistory = userReputation?.loanHistory ?? [];
   const vouchHistory = userReputation?.vouchHistory ?? [];
 
-  // Calculate star rating display (max 5 stars for UI)
-  const starRating = useMemo(() => {
-    return Math.min(stars, 5);
-  }, [stars]);
-
   // Get tier display info
   const tierInfo = useMemo(() => {
     const tierMap = {
@@ -92,7 +87,7 @@ function ProfileContent() {
         <AccountAvatar account={connectedAccount} size={80} className='border-4 border-background shadow-lg' />
         <div className='text-center space-y-2'>
           <h1 className='text-3xl font-bold'>{connectedAccount.name || 'Unnamed Account'}</h1>
-          <div className='flex items-center gap-2 text-muted-foreground'>
+          <div className='flex items-center justify-center gap-2 text-muted-foreground'>
             <span className='font-mono text-sm'>{shortenAddress(connectedAccount.address)}</span>
             <Button
               variant='ghost'
@@ -205,28 +200,17 @@ function ProfileContent() {
 
                 {/* Star Rating */}
                 <div className='flex flex-col items-center gap-3'>
-                  <div className='flex items-center gap-1'>
-                    {[...Array(5)].map((_, index) => (
-                      <Star
-                        key={index}
-                        className={`h-6 w-6 ${
-                          index < starRating
-                            ? 'fill-amber-honey text-amber-honey'
-                            : 'fill-none text-muted-foreground/30'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <div className='text-center space-y-1'>
-                    <p className='text-sm font-semibold text-card-foreground'>
-                      {stars > 0 ? `${stars} Stars` : 'No Stars Yet'}
+                  <div className='flex items-center gap-2'>
+                    <Star className='h-6 w-6 fill-amber-honey text-amber-honey' />
+                    <p className='text-lg font-semibold text-card-foreground'>
+                      {stars > 0 ? stars : '0'}
                     </p>
-                    {starsAtStake > 0 && (
-                      <p className='text-xs text-muted-foreground'>
-                        {starsAtStake} stars at stake
-                      </p>
-                    )}
                   </div>
+                  {starsAtStake > 0 && (
+                    <p className='text-xs text-muted-foreground'>
+                      {starsAtStake} stars at stake
+                    </p>
+                  )}
                 </div>
               </div>
             )}
@@ -343,47 +327,6 @@ function ProfileContent() {
           </CardContent>
         </Card>
       )}
-
-      {/* Actions Section */}
-      <Card>
-        <CardHeader>
-          <div className='flex items-center gap-2'>
-            <Settings className='h-5 w-5' />
-            <CardTitle>Quick Actions</CardTitle>
-          </div>
-          <CardDescription>Manage your account and preferences</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className='flex flex-wrap gap-3'>
-            <Button
-              variant='secondary'
-              onClick={() => router.push('/dashboard')}>
-              Go to Dashboard
-            </Button>
-            {userRole === 'lender' && (
-              <Button
-                variant='secondary'
-                onClick={() => router.push('/lend')}>
-                Lend Assets
-              </Button>
-            )}
-            {userRole === 'borrower' && (
-              <Button
-                variant='secondary'
-                onClick={() => router.push('/borrow')}>
-                Borrow Assets
-              </Button>
-            )}
-            {!userRole && (
-              <Button
-                variant='secondary'
-                onClick={() => router.push('/')}>
-                Select Role
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
