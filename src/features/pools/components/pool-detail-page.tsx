@@ -21,7 +21,6 @@ import { AnalyticsKpiCards } from '@/features/pools/components/analytics-kpi-car
 import { AnalyticsCharts } from '@/features/pools/components/analytics-charts';
 import { AnalyticsLoanHistory } from '@/features/pools/components/analytics-loan-history';
 import { usePoolDetailLogic } from '@/features/pools/hooks/use-pool-detail';
-import { MOCK_VALUES } from '@/lib/constants';
 
 export function PoolDetailPage() {
   const {
@@ -277,10 +276,7 @@ export function PoolDetailPage() {
                 <DepositForm pool={pool} onAmountChange={setDepositAmount} />
                 <ApyPreview pool={pool} depositAmount={depositAmount} />
               </div>
-              <LenderPositionCard
-                activeBacks={MOCK_VALUES.ACTIVE_BACKS}
-                defaultedBacks={MOCK_VALUES.DEFAULTED_BACKS}
-              />
+              <LenderPositionCard />
               <MyDepositsTable deposits={[]} />
               <PendingRequestsTable requests={[]} />
               <MyBacksTable backs={[]} />

@@ -9,12 +9,10 @@ import { Skeleton } from '@/shared/ui/skeleton';
 import { Card } from '@/shared/ui/card';
 import { useProfileSync } from '@/features/profile/hooks/use-profile-sync';
 import { useTypink } from 'typink';
-import { MOCK_ADDRESSES } from '@/lib/constants';
 
 export function ProfilePage() {
   const { connectedAccount } = useTypink();
-  // Use connected wallet address or fallback to mock address for development
-  const walletAddress = connectedAccount?.address || MOCK_ADDRESSES.DEFAULT;
+  const walletAddress = connectedAccount?.address;
   
   const { profile, isLoading: profileLoading } = useProfileSync(walletAddress);
   const { data: stats, isLoading: statsLoading } = useProfileStats(walletAddress);

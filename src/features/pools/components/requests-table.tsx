@@ -14,6 +14,7 @@ import { Skeleton } from '@/shared/ui/skeleton';
 import { Clock, Users, Inbox } from 'lucide-react';
 import { EmptyState } from '@/shared/components/empty-state';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
+import { getDaysRemaining } from '@/lib/loan-utils';
 import type { LoanDetails } from '@/lib/types';
 
 interface RequestsTableProps {
@@ -21,34 +22,10 @@ interface RequestsTableProps {
   isLoading?: boolean;
 }
 
-// Mock requests data
-const mockRequests: LoanDetails[] = [
-  {
-    loanId: '0x2222222222222222222222222222222222222222222222222222222222222222',
-    borrower: '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty',
-    requestedAmount: 5000000000000000000n,
-    fundedAmount: 3500000000000000000n,
-    lenderCount: 2,
-    interestRate: 800n,
-    penaltyRate: 300n,
-    duration: BigInt(60 * 24 * 60 * 60),
-    startTime: BigInt(0),
-    dueTime: BigInt(Date.now() + 60 * 24 * 60 * 60 * 1000),
-    status: 'funding',
-    poolId: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
-    createdAt: Date.now() - 5 * 24 * 60 * 60 * 1000,
-    lenders: [],
-    remainingAmount: 1500000000000000000n,
-    progress: 70,
-    daysRemaining: 60,
-    totalRepayment: 5400000000000000000n,
-    isOverdue: false,
-  },
-];
-
-export function RequestsTable({ requests = mockRequests, isLoading = false }: RequestsTableProps) {
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString('en-US', {
+export function RequestsTable({ requests = [], isLoading = false }: RequestsTableProps) {
+  const formatDate = (timestamp: number | bigint) => {
+    const ts = typeof timestamp === 'bigint' ? Number(timestamp) * 1000 : timestamp;
+    return new Date(ts).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -101,39 +78,39 @@ export function RequestsTable({ requests = mockRequests, isLoading = false }: Re
             </TableRow>
           </TableHeader>
           <TableBody>
-            {requests.map((request) => (
-              <TableRow key={request.loanId}>
-                <TableCell className="font-medium">
-                  {formatBalance(request.requestedAmount)} tokens
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 h-2 bg-anti-flash-white/40 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-slate-900 rounded-full"
-                        style={{ width: `${request.progress}%` }}
-                      />
+            {requests.map((request) => {
+              const loanIdStr = request.loanId.toString();
+              const vouchersCount = request.vouchers?.length || 0;
+              
+              return (
+                <TableRow key={loanIdStr}>
+                  <TableCell className="font-medium">
+                    {formatBalance(request.amount)} tokens
+                  </TableCell>
+                  <TableCell>
+                    {/* Progress not applicable - loans are immediately Active when created */}
+                    <span className="text-sm text-slate-600">N/A</span>
+                  </TableCell>
+                  <TableCell>{formatInterestRate(request.interestRate)}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Users className="size-4 text-slate-400" />
+                      {vouchersCount} {vouchersCount === 1 ? 'voucher' : 'vouchers'}
                     </div>
-                    <span className="text-sm text-slate-600 w-12 text-right">{request.progress}%</span>
-                  </div>
-                </TableCell>
-                <TableCell>{formatInterestRate(request.interestRate)}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1">
-                    <Users className="size-4 text-slate-400" />
-                    {request.lenderCount}
-                  </div>
-                </TableCell>
-                <TableCell>{formatDate(request.createdAt)}</TableCell>
-                <TableCell>
-                  {request.status === 'pending' ? (
-                    <Badge variant="amarillo">Pending</Badge>
-                  ) : (
-                    <Badge variant="verde">Funding</Badge>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell>{formatDate(request.startTime)}</TableCell>
+                  <TableCell>
+                    {request.status === 'Active' ? (
+                      <Badge variant="verde">Active</Badge>
+                    ) : request.status === 'Repaid' ? (
+                      <Badge variant="verde">Repaid</Badge>
+                    ) : (
+                      <Badge variant="rojo">Defaulted</Badge>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </CardContent>

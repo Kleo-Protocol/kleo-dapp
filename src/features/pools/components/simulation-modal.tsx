@@ -46,7 +46,7 @@ export function SimulationModal({ loan, open, onOpenChange }: SimulationModalPro
 
   const amountNum = parseFloat(amount) || 0;
   const interestRate = Number(loan.interestRate) / 100;
-  const durationDays = Math.floor(Number(loan.duration) / (24 * 60 * 60));
+  const durationDays = Math.floor(Number(loan.term) / (24 * 60 * 60));
   
   // Mock calculations
   const estimatedReturn = amountNum > 0 ? (amountNum * interestRate * durationDays) / 365 : 0;
@@ -77,7 +77,7 @@ export function SimulationModal({ loan, open, onOpenChange }: SimulationModalPro
           <div className="rounded-lg border border-slate-200 bg-anti-flash-white/50 p-4 space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-600">Loan Amount</span>
-              <span className="font-semibold text-slate-900">{formatBalance(Number(loan.requestedAmount) / 1e18)} tokens</span>
+              <span className="font-semibold text-slate-900">{formatBalance(Number(loan.amount) / 1e18)} tokens</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-600">Interest Rate</span>

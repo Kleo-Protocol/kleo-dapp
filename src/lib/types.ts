@@ -60,37 +60,45 @@ export interface ProfileStats {
   onTimePaymentRate: number; // Percentage 0-100
 }
 
-// Loan types
-export type LoanStatus = 'pending' | 'funding' | 'active' | 'completed' | 'defaulted' | 'cancelled';
+// Loan types - matching contract structure
+// Contract status: "Active" | "Repaid" | "Defaulted"
+export type LoanStatus = 'Active' | 'Repaid' | 'Defaulted';
 
-export interface Loan {
-  loanId: string; // Hash
-  borrower: string; // Address
-  requestedAmount: bigint; // Balance
-  fundedAmount: bigint; // Balance
-  lenderCount: number; // u32
-  interestRate: bigint; // u64 - in basis points
-  penaltyRate: bigint; // u64 - in basis points
-  duration: bigint; // u64 - in seconds
-  startTime: bigint; // Timestamp
-  dueTime: bigint; // Timestamp
-  status: LoanStatus;
-  poolId: string; // Hash
-  createdAt: number; // Timestamp for mock data
+// Contract loan structure (matches LoanManagerLoan from contract)
+export interface ContractLoan {
+  loanId: bigint;
+  borrower: string; // AccountId32 as string
+  amount: bigint; // Balance - the loan amount
+  interestRate: bigint; // Interest rate (basis points or similar)
+  term: bigint; // Duration in seconds
+  purpose: Uint8Array | string; // Bytes - loan purpose
+  startTime: bigint; // Timestamp in seconds
+  status: LoanStatus; // "Active" | "Repaid" | "Defaulted"
+  vouchers: string[]; // Array of AccountId32 addresses
 }
 
+// UI loan type with computed/derived fields for display
+export interface Loan extends ContractLoan {
+  // Computed fields
+  dueTime: bigint; // startTime + term
+  totalRepayment: bigint; // amount + interest
+  daysRemaining: number; // Calculated from dueTime
+  isOverdue: boolean; // true if current time > dueTime and status is Active
+  purposeText?: string; // Decoded purpose text
+}
+
+// Extended loan details for detailed views
+export interface LoanDetails extends Loan {
+  // Additional UI fields
+  progress?: number; // Percentage 0-100 (for funding progress if applicable)
+  remainingAmount?: bigint; // For partial repayments
+}
+
+// Legacy type for backward compatibility during migration
+// @deprecated Use Loan or ContractLoan instead
 export interface LoanLender {
   loanId: string;
   lenderAddress: string;
-  amount: bigint; // Balance
-  contributedAt: number; // Timestamp
-}
-
-export interface LoanDetails extends Loan {
-  lenders: LoanLender[];
-  remainingAmount: bigint;
-  progress: number; // Percentage 0-100
-  daysRemaining: number;
-  totalRepayment: bigint;
-  isOverdue: boolean;
+  amount: bigint;
+  contributedAt: number;
 }

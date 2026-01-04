@@ -69,9 +69,12 @@ export function BackModal({ loan, open, onOpenChange }: BackModalProps) {
       return;
     }
 
-    const maxAmount = Number(loan.remainingAmount) / 1e18;
-    if (amountNum > maxAmount) {
-      setError(`Amount exceeds remaining funding needed (${formatBalance(maxAmount)} tokens)`);
+    // Note: In the contract, loans are immediately funded when created (status becomes Active)
+    // There's no "remaining amount" concept. This component may need to be rethought
+    // for the actual contract flow where vouchers stake capital upfront.
+    const loanAmount = Number(loan.amount) / 1e18;
+    if (amountNum > loanAmount) {
+      setError(`Amount exceeds loan amount (${formatBalance(loanAmount)} tokens)`);
       return;
     }
 
@@ -97,7 +100,7 @@ export function BackModal({ loan, open, onOpenChange }: BackModalProps) {
 
   const amountNum = parseFloat(amount) || 0;
   const interestRate = Number(loan.interestRate) / 100;
-  const durationDays = Math.floor(Number(loan.duration) / (24 * 60 * 60));
+  const durationDays = Math.floor(Number(loan.term) / (24 * 60 * 60));
   const estimatedReturn = amountNum > 0 ? (amountNum * interestRate * durationDays) / 365 : 0;
   const totalReturn = amountNum + estimatedReturn;
   const capitalExposure = (amountNum / capital) * 100;
@@ -121,7 +124,7 @@ export function BackModal({ loan, open, onOpenChange }: BackModalProps) {
           <div className="rounded-lg border border-border bg-secondary/50 p-4 space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Loan Amount</span>
-              <span className="font-semibold text-card-foreground">{formatBalance(Number(loan.requestedAmount) / 1e18)} tokens</span>
+              <span className="font-semibold text-card-foreground">{formatBalance(Number(loan.amount) / 1e18)} tokens</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Interest Rate</span>

@@ -15,7 +15,12 @@ interface MaxBorrowInfoProps {
 export function MaxBorrowInfo({ pool }: MaxBorrowInfoProps) {
   const { reputation, tier } = useUserStore();
 
-  // Mock calculation: max borrow based on reputation and tier
+  // Calculate max borrow based on reputation and tier
+  // This is a client-side estimation. The actual borrowing capacity is determined by the contract
+  // based on tier requirements (stars and vouches) as per the protocol:
+  // Tier 1: < 1,000 units, Min Stars: 5, Min Vouches: 1
+  // Tier 2: 1,000 - 10,000 units, Min Stars: 20, Min Vouches: 2
+  // Tier 3: > 10,000 units, Min Stars: 50, Min Vouches: 3
   const calculateMaxBorrow = () => {
     const baseMultiplier = tier === 'verde' ? 10 : tier === 'amarillo' ? 5 : 2;
     const reputationMultiplier = Math.floor(reputation / 100);

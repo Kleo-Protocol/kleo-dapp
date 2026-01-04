@@ -17,6 +17,7 @@ import { Calendar, DollarSign, Inbox } from 'lucide-react';
 import { RepayModal } from './repay-modal';
 import { EmptyState } from '@/shared/components/empty-state';
 import { formatBalance } from '@/shared/utils/format';
+import { getDaysRemaining, isLoanOverdue } from '@/lib/loan-utils';
 import type { LoanDetails } from '@/lib/types';
 
 interface LoansTableProps {
@@ -24,35 +25,11 @@ interface LoansTableProps {
   isLoading?: boolean;
 }
 
-// Mock active loans data
-const mockLoans: LoanDetails[] = [
-  {
-    loanId: '0x1111111111111111111111111111111111111111111111111111111111111111',
-    borrower: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
-    requestedAmount: 10000000000000000000n,
-    fundedAmount: 10000000000000000000n,
-    lenderCount: 5,
-    interestRate: 500n,
-    penaltyRate: 200n,
-    duration: BigInt(90 * 24 * 60 * 60),
-    startTime: BigInt(Date.now() - 30 * 24 * 60 * 60 * 1000),
-    dueTime: BigInt(Date.now() + 60 * 24 * 60 * 60 * 1000),
-    status: 'active',
-    poolId: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
-    createdAt: Date.now() - 30 * 24 * 60 * 60 * 1000,
-    lenders: [],
-    remainingAmount: 0n,
-    progress: 100,
-    daysRemaining: 60,
-    totalRepayment: 10500000000000000000n,
-    isOverdue: false,
-  },
-];
-
-export function LoansTable({ loans = mockLoans, isLoading = false }: LoansTableProps) {
+export function LoansTable({ loans = [], isLoading = false }: LoansTableProps) {
   const [repayLoanId, setRepayLoanId] = useState<string | null>(null);
 
   const formatDate = (timestamp: bigint) => {
+    // Timestamp is in seconds, convert to milliseconds
     return new Date(Number(timestamp) * 1000).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -107,45 +84,57 @@ export function LoansTable({ loans = mockLoans, isLoading = false }: LoansTableP
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loans.map((loan) => (
-                <TableRow key={loan.loanId}>
-                  <TableCell className="font-medium">
-                    {formatBalance(loan.fundedAmount)} tokens
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {formatBalance(loan.totalRepayment)} tokens
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="size-4 text-slate-400" />
-                      {formatDate(loan.dueTime)}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {loan.isOverdue ? (
-                      <span className="text-red-600 font-medium">Overdue</span>
-                    ) : (
-                      <span>{loan.daysRemaining} days</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {loan.isOverdue ? (
-                      <Badge variant="rojo">Overdue</Badge>
-                    ) : (
-                      <Badge variant="verde">Active</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => setRepayLoanId(loan.loanId)}
-                    >
-                      Repay
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {loans.map((loan) => {
+                const overdue = isLoanOverdue(loan);
+                const daysRemaining = getDaysRemaining(loan);
+                const loanIdStr = loan.loanId.toString();
+                
+                return (
+                  <TableRow key={loanIdStr}>
+                    <TableCell className="font-medium">
+                      {formatBalance(loan.amount)} tokens
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {formatBalance(loan.totalRepayment)} tokens
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="size-4 text-slate-400" />
+                        {formatDate(loan.dueTime)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {overdue ? (
+                        <span className="text-red-600 font-medium">Overdue</span>
+                      ) : (
+                        <span>{daysRemaining} days</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {loan.status === 'Defaulted' ? (
+                        <Badge variant="rojo">Defaulted</Badge>
+                      ) : loan.status === 'Repaid' ? (
+                        <Badge variant="verde">Repaid</Badge>
+                      ) : overdue ? (
+                        <Badge variant="rojo">Overdue</Badge>
+                      ) : (
+                        <Badge variant="verde">Active</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {loan.status === 'Active' && (
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => setRepayLoanId(loanIdStr)}
+                        >
+                          Repay
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>

@@ -18,6 +18,7 @@ import { BackModal } from './back-modal';
 import { EmptyState } from '@/shared/components/empty-state';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
+import { getDaysRemaining } from '@/lib/loan-utils';
 import type { LoanDetails } from '@/lib/types';
 
 interface PendingRequestsTableProps {
@@ -25,58 +26,13 @@ interface PendingRequestsTableProps {
   isLoading?: boolean;
 }
 
-// Mock pending requests data
-const mockRequests: LoanDetails[] = [
-  {
-    loanId: '0x2222222222222222222222222222222222222222222222222222222222222222',
-    borrower: '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty',
-    requestedAmount: 5000000000000000000n,
-    fundedAmount: 3500000000000000000n,
-    lenderCount: 2,
-    interestRate: 800n,
-    penaltyRate: 300n,
-    duration: BigInt(60 * 24 * 60 * 60),
-    startTime: BigInt(0),
-    dueTime: BigInt(Date.now() + 60 * 24 * 60 * 60 * 1000),
-    status: 'funding',
-    poolId: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
-    createdAt: Date.now() - 5 * 24 * 60 * 60 * 1000,
-    lenders: [],
-    remainingAmount: 1500000000000000000n,
-    progress: 70,
-    daysRemaining: 60,
-    totalRepayment: 5400000000000000000n,
-    isOverdue: false,
-  },
-  {
-    loanId: '0x5555555555555555555555555555555555555555555555555555555555555555',
-    borrower: '5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y',
-    requestedAmount: 3000000000000000000n,
-    fundedAmount: 0n,
-    lenderCount: 0,
-    interestRate: 1200n,
-    penaltyRate: 400n,
-    duration: BigInt(30 * 24 * 60 * 60),
-    startTime: BigInt(0),
-    dueTime: BigInt(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    status: 'pending',
-    poolId: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
-    createdAt: Date.now() - 2 * 24 * 60 * 60 * 1000,
-    lenders: [],
-    remainingAmount: 3000000000000000000n,
-    progress: 0,
-    daysRemaining: 30,
-    totalRepayment: 3300000000000000000n,
-    isOverdue: false,
-  },
-];
-
-export function PendingRequestsTable({ requests = mockRequests, isLoading = false }: PendingRequestsTableProps) {
+export function PendingRequestsTable({ requests = [], isLoading = false }: PendingRequestsTableProps) {
   const [simulationLoanId, setSimulationLoanId] = useState<string | null>(null);
   const [backLoanId, setBackLoanId] = useState<string | null>(null);
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString('en-US', {
+  const formatDate = (timestamp: number | bigint) => {
+    const ts = typeof timestamp === 'bigint' ? Number(timestamp) : timestamp;
+    return new Date(ts).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -131,76 +87,78 @@ export function PendingRequestsTable({ requests = mockRequests, isLoading = fals
               </TableRow>
             </TableHeader>
             <TableBody>
-              {requests.map((request) => (
-                <TableRow key={request.loanId}>
-                  <TableCell className="font-medium">
-                    {formatBalance(request.requestedAmount)} tokens
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-2 bg-anti-flash-white/40 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-slate-900 rounded-full"
-                          style={{ width: `${request.progress}%` }}
-                        />
+              {requests.map((request) => {
+                const loanIdStr = request.loanId.toString();
+                const daysRemaining = getDaysRemaining(request);
+                const termDays = Math.floor(Number(request.term) / (24 * 60 * 60));
+                const vouchersCount = request.vouchers?.length || 0;
+                
+                return (
+                  <TableRow key={loanIdStr}>
+                    <TableCell className="font-medium">
+                      {formatBalance(request.amount)} tokens
+                    </TableCell>
+                    <TableCell>
+                      {/* Progress not applicable for contract loans - they're either Active or not */}
+                      <span className="text-sm text-slate-600">N/A</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <TrendingUp className="size-4 text-slate-400" />
+                        {formatInterestRate(request.interestRate)}
                       </div>
-                      <span className="text-sm text-slate-600 w-12 text-right">{request.progress}%</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <TrendingUp className="size-4 text-slate-400" />
-                      {formatInterestRate(request.interestRate)}
-                    </div>
-                  </TableCell>
-                  <TableCell>{Math.floor(Number(request.duration) / (24 * 60 * 60))} days</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Users className="size-4 text-slate-400" />
-                      {request.lenderCount}
-                    </div>
-                  </TableCell>
-                  <TableCell>{formatDate(request.createdAt)}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() => setSimulationLoanId(request.loanId)}
-                              disabled={isLoading}
-                            >
-                              Simulate
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Preview returns and risks before backing</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="primary"
-                              size="sm"
-                              onClick={() => setBackLoanId(request.loanId)}
-                              disabled={isLoading}
-                            >
-                              Back
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Fund this loan request</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                    <TableCell>{termDays} days</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Users className="size-4 text-slate-400" />
+                        {vouchersCount} {vouchersCount === 1 ? 'voucher' : 'vouchers'}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {formatDate(Number(request.startTime) * 1000)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => setSimulationLoanId(loanIdStr)}
+                                disabled={isLoading}
+                              >
+                                Simulate
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Preview returns and risks before backing</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                onClick={() => setBackLoanId(loanIdStr)}
+                                disabled={isLoading || request.status !== 'Active'}
+                              >
+                                Back
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Fund this loan request</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>

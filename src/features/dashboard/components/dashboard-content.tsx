@@ -13,15 +13,13 @@ import { DashboardKpis } from './dashboard-kpis';
 import { DashboardActivity } from './dashboard-activity';
 import { DashboardQuickActions } from './dashboard-quick-actions';
 import { DashboardPools } from './dashboard-pools';
-import { MOCK_ADDRESSES } from '@/lib/constants';
 
 export function DashboardContent() {
   const { connectedAccount } = useTypink();
   const { userRole } = useAuthStore();
   const { shouldShowContent } = useDashboard();
   
-  // Use connected wallet address or fallback to mock address for development
-  const walletAddress = connectedAccount?.address || MOCK_ADDRESSES.DEFAULT;
+  const walletAddress = connectedAccount?.address;
 
   const { profile, isLoading: profileLoading } = useProfileSync(walletAddress);
   const { data: stats, isLoading: statsLoading } = useProfileStats(walletAddress);
