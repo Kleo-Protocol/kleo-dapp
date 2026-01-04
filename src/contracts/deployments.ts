@@ -17,31 +17,31 @@ export const deployments: ContractDeployment[] = [
   {
     id: ContractId.CONFIG,
     metadata: config,
-    address: '0x899710a044f6472f9acde543063900e11ace3fc2',
+    address: '0x7d5760444f5c7905d0489253958f7e071882c9c1',
     network: paseoAssetHub.id,
   },
   {
     id: ContractId.LENDING_POOL,
     metadata: lendingPool,
-    address: '0xc6d7f618aceb4189dfd7a2fb703efb3811b8ecf0',
+    address: '0xe59e8e263757156190de42e76f76602fd39c013e',
     network: paseoAssetHub.id,
   },
   {
     id: ContractId.REPUTATION,
     metadata: reputation,
-    address: '0x899d7f073aa66fd8af651c82af99d7ec2677a997',
+    address: '0x8c80413949a52ace94cda021b19a6ebd0339f51d',
     network: paseoAssetHub.id,
   },
   {
     id: ContractId.VOUCH,
     metadata: vouch,
-    address: '0xbc6e43400a06c1f0a3d7b062e4595ae8054ce147',
+    address: '0x14b3656b56e1c3330b1cd8e1a9759afbe66d9bff',
     network: paseoAssetHub.id,
   },
   {
     id: ContractId.LOAN_MANAGER,
     metadata: loanManager,
-    address: '0x46bc2b3b3b55e62a1385d91d9985168973457134',
+    address: '0x14b3656b56e1c3330b1cd8e1a9759afbe66d9bff',
     network: paseoAssetHub.id,
   }
 ];
