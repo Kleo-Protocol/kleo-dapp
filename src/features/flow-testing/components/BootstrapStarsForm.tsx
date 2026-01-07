@@ -48,15 +48,10 @@ export function BootstrapStarsForm() {
   };
 
   return (
-    <div style={{ marginBottom: '2rem', padding: '1rem', border: '1px solid #ccc', borderRadius: '4px' }}>
-      <h2 style={{ marginTop: 0 }}>Bootstrap Stars (Admin)</h2>
-      <p style={{ fontSize: '0.9rem', color: '#666' }}>
-        Set stars for test accounts. This is an admin function and will be removed after testing.
-      </p>
-
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <div className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label htmlFor="user-address" style={{ display: 'block', marginBottom: '0.5rem' }}>
+          <label htmlFor="user-address" className="block mb-2 text-sm font-medium text-slate-700">
             User Address (AccountId)
           </label>
           <input
@@ -66,23 +61,17 @@ export function BootstrapStarsForm() {
             onChange={(e) => setUserAddress(e.target.value)}
             placeholder="5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
             disabled={isSubmitting}
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              fontSize: '0.9rem',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-            }}
+            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
           />
           {currentStars !== undefined && userAddress && (
-            <p style={{ marginTop: '0.25rem', fontSize: '0.85rem', color: '#666' }}>
+            <p className="mt-1 text-xs text-slate-600">
               Current stars: {currentStars}
             </p>
           )}
         </div>
 
         <div>
-          <label htmlFor="stars" style={{ display: 'block', marginBottom: '0.5rem' }}>
+          <label htmlFor="stars" className="block mb-2 text-sm font-medium text-slate-700">
             Stars
           </label>
           <input
@@ -93,18 +82,12 @@ export function BootstrapStarsForm() {
             placeholder="100"
             min="0"
             disabled={isSubmitting}
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              fontSize: '0.9rem',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-            }}
+            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
           />
         </div>
 
         {error && (
-          <div style={{ padding: '0.75rem', backgroundColor: '#fee', color: '#c00', borderRadius: '4px' }}>
+          <div className="p-3 bg-red-50 text-red-700 rounded-md text-sm border border-red-200">
             {error}
           </div>
         )}
@@ -112,15 +95,7 @@ export function BootstrapStarsForm() {
         <button
           type="submit"
           disabled={isSubmitting || !userAddress.trim() || !stars.trim()}
-          style={{
-            padding: '0.75rem 1.5rem',
-            fontSize: '1rem',
-            backgroundColor: isSubmitting ? '#ccc' : '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: isSubmitting ? 'not-allowed' : 'pointer',
-          }}
+          className="px-6 py-3 text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors"
         >
           {isSubmitting ? 'Setting Stars...' : 'Set Stars'}
         </button>

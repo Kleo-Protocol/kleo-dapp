@@ -18,23 +18,18 @@ export function LoansList() {
 
   if (allLoanIds.length === 0) {
     return (
-      <div style={{ padding: '1rem', textAlign: 'center', color: '#666' }}>
+      <div className="p-4 text-center text-slate-600">
         No loans found
       </div>
     );
   }
 
   return (
-    <div style={{ marginTop: '1.5rem' }}>
-      <h3 style={{ marginTop: 0, marginBottom: '1rem', fontSize: '1.2rem' }}>
+    <div className="mt-6">
+      <h3 className="text-xl font-semibold mb-4 text-slate-900">
         All Loans ({allLoanIds.length})
       </h3>
-      <div style={{ 
-        display: 'grid', 
-        gap: '1rem',
-        maxHeight: '500px',
-        overflowY: 'auto',
-      }}>
+      <div className="grid gap-4 max-h-[500px] overflow-y-auto">
         {allLoanIds.map((loanId) => {
           const loanIdStr = typeof loanId === 'bigint' ? loanId.toString() : String(loanId);
           return <LoanCard key={loanIdStr} loanId={loanId} />;
@@ -51,26 +46,16 @@ function LoanCard({ loanId }: { loanId: bigint }) {
 
   if (isLoading) {
     return (
-      <div style={{
-        padding: '1rem',
-        border: '1px solid #ddd',
-        borderRadius: '6px',
-        backgroundColor: '#f9f9f9',
-      }}>
-        Loading loan {loanId.toString()}...
+      <div className="p-4 border border-slate-200 rounded-lg bg-slate-50">
+        <p className="text-slate-600">Loading loan {loanId.toString()}...</p>
       </div>
     );
   }
 
   if (!loan) {
     return (
-      <div style={{
-        padding: '1rem',
-        border: '1px solid #ddd',
-        borderRadius: '6px',
-        backgroundColor: '#f9f9f9',
-      }}>
-        Loan {loanId.toString()} not found
+      <div className="p-4 border border-slate-200 rounded-lg bg-slate-50">
+        <p className="text-slate-600">Loan {loanId.toString()} not found</p>
       </div>
     );
   }
@@ -124,64 +109,54 @@ function LoanCard({ loanId }: { loanId: bigint }) {
   };
 
   return (
-    <div style={{
-      padding: '1rem',
-      border: '1px solid #ddd',
-      borderRadius: '6px',
-      backgroundColor: '#fff',
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.75rem' }}>
-        <div>
-          <strong style={{ fontSize: '1.1rem' }}>Loan #{loanId.toString()}</strong>
-          <span style={{
-            marginLeft: '0.5rem',
-            padding: '0.25rem 0.5rem',
-            backgroundColor: getStatusColor(loan.status),
-            color: 'white',
-            borderRadius: '4px',
-            fontSize: '0.85rem',
-            fontWeight: 'bold',
-          }}>
+    <div className="p-4 border border-slate-200 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex justify-between items-start mb-3">
+        <div className="flex items-center gap-2">
+          <strong className="text-lg text-slate-900">Loan #{loanId.toString()}</strong>
+          <span
+            className="px-2 py-1 text-xs font-semibold text-white rounded"
+            style={{ backgroundColor: getStatusColor(loan.status) }}
+          >
             {loan.status}
           </span>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.9rem' }}>
+      <div className="grid grid-cols-2 gap-3 text-sm">
         <div>
-          <strong style={{ color: '#666' }}>Borrower:</strong>
-          <div style={{ marginTop: '0.25rem', fontFamily: 'monospace', fontSize: '0.85rem' }}>
+          <strong className="text-slate-600 font-medium">Borrower:</strong>
+          <div className="mt-1 font-mono text-xs text-slate-800">
             {formatAddress(loan.borrower).slice(0, 10)}...{formatAddress(loan.borrower).slice(-8)}
           </div>
         </div>
 
         <div>
-          <strong style={{ color: '#666' }}>Amount:</strong>
-          <div style={{ marginTop: '0.25rem' }}>
+          <strong className="text-slate-600 font-medium">Amount:</strong>
+          <div className="mt-1 text-slate-800">
             {formatTokenAmount(loan.amount, 18)} tokens
           </div>
         </div>
 
         {repaymentAmount && (
           <div>
-            <strong style={{ color: '#666' }}>Repayment:</strong>
-            <div style={{ marginTop: '0.25rem' }}>
+            <strong className="text-slate-600 font-medium">Repayment:</strong>
+            <div className="mt-1 text-slate-800 font-medium">
               {formatRepaymentAmount(repaymentAmount)} tokens
             </div>
           </div>
         )}
 
         <div>
-          <strong style={{ color: '#666' }}>Interest Rate:</strong>
-          <div style={{ marginTop: '0.25rem' }}>
+          <strong className="text-slate-600 font-medium">Interest Rate:</strong>
+          <div className="mt-1 text-slate-800">
             {(Number(loan.interestRate) / 1000000000).toFixed(2)}%
           </div>
         </div>
 
         {loan.status === 'Pending' && (
           <div>
-            <strong style={{ color: '#666' }}>Vouches:</strong>
-            <div style={{ marginTop: '0.25rem' }}>
+            <strong className="text-slate-600 font-medium">Vouches:</strong>
+            <div className="mt-1 text-slate-800">
               {vouchCount ?? 0}
             </div>
           </div>
@@ -189,8 +164,8 @@ function LoanCard({ loanId }: { loanId: bigint }) {
 
         {loan.status === 'Active' && loan.startTime && (
           <div>
-            <strong style={{ color: '#666' }}>Due Date:</strong>
-            <div style={{ marginTop: '0.25rem', fontSize: '0.85rem' }}>
+            <strong className="text-slate-600 font-medium">Due Date:</strong>
+            <div className="mt-1 text-xs text-slate-700">
               {calculateDueDate()}
             </div>
           </div>
@@ -198,16 +173,16 @@ function LoanCard({ loanId }: { loanId: bigint }) {
 
         {loan.startTime && loan.startTime !== 0n && (
           <div>
-            <strong style={{ color: '#666' }}>Start Time:</strong>
-            <div style={{ marginTop: '0.25rem', fontSize: '0.85rem' }}>
+            <strong className="text-slate-600 font-medium">Start Time:</strong>
+            <div className="mt-1 text-xs text-slate-700">
               {formatDate(loan.startTime)}
             </div>
           </div>
         )}
 
         <div>
-          <strong style={{ color: '#666' }}>Term:</strong>
-          <div style={{ marginTop: '0.25rem' }}>
+          <strong className="text-slate-600 font-medium">Term:</strong>
+          <div className="mt-1 text-slate-800">
             {Math.floor(Number(loan.term) / (1000 * 60 * 60 * 24))} days
           </div>
         </div>

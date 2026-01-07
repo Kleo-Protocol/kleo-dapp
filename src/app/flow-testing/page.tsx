@@ -195,77 +195,39 @@ export default function FlowTestingPage() {
     }
   };
 
-  const stepStyle = {
-    marginBottom: '2rem',
-    padding: '1.5rem',
-    border: '1px solid #ccc',
-    borderRadius: '8px',
-    backgroundColor: '#fff',
-  };
-
-  const formStyle = {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '1rem',
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: '0.75rem',
-    fontSize: '0.9rem',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    boxSizing: 'border-box' as const,
-  };
-
-  const buttonStyle = (disabled: boolean) => ({
-    padding: '0.75rem 1.5rem',
-    fontSize: '1rem',
-    backgroundColor: disabled ? '#ccc' : '#007bff',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-  });
-
   return (
-    <div style={{
-      maxWidth: '900px',
-      margin: '0 auto',
-      padding: '2rem',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-    }}>
-      <header style={{ marginBottom: '2rem' }}>
-        <h1 style={{ margin: 0, fontSize: '2rem', fontWeight: 'bold' }}>
+    <div className="max-w-4xl mx-auto p-8">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">
           Flow Testing
         </h1>
-        <p style={{ marginTop: '0.5rem', color: '#666', fontSize: '0.9rem' }}>
+        <p className="text-slate-600 text-sm mb-2">
           Complete testing flow for Kleo Protocol. All steps available simultaneously.
         </p>
         {connectedAccount && (
-          <p style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#888' }}>
+          <p className="text-xs text-slate-500">
             Connected: {connectedAccount.address.slice(0, 10)}...
           </p>
         )}
       </header>
 
-      <main>
+      <main className="space-y-8">
         {/* Step 1: Bootstrap Stars */}
-        <div style={stepStyle}>
-          <h2 style={{ marginTop: 0, fontSize: '1.5rem' }}>Step 1: Bootstrap Stars (Admin)</h2>
+        <div className="mb-8 p-6 border border-slate-200 rounded-lg bg-white shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-slate-900">Step 1: Bootstrap Stars (Admin)</h2>
           <BootstrapStarsForm />
         </div>
 
         {/* Step 2: Add Liquidity */}
-        <div style={stepStyle}>
-          <h2 style={{ marginTop: 0, fontSize: '1.5rem' }}>Step 2: Add Liquidity</h2>
-          <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
+        <div className="mb-8 p-6 border border-slate-200 rounded-lg bg-white shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-slate-900">Step 2: Add Liquidity</h2>
+          <p className="text-sm text-slate-600 mb-4">
             Deposit tokens to the lending pool. Your balance: {userBalance.toFixed(4)} tokens
             {userDeposit !== undefined && ` | Deposited: ${formatTokenAmount(userDeposit, 10).toFixed(4)} tokens`}
           </p>
-          <form onSubmit={handleDeposit} style={formStyle}>
+          <form onSubmit={handleDeposit} className="flex flex-col gap-4">
             <div>
-              <label htmlFor="deposit-amount" style={{ display: 'block', marginBottom: '0.5rem' }}>
+              <label htmlFor="deposit-amount" className="block mb-2 text-sm font-medium text-slate-700">
                 Deposit Amount (tokens)
               </label>
               <input
@@ -276,13 +238,13 @@ export default function FlowTestingPage() {
                 placeholder="100"
                 step="0.0001"
                 disabled={isDepositing || !connectedAccount}
-                style={inputStyle}
+                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
               />
             </div>
             <button
               type="submit"
               disabled={isDepositing || !connectedAccount || !depositAmount}
-              style={buttonStyle(isDepositing || !connectedAccount || !depositAmount)}
+              className="px-6 py-3 text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors"
             >
               {isDepositing ? 'Depositing...' : 'Deposit'}
             </button>
@@ -290,14 +252,14 @@ export default function FlowTestingPage() {
         </div>
 
         {/* Step 3: Request Loan */}
-        <div style={stepStyle}>
-          <h2 style={{ marginTop: 0, fontSize: '1.5rem' }}>Step 3: Request Loan</h2>
-          <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
+        <div className="mb-8 p-6 border border-slate-200 rounded-lg bg-white shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-slate-900">Step 3: Request Loan</h2>
+          <p className="text-sm text-slate-600 mb-4">
             Request a new loan. Pending: {pendingLoans?.length ?? 0} | Active: {activeLoans?.length ?? 0}
           </p>
-          <form onSubmit={handleRequestLoan} style={formStyle}>
+          <form onSubmit={handleRequestLoan} className="flex flex-col gap-4">
             <div>
-              <label htmlFor="loan-amount" style={{ display: 'block', marginBottom: '0.5rem' }}>
+              <label htmlFor="loan-amount" className="block mb-2 text-sm font-medium text-slate-700">
                 Loan Amount (tokens)
               </label>
               <input
@@ -308,11 +270,11 @@ export default function FlowTestingPage() {
                 placeholder="500"
                 step="0.0001"
                 disabled={isRequestingLoan || !connectedAccount}
-                style={inputStyle}
+                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
               />
             </div>
             <div>
-              <label htmlFor="loan-term" style={{ display: 'block', marginBottom: '0.5rem' }}>
+              <label htmlFor="loan-term" className="block mb-2 text-sm font-medium text-slate-700">
                 Loan Term (days)
               </label>
               <input
@@ -323,13 +285,13 @@ export default function FlowTestingPage() {
                 placeholder="30"
                 min="1"
                 disabled={isRequestingLoan || !connectedAccount}
-                style={inputStyle}
+                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
               />
             </div>
             <button
               type="submit"
               disabled={isRequestingLoan || !connectedAccount || !loanAmount || !loanTerm}
-              style={buttonStyle(isRequestingLoan || !connectedAccount || !loanAmount || !loanTerm)}
+              className="px-6 py-3 text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors"
             >
               {isRequestingLoan ? 'Requesting...' : 'Request Loan'}
             </button>
@@ -338,17 +300,17 @@ export default function FlowTestingPage() {
         </div>
 
         {/* Step 4: Vouch for Loan */}
-        <div style={stepStyle}>
-          <h2 style={{ marginTop: 0, fontSize: '1.5rem' }}>Step 4: Vouch for Loan</h2>
-          <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
+        <div className="mb-8 p-6 border border-slate-200 rounded-lg bg-white shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-slate-900">Step 4: Vouch for Loan</h2>
+          <p className="text-sm text-slate-600 mb-4">
             Vouch for a pending loan by staking stars and capital.
             {connectedAccount && (
-              <span> Your stars: <strong>{userStars ?? 0}</strong></span>
+              <span> Your stars: <strong className="text-slate-900">{userStars ?? 0}</strong></span>
             )}
           </p>
-          <form onSubmit={handleVouch} style={formStyle}>
+          <form onSubmit={handleVouch} className="flex flex-col gap-4">
             <div>
-              <label htmlFor="vouch-loan-id" style={{ display: 'block', marginBottom: '0.5rem' }}>
+              <label htmlFor="vouch-loan-id" className="block mb-2 text-sm font-medium text-slate-700">
                 Loan ID
               </label>
               <input
@@ -358,16 +320,16 @@ export default function FlowTestingPage() {
                 onChange={(e) => setVouchLoanId(e.target.value)}
                 placeholder="1"
                 disabled={isVouching || !connectedAccount}
-                style={inputStyle}
+                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
               />
               {selectedLoan && (
-                <p style={{ marginTop: '0.25rem', fontSize: '0.85rem', color: '#666' }}>
+                <p className="mt-1 text-xs text-slate-600">
                   Status: {selectedLoan.status} | Amount: {formatTokenAmount(selectedLoan.amount, 18).toFixed(4)} tokens
                 </p>
               )}
             </div>
             <div>
-              <label htmlFor="vouch-stars" style={{ display: 'block', marginBottom: '0.5rem' }}>
+              <label htmlFor="vouch-stars" className="block mb-2 text-sm font-medium text-slate-700">
                 Stars to Stake
               </label>
               <input
@@ -378,11 +340,11 @@ export default function FlowTestingPage() {
                 placeholder="10"
                 min="0"
                 disabled={isVouching || !connectedAccount}
-                style={inputStyle}
+                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
               />
             </div>
             <div>
-              <label htmlFor="vouch-capital" style={{ display: 'block', marginBottom: '0.5rem' }}>
+              <label htmlFor="vouch-capital" className="block mb-2 text-sm font-medium text-slate-700">
                 Capital Percent (0-100)
               </label>
               <input
@@ -394,13 +356,13 @@ export default function FlowTestingPage() {
                 min="0"
                 max="100"
                 disabled={isVouching || !connectedAccount}
-                style={inputStyle}
+                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
               />
             </div>
             <button
               type="submit"
               disabled={isVouching || !connectedAccount || !vouchLoanId || !vouchStars || !vouchCapitalPercent}
-              style={buttonStyle(isVouching || !connectedAccount || !vouchLoanId || !vouchStars || !vouchCapitalPercent)}
+              className="px-6 py-3 text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors"
             >
               {isVouching ? 'Vouching...' : 'Vouch for Loan'}
             </button>
@@ -408,14 +370,14 @@ export default function FlowTestingPage() {
         </div>
 
         {/* Step 5: Repay Loan */}
-        <div style={stepStyle}>
-          <h2 style={{ marginTop: 0, fontSize: '1.5rem' }}>Step 5: Repay Loan</h2>
-          <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
+        <div className="mb-8 p-6 border border-slate-200 rounded-lg bg-white shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-slate-900">Step 5: Repay Loan</h2>
+          <p className="text-sm text-slate-600 mb-4">
             Repay an active loan. Active loans: {activeLoans?.length ?? 0}
           </p>
-          <form onSubmit={handleRepay} style={formStyle}>
+          <form onSubmit={handleRepay} className="flex flex-col gap-4">
             <div>
-              <label htmlFor="repay-loan-id" style={{ display: 'block', marginBottom: '0.5rem' }}>
+              <label htmlFor="repay-loan-id" className="block mb-2 text-sm font-medium text-slate-700">
                 Loan ID
               </label>
               <input
@@ -425,14 +387,14 @@ export default function FlowTestingPage() {
                 onChange={(e) => setRepayLoanId(e.target.value)}
                 placeholder="1"
                 disabled={isRepaying || !connectedAccount}
-                style={inputStyle}
+                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
               />
               {repayLoanData && (
-                <div style={{ marginTop: '0.5rem', padding: '0.75rem', backgroundColor: '#f5f5f5', borderRadius: '4px', fontSize: '0.85rem' }}>
-                  <p><strong>Status:</strong> {repayLoanData.status}</p>
-                  <p><strong>Amount:</strong> {formatTokenAmount(repayLoanData.amount, 18).toFixed(4)} tokens</p>
+                <div className="mt-2 p-3 bg-slate-50 rounded-md text-xs">
+                  <p className="mb-1"><strong className="text-slate-700">Status:</strong> <span className="text-slate-800">{repayLoanData.status}</span></p>
+                  <p className="mb-1"><strong className="text-slate-700">Amount:</strong> <span className="text-slate-800">{formatTokenAmount(repayLoanData.amount, 18).toFixed(4)} tokens</span></p>
                   {repaymentAmount && (
-                    <p><strong>Repayment:</strong> {formatTokenAmount(repaymentAmount, 18).toFixed(4)} tokens</p>
+                    <p><strong className="text-slate-700">Repayment:</strong> <span className="text-slate-800">{formatTokenAmount(repaymentAmount, 18).toFixed(4)} tokens</span></p>
                   )}
                 </div>
               )}
@@ -440,14 +402,14 @@ export default function FlowTestingPage() {
             <button
               type="submit"
               disabled={isRepaying || !connectedAccount || !repayLoanId || !repaymentAmount}
-              style={buttonStyle(isRepaying || !connectedAccount || !repayLoanId || !repaymentAmount)}
+              className="px-6 py-3 text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors"
             >
               {isRepaying ? 'Repaying...' : 'Repay Loan'}
             </button>
           </form>
           {activeLoans && activeLoans.length > 0 && (
-            <div style={{ marginTop: '1rem', padding: '0.75rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
-              <strong>Active Loans:</strong> {activeLoans.map(id => id.toString()).join(', ')}
+            <div className="mt-4 p-3 bg-slate-50 rounded-md text-sm">
+              <strong className="text-slate-700">Active Loans:</strong> <span className="text-slate-800">{activeLoans.map(id => id.toString()).join(', ')}</span>
             </div>
           )}
         </div>
