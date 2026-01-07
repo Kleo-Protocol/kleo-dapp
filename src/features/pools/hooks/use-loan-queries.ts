@@ -12,7 +12,7 @@ export function useLoan(loanId: bigint | number | string | undefined) {
   const { contract } = useContract(ContractId.LOAN_MANAGER);
 
   return useQuery({
-    queryKey: ['loan', loanId],
+    queryKey: ['loan', loanId?.toString()],
     queryFn: async (): Promise<LoanManagerLoan | null> => {
       if (loanId === undefined || loanId === null || !contract) {
         return null;
@@ -46,7 +46,7 @@ export function useRepaymentAmount(loanId: bigint | number | string | undefined)
   const { contract } = useContract(ContractId.LOAN_MANAGER);
 
   return useQuery({
-    queryKey: ['loan', 'repaymentAmount', loanId],
+    queryKey: ['loan', 'repaymentAmount', loanId?.toString()],
     queryFn: async (): Promise<bigint | null> => {
       if (loanId === undefined || loanId === null || !contract) {
         return null;
@@ -142,7 +142,7 @@ export function useLoanStatus(loanId: bigint | number | string | undefined) {
   const { data: loan } = useLoan(loanId);
 
   return useQuery({
-    queryKey: ['loan', 'status', loanId, loan?.startTime, loan?.term],
+    queryKey: ['loan', 'status', loanId?.toString(), loan?.startTime?.toString(), loan?.term?.toString()],
     queryFn: async () => {
       if (!loan || loan.status === 'Repaid' || loan.status === 'Defaulted') {
         return {

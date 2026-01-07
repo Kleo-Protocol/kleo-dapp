@@ -13,7 +13,7 @@ export function useVouchesForLoan(loanId: bigint | number | string | undefined) 
   const { contract } = useContract(ContractId.VOUCH);
 
   return useQuery({
-    queryKey: ['vouch', 'count', loanId],
+    queryKey: ['vouch', 'count', loanId?.toString()],
     queryFn: async (): Promise<number> => {
       if (loanId === undefined || loanId === null || !contract) {
         return 0;
@@ -44,7 +44,7 @@ export function useVouchersForLoan(loanId: bigint | number | string | undefined)
   const { contract } = useContract(ContractId.VOUCH);
 
   return useQuery({
-    queryKey: ['vouch', 'vouchers', loanId],
+    queryKey: ['vouch', 'vouchers', loanId?.toString()],
     queryFn: async (): Promise<AccountId32[]> => {
       if (loanId === undefined || loanId === null || !contract) {
         return [];

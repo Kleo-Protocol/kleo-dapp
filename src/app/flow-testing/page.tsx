@@ -5,6 +5,7 @@ import { useTypink, useContract, useBalances, txToaster, checkBalanceSufficiency
 import { useQueryClient } from '@tanstack/react-query';
 import { ContractId } from '@/contracts/deployments';
 import { BootstrapStarsForm } from '@/features/flow-testing/components/BootstrapStarsForm';
+import { LoansList } from '@/features/flow-testing/components/LoansList';
 import { useRequestLoan, useVouchForLoan, useRepayLoan } from '@/features/pools/hooks/use-loan-transactions';
 import { useLoan, useRepaymentAmount, usePendingLoans, useActiveLoans } from '@/features/pools/hooks/use-loan-queries';
 import { useStars } from '@/features/profile/hooks/use-reputation-queries';
@@ -333,11 +334,7 @@ export default function FlowTestingPage() {
               {isRequestingLoan ? 'Requesting...' : 'Request Loan'}
             </button>
           </form>
-          {pendingLoans && pendingLoans.length > 0 && (
-            <div style={{ marginTop: '1rem', padding: '0.75rem', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
-              <strong>Pending Loans:</strong> {pendingLoans.map(id => id.toString()).join(', ')}
-            </div>
-          )}
+          <LoansList />
         </div>
 
         {/* Step 4: Vouch for Loan */}

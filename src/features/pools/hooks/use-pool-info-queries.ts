@@ -128,7 +128,7 @@ export function usePoolUtilization() {
   const { data: totalBorrowed } = useTotalBorrowed();
 
   return useQuery({
-    queryKey: ['lendingPool', 'utilization', totalLiquidity, totalBorrowed],
+    queryKey: ['lendingPool', 'utilization', totalLiquidity?.toString(), totalBorrowed?.toString()],
     queryFn: async (): Promise<number> => {
       if (!totalLiquidity || totalLiquidity === 0n) {
         return 0;
