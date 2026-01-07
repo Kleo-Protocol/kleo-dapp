@@ -1,12 +1,12 @@
 {
   "source": {
-    "hash": "0xdba4d0788ba9471b46b7f9253c91b5cde5d04a13ce994be564e9ba741edd91c8",
+    "hash": "0xa478efeaa5f0947d3ba79cefc0dc44aaf2ff16f1e92156c8f827f16b2d858d5d",
     "language": "ink! 6.0.0-beta.1",
     "compiler": "rustc 1.91.1",
     "build_info": {
       "rust_toolchain": "stable-aarch64-apple-darwin",
       "cargo_contract_version": "6.0.0-beta.1",
-      "build_mode": "Debug"
+      "build_mode": "Release"
     }
   },
   "contract": {
@@ -23,15 +23,16 @@
       "id": 0,
       "type": {
         "path": [
-          "primitive_types",
-          "H160"
+          "ink_primitives",
+          "types",
+          "AccountId"
         ],
         "def": {
           "composite": {
             "fields": [
               {
                 "type": 1,
-                "typeName": "[u8; 20]"
+                "typeName": "[u8; 32]"
               }
             ]
           }
@@ -43,7 +44,7 @@
       "type": {
         "def": {
           "array": {
-            "len": 20,
+            "len": 32,
             "type": 2
           }
         }
@@ -60,8 +61,19 @@
     {
       "id": 3,
       "type": {
+        "path": [
+          "primitive_types",
+          "H160"
+        ],
         "def": {
-          "primitive": "u32"
+          "composite": {
+            "fields": [
+              {
+                "type": 4,
+                "typeName": "[u8; 20]"
+              }
+            ]
+          }
         }
       }
     },
@@ -69,14 +81,33 @@
       "id": 4,
       "type": {
         "def": {
-          "sequence": {
-            "type": 5
+          "array": {
+            "len": 20,
+            "type": 2
           }
         }
       }
     },
     {
       "id": 5,
+      "type": {
+        "def": {
+          "primitive": "u32"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 7
+          }
+        }
+      }
+    },
+    {
+      "id": 7,
       "type": {
         "path": [
           "reputation",
@@ -88,12 +119,12 @@
             "fields": [
               {
                 "name": "amount",
-                "type": 6,
+                "type": 8,
                 "typeName": "Balance"
               },
               {
                 "name": "repaid",
-                "type": 7,
+                "type": 9,
                 "typeName": "bool"
               }
             ]
@@ -102,7 +133,7 @@
       }
     },
     {
-      "id": 6,
+      "id": 8,
       "type": {
         "def": {
           "primitive": "u128"
@@ -110,7 +141,7 @@
       }
     },
     {
-      "id": 7,
+      "id": 9,
       "type": {
         "def": {
           "primitive": "bool"
@@ -118,17 +149,17 @@
       }
     },
     {
-      "id": 8,
+      "id": 10,
       "type": {
         "def": {
           "sequence": {
-            "type": 9
+            "type": 11
           }
         }
       }
     },
     {
-      "id": 9,
+      "id": 11,
       "type": {
         "path": [
           "reputation",
@@ -140,46 +171,15 @@
             "fields": [
               {
                 "name": "borrower",
-                "type": 10,
+                "type": 0,
                 "typeName": "AccountId"
               },
               {
                 "name": "successful",
-                "type": 7,
+                "type": 9,
                 "typeName": "bool"
               }
             ]
-          }
-        }
-      }
-    },
-    {
-      "id": 10,
-      "type": {
-        "path": [
-          "ink_primitives",
-          "types",
-          "AccountId"
-        ],
-        "def": {
-          "composite": {
-            "fields": [
-              {
-                "type": 11,
-                "typeName": "[u8; 32]"
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": 11,
-      "type": {
-        "def": {
-          "array": {
-            "len": 32,
-            "type": 2
           }
         }
       }
@@ -204,7 +204,7 @@
         "params": [
           {
             "name": "K",
-            "type": 10
+            "type": 0
           },
           {
             "name": "V",
@@ -233,22 +233,22 @@
             "fields": [
               {
                 "name": "stars",
-                "type": 3,
+                "type": 5,
                 "typeName": "u32"
               },
               {
                 "name": "stars_at_stake",
-                "type": 3,
+                "type": 5,
                 "typeName": "u32"
               },
               {
                 "name": "loan_history",
-                "type": 4,
+                "type": 6,
                 "typeName": "Vec<LoanStat>"
               },
               {
                 "name": "vouch_history",
-                "type": 8,
+                "type": 10,
                 "typeName": "Vec<VouchStat>"
               },
               {
@@ -258,7 +258,7 @@
               },
               {
                 "name": "banned",
-                "type": 7,
+                "type": 9,
                 "typeName": "bool"
               }
             ]
@@ -361,7 +361,7 @@
         "params": [
           {
             "name": "T",
-            "type": 10
+            "type": 3
           }
         ],
         "def": {
@@ -375,7 +375,7 @@
                 "name": "Some",
                 "fields": [
                   {
-                    "type": 10
+                    "type": 3
                   }
                 ],
                 "index": 1
@@ -504,8 +504,13 @@
           "composite": {
             "fields": [
               {
-                "name": "config",
+                "name": "admin",
                 "type": 0,
+                "typeName": "<AccountId as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<1309530309u32, ()>,>>::Type"
+              },
+              {
+                "name": "config",
+                "type": 3,
                 "typeName": "<ConfigRef as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<1009249828u32, ()>,>>::Type"
               },
               {
@@ -516,12 +521,12 @@
               {
                 "name": "vouch_contract",
                 "type": 19,
-                "typeName": "<Lazy<Option<AccountId>> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<2807790375u32,\n()>,>>::Type"
+                "typeName": "<Lazy<Option<Address>> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<2807790375u32,\n()>,>>::Type"
               },
               {
                 "name": "loan_manager",
                 "type": 23,
-                "typeName": "<Lazy<Option<AccountId>> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<2764363298u32,\n()>,>>::Type"
+                "typeName": "<Lazy<Option<Address>> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<2764363298u32,\n()>,>>::Type"
               }
             ]
           }
@@ -718,7 +723,7 @@
         "params": [
           {
             "name": "T",
-            "type": 3
+            "type": 5
           },
           {
             "name": "E",
@@ -732,7 +737,7 @@
                 "name": "Ok",
                 "fields": [
                   {
-                    "type": 3
+                    "type": 5
                   }
                 ],
                 "index": 0
@@ -760,7 +765,7 @@
         "params": [
           {
             "name": "T",
-            "type": 7
+            "type": 9
           },
           {
             "name": "E",
@@ -774,7 +779,7 @@
                 "name": "Ok",
                 "fields": [
                   {
-                    "type": 7
+                    "type": 9
                   }
                 ],
                 "index": 0
@@ -797,6 +802,48 @@
       "id": 34,
       "type": {
         "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 0
+          },
+          {
+            "name": "E",
+            "type": 28
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 0
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 28
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 35,
+      "type": {
+        "path": [
           "ink_primitives",
           "types",
           "Hash"
@@ -805,7 +852,7 @@
           "composite": {
             "fields": [
               {
-                "type": 11,
+                "type": 1,
                 "typeName": "[u8; 32]"
               }
             ]
@@ -821,6 +868,15 @@
         "struct": {
           "name": "Reputation",
           "fields": [
+            {
+              "name": "admin",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 0
+                }
+              }
+            },
             {
               "name": "config",
               "layout": {
@@ -838,7 +894,7 @@
                               "layout": {
                                 "leaf": {
                                   "key": "0x00000000",
-                                  "ty": 0
+                                  "ty": 3
                                 }
                               }
                             }
@@ -864,7 +920,7 @@
                           "layout": {
                             "leaf": {
                               "key": "0xc1844062",
-                              "ty": 3
+                              "ty": 5
                             }
                           }
                         },
@@ -873,7 +929,7 @@
                           "layout": {
                             "leaf": {
                               "key": "0xc1844062",
-                              "ty": 3
+                              "ty": 5
                             }
                           }
                         },
@@ -882,7 +938,7 @@
                           "layout": {
                             "leaf": {
                               "key": "0xc1844062",
-                              "ty": 4
+                              "ty": 6
                             }
                           }
                         },
@@ -891,7 +947,7 @@
                           "layout": {
                             "leaf": {
                               "key": "0xc1844062",
-                              "ty": 8
+                              "ty": 10
                             }
                           }
                         },
@@ -909,7 +965,7 @@
                           "layout": {
                             "leaf": {
                               "key": "0xc1844062",
-                              "ty": 7
+                              "ty": 9
                             }
                           }
                         }
@@ -942,7 +998,7 @@
                               "layout": {
                                 "leaf": {
                                   "key": "0x277b5ba7",
-                                  "ty": 10
+                                  "ty": 3
                                 }
                               }
                             }
@@ -977,7 +1033,7 @@
                               "layout": {
                                 "leaf": {
                                   "key": "0x22d6c4a4",
-                                  "ty": 10
+                                  "ty": 3
                                 }
                               }
                             }
@@ -1006,9 +1062,18 @@
           {
             "label": "config_address",
             "type": {
-              "type": 0,
+              "type": 3,
               "displayName": [
                 "Address"
+              ]
+            }
+          },
+          {
+            "label": "admin_account_id",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
               ]
             }
           }
@@ -1034,9 +1099,9 @@
           {
             "label": "vouch_address",
             "type": {
-              "type": 10,
+              "type": 3,
               "displayName": [
-                "AccountId"
+                "Address"
               ]
             }
           }
@@ -1063,9 +1128,9 @@
           {
             "label": "loan_manager_address",
             "type": {
-              "type": 10,
+              "type": 3,
               "displayName": [
-                "AccountId"
+                "Address"
               ]
             }
           }
@@ -1092,7 +1157,7 @@
           {
             "label": "user",
             "type": {
-              "type": 10,
+              "type": 0,
               "displayName": [
                 "AccountId"
               ]
@@ -1120,7 +1185,7 @@
           {
             "label": "user",
             "type": {
-              "type": 10,
+              "type": 0,
               "displayName": [
                 "AccountId"
               ]
@@ -1129,7 +1194,7 @@
           {
             "label": "amount",
             "type": {
-              "type": 3,
+              "type": 5,
               "displayName": [
                 "u32"
               ]
@@ -1158,7 +1223,7 @@
           {
             "label": "user",
             "type": {
-              "type": 10,
+              "type": 0,
               "displayName": [
                 "AccountId"
               ]
@@ -1186,7 +1251,7 @@
           {
             "label": "user",
             "type": {
-              "type": 10,
+              "type": 0,
               "displayName": [
                 "AccountId"
               ]
@@ -1195,7 +1260,7 @@
           {
             "label": "amount",
             "type": {
-              "type": 3,
+              "type": 5,
               "displayName": [
                 "u32"
               ]
@@ -1224,7 +1289,7 @@
           {
             "label": "user",
             "type": {
-              "type": 10,
+              "type": 0,
               "displayName": [
                 "AccountId"
               ]
@@ -1233,7 +1298,7 @@
           {
             "label": "amount",
             "type": {
-              "type": 3,
+              "type": 5,
               "displayName": [
                 "u32"
               ]
@@ -1262,7 +1327,7 @@
           {
             "label": "user",
             "type": {
-              "type": 10,
+              "type": 0,
               "displayName": [
                 "AccountId"
               ]
@@ -1271,7 +1336,7 @@
           {
             "label": "amount",
             "type": {
-              "type": 3,
+              "type": 5,
               "displayName": [
                 "u32"
               ]
@@ -1280,7 +1345,7 @@
           {
             "label": "borrower",
             "type": {
-              "type": 10,
+              "type": 0,
               "displayName": [
                 "AccountId"
               ]
@@ -1289,7 +1354,7 @@
           {
             "label": "success",
             "type": {
-              "type": 7,
+              "type": 9,
               "displayName": [
                 "bool"
               ]
@@ -1308,6 +1373,129 @@
           " Only callable by the authorized vouch contract"
         ],
         "default": false
+      },
+      {
+        "label": "admin_set_stars",
+        "selector": "0x1010203b",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          },
+          {
+            "label": "stars",
+            "type": {
+              "type": 5,
+              "displayName": [
+                "u32"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 29,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Admin function: Set stars for a user (for testing)",
+          " Only callable by admin"
+        ],
+        "default": false
+      },
+      {
+        "label": "admin_add_stars",
+        "selector": "0xbdb6df2c",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "type": 5,
+              "displayName": [
+                "u32"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 29,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Admin function: Add stars to a user (for testing)",
+          " Only callable by admin"
+        ],
+        "default": false
+      },
+      {
+        "label": "admin_unban_user",
+        "selector": "0x35b40fc4",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 29,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Admin function: Unban a user (for testing)",
+          " Only callable by admin"
+        ],
+        "default": false
+      },
+      {
+        "label": "get_admin",
+        "selector": "0x57b8a8a7",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 34,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Admin function: Get admin address (for verification)"
+        ],
+        "default": false
       }
     ],
     "events": [],
@@ -1323,19 +1511,19 @@
     },
     "environment": {
       "accountId": {
-        "type": 10,
+        "type": 0,
         "displayName": [
           "AccountId"
         ]
       },
       "balance": {
-        "type": 6,
+        "type": 8,
         "displayName": [
           "Balance"
         ]
       },
       "hash": {
-        "type": 34,
+        "type": 35,
         "displayName": [
           "Hash"
         ]
@@ -1347,7 +1535,7 @@
         ]
       },
       "blockNumber": {
-        "type": 3,
+        "type": 5,
         "displayName": [
           "BlockNumber"
         ]

@@ -5,17 +5,24 @@ import type { AccountId32 } from "dedot/codecs";
 export type Config = {
   admin: AccountId32;
   baseInterestRate: bigint;
-  optimalUtilization: bigint;
-  slope1: bigint;
-  slope2: bigint;
   boost: bigint;
   minStarsToVouch: number;
   cooldownPeriod: bigint;
-  exposureCap: bigint;
-  reserveFactor: number;
-  maxRate: bigint;
+  loanTerm: bigint;
+  loanTierScalingFactor: bigint;
+  loanTier1MaxScaledAmount: bigint;
+  loanTier2MaxScaledAmount: bigint;
+  loanTier1MinStars: number;
+  loanTier1MinVouches: number;
+  loanTier2MinStars: number;
+  loanTier2MinVouches: number;
+  loanTier3MinStars: number;
+  loanTier3MinVouches: number;
+  defaultGracePeriod: bigint;
+  starDiscountPercentPerStar: bigint;
+  maxStarDiscountPercent: bigint;
 };
 
 export type InkPrimitivesLangError = "CouldNotReadInput";
 
-export type ConfigError = "NotAdmin";
+export type ConfigError = "NotAdmin" | "InvalidValue" | "AlreadyAdmin";

@@ -1,12 +1,12 @@
 {
   "source": {
-    "hash": "0x9e18a6583aef2f5c19bcbd3f2ab8ebe671f122f4b41e40995e9057a72754309c",
+    "hash": "0x1ca3242f160604c03dde1cbbdbda88c939e77b1b1be5129c51a6bbf5a06e17e1",
     "language": "ink! 6.0.0-beta.1",
     "compiler": "rustc 1.91.1",
     "build_info": {
       "rust_toolchain": "stable-aarch64-apple-darwin",
       "cargo_contract_version": "6.0.0-beta.1",
-      "build_mode": "Debug"
+      "build_mode": "Release"
     }
   },
   "contract": {
@@ -552,7 +552,7 @@
         "params": [
           {
             "name": "T",
-            "type": 19
+            "type": 0
           }
         ],
         "def": {
@@ -566,7 +566,7 @@
                 "name": "Some",
                 "fields": [
                   {
-                    "type": 19
+                    "type": 0
                   }
                 ],
                 "index": 1
@@ -732,12 +732,12 @@
               {
                 "name": "vouch_contract",
                 "type": 27,
-                "typeName": "<Lazy<Option<AccountId>> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<1413507888u32,\n()>,>>::Type"
+                "typeName": "<Lazy<Option<Address>> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<1413507888u32,\n()>,>>::Type"
               },
               {
                 "name": "loan_manager",
                 "type": 31,
-                "typeName": "<Lazy<Option<AccountId>> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<4100583378u32,\n()>,>>::Type"
+                "typeName": "<Lazy<Option<Address>> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<4100583378u32,\n()>,>>::Type"
               }
             ]
           }
@@ -942,6 +942,90 @@
         "params": [
           {
             "name": "T",
+            "type": 41
+          },
+          {
+            "name": "E",
+            "type": 36
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 41
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 36
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 41,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 3
+          },
+          {
+            "name": "E",
+            "type": 39
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 3
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 39
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 42,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
             "type": 23
           },
           {
@@ -976,7 +1060,7 @@
       }
     },
     {
-      "id": 41,
+      "id": 43,
       "type": {
         "path": [
           "Result"
@@ -1018,7 +1102,7 @@
       }
     },
     {
-      "id": 42,
+      "id": 44,
       "type": {
         "path": [
           "ink_primitives",
@@ -1038,7 +1122,7 @@
       }
     },
     {
-      "id": 43,
+      "id": 45,
       "type": {
         "def": {
           "primitive": "u32"
@@ -1194,7 +1278,7 @@
                               "layout": {
                                 "leaf": {
                                   "key": "0x306b4054",
-                                  "ty": 19
+                                  "ty": 0
                                 }
                               }
                             }
@@ -1229,7 +1313,7 @@
                               "layout": {
                                 "leaf": {
                                   "key": "0xd2ef69f4",
-                                  "ty": 19
+                                  "ty": 0
                                 }
                               }
                             }
@@ -1286,9 +1370,9 @@
           {
             "label": "vouch_address",
             "type": {
-              "type": 19,
+              "type": 0,
               "displayName": [
-                "AccountId"
+                "Address"
               ]
             }
           }
@@ -1315,9 +1399,9 @@
           {
             "label": "loan_manager_address",
             "type": {
-              "type": 19,
+              "type": 0,
               "displayName": [
-                "AccountId"
+                "Address"
               ]
             }
           }
@@ -1340,9 +1424,19 @@
         "selector": "0x2d10c9bd",
         "mutates": true,
         "payable": true,
-        "args": [],
+        "args": [
+          {
+            "label": "account_id",
+            "type": {
+              "type": 19,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          }
+        ],
         "returnType": {
-          "type": 37,
+          "type": 40,
           "displayName": [
             "ink",
             "MessageResult"
@@ -1367,6 +1461,15 @@
                 "Balance"
               ]
             }
+          },
+          {
+            "label": "account_id",
+            "type": {
+              "type": 19,
+              "displayName": [
+                "AccountId"
+              ]
+            }
           }
         ],
         "returnType": {
@@ -1377,7 +1480,8 @@
           ]
         },
         "docs": [
-          " Withdraw funds from the lending pool"
+          " Withdraw funds from the lending pool",
+          " amount: in 10 decimals (storage format)"
         ],
         "default": false
       },
@@ -1388,7 +1492,7 @@
         "payable": false,
         "args": [],
         "returnType": {
-          "type": 40,
+          "type": 42,
           "displayName": [
             "ink",
             "MessageResult"
@@ -1400,18 +1504,61 @@
       {
         "label": "get_user_yield",
         "selector": "0xdb8df080",
-        "mutates": true,
+        "mutates": false,
         "payable": false,
-        "args": [],
+        "args": [
+          {
+            "label": "account_id",
+            "type": {
+              "type": 19,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          }
+        ],
         "returnType": {
-          "type": 41,
+          "type": 43,
           "displayName": [
             "ink",
             "MessageResult"
           ]
         },
         "docs": [
-          " Get user's accrued yield"
+          " Get user's accrued yield (read-only, doesn't accrue interest)",
+          " Returns yield in 18 decimals (chain format)",
+          " Note: This calculates yield based on current state without accruing interest.",
+          " For up-to-date yield, call accrue_interest_and_get_user_yield instead."
+        ],
+        "default": false
+      },
+      {
+        "label": "accrue_interest_and_get_user_yield",
+        "selector": "0x8e1f3e45",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "account_id",
+            "type": {
+              "type": 19,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 43,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Get user's accrued yield and ensure interest is up-to-date",
+          " Returns yield in 18 decimals (chain format)",
+          " This version accrues interest before calculating yield for accurate results"
         ],
         "default": false
       },
@@ -1432,7 +1579,7 @@
           }
         ],
         "returnType": {
-          "type": 41,
+          "type": 43,
           "displayName": [
             "ink",
             "MessageResult"
@@ -1450,7 +1597,7 @@
         "payable": false,
         "args": [],
         "returnType": {
-          "type": 41,
+          "type": 43,
           "displayName": [
             "ink",
             "MessageResult"
@@ -1493,7 +1640,8 @@
         },
         "docs": [
           " Disburse part of liquidity (add a borrow basically)",
-          " Only callable by the authorized loan manager contract"
+          " Only callable by the authorized loan manager contract",
+          " amount: in 10 decimals (storage format)"
         ],
         "default": false
       },
@@ -1521,7 +1669,8 @@
           ]
         },
         "docs": [
-          " Repay a loan (reduce borrowed amount)"
+          " Repay a loan (reduce borrowed amount)",
+          " amount: in 18 decimals (chain format, matching transferred_value)"
         ],
         "default": false
       },
@@ -1559,7 +1708,8 @@
         },
         "docs": [
           " Slash part of the position of a voucher",
-          " Only callable by the authorized vouch contract"
+          " Only callable by the authorized vouch contract",
+          " amount: in 10 decimals (storage format)"
         ],
         "default": false
       }
@@ -1673,7 +1823,7 @@
         ]
       },
       "hash": {
-        "type": 42,
+        "type": 44,
         "displayName": [
           "Hash"
         ]
@@ -1685,7 +1835,7 @@
         ]
       },
       "blockNumber": {
-        "type": 43,
+        "type": 45,
         "displayName": [
           "BlockNumber"
         ]

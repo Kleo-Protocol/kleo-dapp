@@ -26,11 +26,16 @@ export type InkStorageTraitsImplsAutoKey = {};
 
 export type InkStorageTraitsImplsManualKey = {};
 
+export type InkStorageLazy = {};
+
 export type Reputation = {
+  admin: AccountId32;
   config: H160;
   userReps: {
     get(arg: AccountId32Like): Promise<ReputationUserReputation | undefined>;
   };
+  vouchContract: { get(): Promise<H160 | undefined | undefined> };
+  loanManager: { get(): Promise<H160 | undefined | undefined> };
 };
 
 export type InkPrimitivesLangError = "CouldNotReadInput";
@@ -39,4 +44,5 @@ export type ReputationError =
   | "UserNotFound"
   | "InsufficientStars"
   | "InsufficientStakedStars"
-  | "UserBanned";
+  | "UserBanned"
+  | "Unauthorized";

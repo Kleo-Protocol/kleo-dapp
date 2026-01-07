@@ -17,8 +17,11 @@ export type LendingPool = {
   totalLiquidity: { get(): Promise<bigint | undefined> };
   totalBorrowed: { get(): Promise<bigint | undefined> };
   reservedFunds: { get(): Promise<bigint | undefined> };
+  totalPrincipalDeposits: { get(): Promise<bigint | undefined> };
   userDeposits: { get(arg: AccountId32Like): Promise<bigint | undefined> };
   lastUpdate: { get(): Promise<bigint | undefined> };
+  vouchContract: { get(): Promise<H160 | undefined | undefined> };
+  loanManager: { get(): Promise<H160 | undefined | undefined> };
 };
 
 export type InkPrimitivesLangError = "CouldNotReadInput";
@@ -29,4 +32,5 @@ export type LendingPoolError =
   | "Overflow"
   | "UnavailableFunds"
   | "TransactionFailed"
-  | "AmountMismatch";
+  | "AmountMismatch"
+  | "Unauthorized";
