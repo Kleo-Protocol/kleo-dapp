@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { LoanStatus } from '@/lib/types';
+import type { LoanStatus, Loan } from '@/lib/types';
 
 // Query keys - base keys to avoid circular reference
 const borrowBaseKey = ['borrow'] as const;
@@ -35,7 +35,7 @@ export function useAllLoans() {
  * Hook to fetch loans by borrower address
  */
 export function useBorrowerLoans(borrowerAddress: string | undefined) {
-  return useQuery({
+  return useQuery<Loan[]>({
     queryKey: borrowerAddress
       ? borrowKeys.loans.byBorrower(borrowerAddress)
       : ['borrow', 'loans', 'borrower', 'null'],
@@ -116,7 +116,8 @@ export function useCreateLoan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mutationFn: (_params: {
       borrower: string;
       requestedAmount: bigint;
       interestRate: bigint;

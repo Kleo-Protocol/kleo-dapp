@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
-import { Copy, User, Wallet, Shield, TrendingUp, Settings, Star, History, CheckCircle2, XCircle } from 'lucide-react';
+import { Copy, User, Wallet, Shield, TrendingUp, Star, History, CheckCircle2, XCircle } from 'lucide-react';
 import { formatBalance, useBalances, useTypink } from 'typink';
 import { toast } from 'sonner';
 import { shortenAddress } from '@/lib/utils';
@@ -19,7 +19,7 @@ function ProfileContent() {
   const router = useRouter();
   const { connectedAccount, network, accounts } = useTypink();
   const { userRole, isRegistered } = useAuthStore();
-  const { tier, reputation } = useUserStore();
+  const { tier } = useUserStore();
 
   // Sincronizar estado de typink con nuestro store
   useSyncWalletState();

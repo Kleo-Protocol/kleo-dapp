@@ -18,7 +18,6 @@ import { BackModal } from './back-modal';
 import { EmptyState } from '@/shared/components/empty-state';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
-import { getDaysRemaining } from '@/lib/loan-utils';
 import type { LoanDetails } from '@/lib/types';
 
 interface PendingRequestsTableProps {
@@ -89,7 +88,6 @@ export function PendingRequestsTable({ requests = [], isLoading = false }: Pendi
             <TableBody>
               {requests.map((request) => {
                 const loanIdStr = request.loanId.toString();
-                const daysRemaining = getDaysRemaining(request);
                 const termDays = Math.floor(Number(request.term) / (24 * 60 * 60));
                 const vouchersCount = request.vouchers?.length || 0;
                 
@@ -167,7 +165,7 @@ export function PendingRequestsTable({ requests = [], isLoading = false }: Pendi
       {simulationLoanId && (
         <SimulationModal
           loanId={simulationLoanId}
-          loan={requests.find((r) => r.loanId === simulationLoanId)}
+          loan={requests.find((r) => r.loanId.toString() === simulationLoanId)}
           open={!!simulationLoanId}
           onOpenChange={(open) => !open && setSimulationLoanId(null)}
         />
@@ -176,7 +174,7 @@ export function PendingRequestsTable({ requests = [], isLoading = false }: Pendi
       {backLoanId && (
         <BackModal
           loanId={backLoanId}
-          loan={requests.find((r) => r.loanId === backLoanId)}
+          loan={requests.find((r) => r.loanId.toString() === backLoanId)}
           open={!!backLoanId}
           onOpenChange={(open) => !open && setBackLoanId(null)}
         />

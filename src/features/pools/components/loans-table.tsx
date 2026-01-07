@@ -143,7 +143,7 @@ export function LoansTable({ loans = [], isLoading = false }: LoansTableProps) {
       {repayLoanId && (
         <RepayModal
           loanId={repayLoanId}
-          loan={loans.find((l) => l.loanId === repayLoanId)}
+          loan={loans.find((l) => l.loanId.toString() === repayLoanId)}
           open={!!repayLoanId}
           onOpenChange={(open) => !open && setRepayLoanId(null)}
         />

@@ -36,15 +36,12 @@ export function PoolDetailPage() {
     depositAmount,
     setDepositAmount,
     getStatusBadge,
-    formatBalance,
-    formatInterestRate,
     formatPoolStateValue,
     formatBasisPoints,
     formatOptimalUtilization,
     formatMaxRate,
     formatSlope2,
     formatCooldownPeriod,
-    formatLargeBasisPoints,
     formatMediumBasisPoints,
   } = usePoolDetailLogic();
 

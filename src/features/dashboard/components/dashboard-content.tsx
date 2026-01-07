@@ -41,8 +41,8 @@ export function DashboardContent() {
 
   const isLoading = profileLoading || statsLoading;
   const activeLoans = userRole === 'borrower' 
-    ? borrowerLoans.filter(loan => loan.status === 'active' || loan.status === 'funding')
-    : lenderLoans.filter(loan => loan.status === 'active' || loan.status === 'funding');
+    ? borrowerLoans.filter(loan => loan.status === 'Active')
+    : lenderLoans.filter(loan => loan.status === 'Active');
 
   return (
     <div className="space-y-6">

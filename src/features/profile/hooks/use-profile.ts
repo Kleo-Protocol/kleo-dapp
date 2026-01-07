@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import type { ProfileStats, Profile } from '@/lib/types';
 
 // Query keys
 export const profileKeys = {
@@ -11,7 +12,7 @@ export const profileKeys = {
  * Hook to fetch user profile by wallet address
  */
 export function useProfile(walletAddress: string | undefined) {
-  return useQuery({
+  return useQuery<Profile>({
     queryKey: walletAddress ? profileKeys.detail(walletAddress) : ['profile', 'null'],
     queryFn: () => {
       if (!walletAddress) {
@@ -28,7 +29,7 @@ export function useProfile(walletAddress: string | undefined) {
  * Hook to fetch user profile statistics
  */
 export function useProfileStats(walletAddress: string | undefined) {
-  return useQuery({
+  return useQuery<ProfileStats>({
     queryKey: walletAddress ? profileKeys.stats(walletAddress) : ['profile', 'stats', 'null'],
     queryFn: () => {
       if (!walletAddress) {
@@ -48,7 +49,8 @@ export function useUpdateCapital() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ walletAddress, capital }: { walletAddress: string; capital: bigint }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mutationFn: (_params: { walletAddress: string; capital: bigint }) => {
       throw new Error('updateCapital not implemented - mock removed');
     },
     onSuccess: (_, variables) => {
@@ -65,7 +67,8 @@ export function useUpdateReputation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ walletAddress, reputation }: { walletAddress: string; reputation: number }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mutationFn: (_params: { walletAddress: string; reputation: number }) => {
       throw new Error('updateReputation not implemented - mock removed');
     },
     onSuccess: (_, variables) => {
@@ -82,10 +85,8 @@ export function useUpdateIncomeReference() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      walletAddress,
-      incomeReference,
-    }: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mutationFn: (_params: {
       walletAddress: string;
       incomeReference: string | null;
     }) => {

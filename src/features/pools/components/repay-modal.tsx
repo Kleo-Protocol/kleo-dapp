@@ -52,11 +52,6 @@ export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
   const addresses = connectedAccount ? [connectedAccount.address] : [];
   const balances = useBalances(addresses);
 
-  // Get user balance in tokens (human-readable)
-  const userBalance = connectedAccount && balances[connectedAccount.address]
-    ? Number(balances[connectedAccount.address].free) / 10 ** decimals
-    : 0;
-
   if (!loan) return null;
 
   // Convert bigint to number for display (assuming 18 decimals)
@@ -144,7 +139,7 @@ export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
               });
             }
             queryClient.invalidateQueries({ queryKey: borrowKeys.loans.active });
-            queryClient.invalidateQueries({ queryKey: borrowKeys.detail(loan.loanId) });
+            queryClient.invalidateQueries({ queryKey: borrowKeys.detail(loan.loanId.toString()) });
             
             toast.success(isFullPayment ? 'Loan repaid in full' : 'Payment processed', {
               description: `${amountNum.toLocaleString()} tokens paid towards loan`,

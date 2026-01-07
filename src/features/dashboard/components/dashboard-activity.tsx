@@ -15,22 +15,16 @@ interface DashboardActivityProps {
   isLoading: boolean;
 }
 
-const statusColors = {
-  pending: 'bg-amber-honey/10 text-amber-honey border-amber-honey/20',
-  funding: 'bg-atomic-tangerine/10 text-atomic-tangerine border-atomic-tangerine/20',
-  active: 'bg-forest-green/20 text-forest-green border-forest-green/30',
-  completed: 'bg-forest-green/20 text-forest-green border-forest-green/30',
-  defaulted: 'bg-atomic-tangerine/10 text-atomic-tangerine border-atomic-tangerine/20',
-  cancelled: 'bg-oxford-blue/50 text-anti-flash-white border-oxford-blue/30',
+const statusColors: Record<'Active' | 'Repaid' | 'Defaulted', string> = {
+  Active: 'bg-forest-green/20 text-forest-green border-forest-green/30',
+  Repaid: 'bg-forest-green/20 text-forest-green border-forest-green/30',
+  Defaulted: 'bg-atomic-tangerine/10 text-atomic-tangerine border-atomic-tangerine/20',
 };
 
-const statusLabels = {
-  pending: 'Pending',
-  funding: 'Funding',
-  active: 'Active',
-  completed: 'Completed',
-  defaulted: 'Defaulted',
-  cancelled: 'Cancelled',
+const statusLabels: Record<'Active' | 'Repaid' | 'Defaulted', string> = {
+  Active: 'Active',
+  Repaid: 'Repaid',
+  Defaulted: 'Defaulted',
 };
 
 function formatDaysRemaining(dueTime: bigint): string {
@@ -130,12 +124,12 @@ export function DashboardActivity({ userRole, activeLoans, isLoading }: Dashboar
                     {statusLabels[loan.status]}
                   </Badge>
                   <span className="text-xs text-muted-foreground font-mono">
-                    {loan.loanId.slice(0, 8)}...
+                    {loan.loanId.toString().slice(0, 8)}...
                   </span>
                 </div>
                 <div className="flex items-center gap-4 text-sm">
-                  <span className="font-semibold">{formatBalance(loan.fundedAmount)}</span>
-                  {loan.status === 'active' && (
+                  <span className="font-semibold">{formatBalance(loan.amount)}</span>
+                  {loan.status === 'Active' && (
                     <div className="flex items-center gap-1 text-muted-foreground">
                       <Clock className="size-3" />
                       <span>{formatDaysRemaining(loan.dueTime)}</span>
@@ -144,7 +138,7 @@ export function DashboardActivity({ userRole, activeLoans, isLoading }: Dashboar
                 </div>
               </div>
               <Button asChild variant="ghost" size="sm">
-                <Link href={`/pools/${loan.poolId}`}>
+                <Link href="/pools">
                   View
                   <ArrowRight className="ml-2 size-4" />
                 </Link>

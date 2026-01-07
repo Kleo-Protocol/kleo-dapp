@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { LoanStatus } from '@/lib/types';
+import type { LoanStatus, Loan } from '@/lib/types';
 import { poolsKeys, useAvailablePools } from './use-pools';
 import { borrowKeys } from './use-borrow-data';
 
@@ -24,7 +24,7 @@ export const lendKeys = {
  * Hook to fetch loans by lender address
  */
 export function useLenderLoans(lenderAddress: string | undefined) {
-  return useQuery({
+  return useQuery<Loan[]>({
     queryKey: lenderAddress
       ? lendKeys.loans.byLender(lenderAddress)
       : ['lend', 'loans', 'lender', 'null'],
@@ -122,7 +122,8 @@ export function useContributeToLoan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: { loanId: string; lenderAddress: string; amount: bigint }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mutationFn: (_params: { loanId: string; lenderAddress: string; amount: bigint }) => {
       throw new Error('updateLoanFunding not implemented - mock removed');
     },
     onSuccess: (_, variables) => {

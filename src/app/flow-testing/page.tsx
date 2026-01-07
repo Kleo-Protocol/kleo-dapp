@@ -20,9 +20,8 @@ import { toast } from 'sonner';
  * All steps are available simultaneously - no need to complete one before accessing the next.
  */
 export default function FlowTestingPage() {
-  const { connectedAccount, network } = useTypink();
+  const { connectedAccount, network, client } = useTypink();
   const { contract: lendingPoolContract } = useContract(ContractId.LENDING_POOL);
-  const { contract: loanManagerContract } = useContract(ContractId.LOAN_MANAGER);
   const queryClient = useQueryClient();
   const { requestLoan } = useRequestLoan();
   const { vouchForLoan } = useVouchForLoan();
@@ -76,7 +75,7 @@ export default function FlowTestingPage() {
   // Step 2: Handle Deposit
   const handleDeposit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!lendingPoolContract || !connectedAccount) {
+    if (!lendingPoolContract || !connectedAccount || !client) {
       toast.error('Wallet not connected');
       return;
     }
@@ -91,10 +90,7 @@ export default function FlowTestingPage() {
     const toaster = txToaster();
 
     try {
-      await checkBalanceSufficiency(
-        lendingPoolContract.api as any,
-        connectedAccount.address
-      );
+      await checkBalanceSufficiency(client, connectedAccount.address);
 
       await lendingPoolContract.tx
         .deposit(connectedAccount.address, { value: depositAmountBigInt })

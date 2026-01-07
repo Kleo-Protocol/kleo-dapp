@@ -2,8 +2,9 @@
  * Utility functions for working with loans from the contract
  */
 
-import type { ContractLoan, Loan, LoanDetails } from './types';
+import type { ContractLoan, Loan } from './types';
 import type { LoanManagerLoan } from '@/contracts/types/loan-manager/types';
+import type { AccountId32 } from 'dedot/codecs';
 
 /**
  * Convert contract loan status to UI status
@@ -58,8 +59,17 @@ export function contractLoanToLoan(contractLoan: LoanManagerLoan | ContractLoan,
   const interestAmount = (contractLoan.amount * contractLoan.interestRate * contractLoan.term) / (365n * 86400n * 10000n);
   const totalRepayment = contractLoan.amount + interestAmount;
 
-  // Decode purpose
-  const purposeText = decodePurpose(contractLoan.purpose);
+  // Decode purpose (only if it exists - LoanManagerLoan doesn't have purpose)
+  const purposeText = 'purpose' in contractLoan && contractLoan.purpose 
+    ? decodePurpose(contractLoan.purpose) 
+    : undefined;
+
+  // Handle vouchers - LoanManagerLoan doesn't have vouchers, ContractLoan does
+  const vouchers = 'vouchers' in contractLoan && contractLoan.vouchers
+    ? contractLoan.vouchers.map((v: string | AccountId32) => 
+        typeof v === 'string' ? v : v.toString()
+      )
+    : [];
 
   return {
     ...contractLoan,
@@ -67,9 +77,8 @@ export function contractLoanToLoan(contractLoan: LoanManagerLoan | ContractLoan,
     borrower: typeof contractLoan.borrower === 'string' 
       ? contractLoan.borrower 
       : contractLoan.borrower.toString(),
-    vouchers: contractLoan.vouchers.map((v) => 
-      typeof v === 'string' ? v : v.toString()
-    ),
+    vouchers,
+    purpose: 'purpose' in contractLoan ? contractLoan.purpose : new Uint8Array(),
     status: normalizeLoanStatus(contractLoan.status),
     dueTime,
     totalRepayment,

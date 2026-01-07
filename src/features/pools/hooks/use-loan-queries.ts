@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useContract } from 'typink';
 import { ContractId } from '@/contracts/deployments';
-import type { LoanManagerLoan, LoanManagerLoanStatus } from '@/contracts/types/loan-manager/types';
+import type { LoanManagerLoan } from '@/contracts/types/loan-manager/types';
 
 /**
  * Hook to query loan details from the loan manager contract
@@ -174,8 +174,8 @@ export function useLoanStatus(loanId: bigint | number | string | undefined) {
 
       return {
         isOverdue,
-        isDefaulted: loan.status === 'Defaulted',
-        isRepaid: loan.status === 'Repaid',
+        isDefaulted: false, // Loan is Active, so it's not defaulted
+        isRepaid: false, // Loan is Active, so it's not repaid
         timeUntilDue: isOverdue ? null : timeUntilDue,
       };
     },

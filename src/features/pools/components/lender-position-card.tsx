@@ -3,7 +3,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { AlertTriangle, TrendingDown, Shield } from 'lucide-react';
-import { formatBalance } from '@/shared/utils/format';
 import { useUserStore } from '@/store/user.store';
 import { useUserDeposits } from '@/features/pools/hooks/use-lending-pool-data';
 import { useTypink } from 'typink';
