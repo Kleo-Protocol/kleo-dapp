@@ -68,7 +68,8 @@ export function KleoClientProvider({ children }: Props) {
         client.disconnect().catch(console.error);
       }
     };
-  }, [connect]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const value = useMemo(
     () => ({

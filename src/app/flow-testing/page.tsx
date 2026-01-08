@@ -181,7 +181,12 @@ export default function FlowTestingPage() {
 
     setIsRepaying(true);
     try {
-      await repayLoan(BigInt(repayLoanId), repaymentAmount);
+      // Convert repayment amount from 18 decimals (loan contract) to network decimals
+      // Loans use 18 decimals, but transaction value must be in network decimals
+      const loanDecimals = 18;
+      const conversionFactor = 10n ** BigInt(loanDecimals - decimals);
+      const repaymentAmountInNetworkDecimals = repaymentAmount / conversionFactor;
+      await repayLoan(BigInt(repayLoanId), repaymentAmountInNetworkDecimals);
       setRepayLoanId('');
       toast.success('Loan repaid successfully');
     } catch (error) {

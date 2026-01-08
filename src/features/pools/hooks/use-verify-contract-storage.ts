@@ -2,8 +2,9 @@
  * Utility hook to verify contract storage structure
  * Use this to debug storage access issues
  */
-import { useContract, useTypink } from 'typink';
+import { useContract } from 'typink';
 import { ContractId } from '@/contracts/deployments';
+import { useTypink } from 'typink';
 
 export function useVerifyContractStorage() {
   const { contract } = useContract(ContractId.LENDING_POOL);

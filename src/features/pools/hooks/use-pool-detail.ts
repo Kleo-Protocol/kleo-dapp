@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { usePools, usePoolState, usePoolStats } from '@/features/pools/hooks/use-pools';
 import { useKleoClient } from '@/providers/kleo-client-provider';

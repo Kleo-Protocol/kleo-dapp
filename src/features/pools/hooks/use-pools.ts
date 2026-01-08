@@ -142,8 +142,7 @@ export function useUpdatePoolLiquidity() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    mutationFn: (_params: { poolId: string; liquidityDelta: bigint }) => {
+    mutationFn: ({ poolId, liquidityDelta }: { poolId: string; liquidityDelta: bigint }) => {
       throw new Error('Update pool liquidity not implemented - mock removed');
     },
     onSuccess: (_, variables) => {

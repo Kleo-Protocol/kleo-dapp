@@ -14,6 +14,7 @@ import { Skeleton } from '@/shared/ui/skeleton';
 import { Clock, Users, Inbox } from 'lucide-react';
 import { EmptyState } from '@/shared/components/empty-state';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
+import { getDaysRemaining } from '@/lib/loan-utils';
 import type { LoanDetails } from '@/lib/types';
 
 interface RequestsTableProps {
