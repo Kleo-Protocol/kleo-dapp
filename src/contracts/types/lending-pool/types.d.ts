@@ -19,6 +19,7 @@ export type LendingPool = {
   reservedFunds: { get(): Promise<bigint | undefined> };
   totalPrincipalDeposits: { get(): Promise<bigint | undefined> };
   userDeposits: { get(arg: AccountId32Like): Promise<bigint | undefined> };
+  userStakedCapital: { get(arg: AccountId32Like): Promise<bigint | undefined> };
   lastUpdate: { get(): Promise<bigint | undefined> };
   vouchContract: { get(): Promise<H160 | undefined | undefined> };
   loanManager: { get(): Promise<H160 | undefined | undefined> };
@@ -34,3 +35,11 @@ export type LendingPoolError =
   | "TransactionFailed"
   | "AmountMismatch"
   | "Unauthorized";
+
+export type LendingPoolUserInfo = {
+  deposit: bigint;
+  stakedCapital: bigint;
+  availableBalance: bigint;
+  yieldAmount: bigint;
+  totalShare: bigint;
+};

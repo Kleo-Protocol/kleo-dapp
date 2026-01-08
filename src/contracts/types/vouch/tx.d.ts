@@ -60,10 +60,12 @@ export interface ContractTx<
   /**
    * Resolve all vouch relationships for a loan upon loan completion
    * Only callable by the authorized loan manager contract
+   * loan_amount: The loan amount (in 10 decimals). Only used when success=false to calculate recovery.
    *
    * @param {bigint} loanId
    * @param {AccountId32Like} borrower
    * @param {boolean} success
+   * @param {bigint} loanAmount
    * @param {H160} loanManagerAddress
    * @param {ContractTxOptions} options
    *
@@ -74,6 +76,7 @@ export interface ContractTx<
       loanId: bigint,
       borrower: AccountId32Like,
       success: boolean,
+      loanAmount: bigint,
       loanManagerAddress: H160,
       options?: ContractTxOptions,
     ) => ContractSubmittableExtrinsic,

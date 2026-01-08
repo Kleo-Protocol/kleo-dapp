@@ -141,6 +141,7 @@ export interface ContractTx<
    * Slash part of the position of a voucher
    * Only callable by the authorized vouch contract
    * amount: in 10 decimals (storage format)
+   * Note: This function also decreases staked capital tracking automatically
    *
    * @param {AccountId32Like} user
    * @param {bigint} amount
@@ -149,6 +150,69 @@ export interface ContractTx<
    * @selector 0xd6170b15
    **/
   slashStake: GenericContractTxCall<
+    (
+      user: AccountId32Like,
+      amount: bigint,
+      options?: ContractTxOptions,
+    ) => ContractSubmittableExtrinsic,
+    Type
+  >;
+
+  /**
+   * Handle default recovery: compare total slashed capital to loan amount
+   * Only callable by the authorized vouch contract
+   * total_slashed_capital: Total capital slashed from all vouchers (in 10 decimals)
+   * loan_amount: The loan amount that defaulted (in 10 decimals)
+   *
+   * Logic:
+   * - If slashed capital >= loan amount: Add loan amount back to liquidity (covers the default)
+   * - If slashed capital < loan amount: Add slashed amount back to liquidity, add deficit to reserved_funds
+   *
+   * @param {bigint} totalSlashedCapital
+   * @param {bigint} loanAmount
+   * @param {ContractTxOptions} options
+   *
+   * @selector 0x738e7f80
+   **/
+  handleDefaultRecovery: GenericContractTxCall<
+    (
+      totalSlashedCapital: bigint,
+      loanAmount: bigint,
+      options?: ContractTxOptions,
+    ) => ContractSubmittableExtrinsic,
+    Type
+  >;
+
+  /**
+   * Increase staked capital for a user (only callable by vouch contract)
+   * amount: in 10 decimals (storage format)
+   *
+   * @param {AccountId32Like} user
+   * @param {bigint} amount
+   * @param {ContractTxOptions} options
+   *
+   * @selector 0xdde18f09
+   **/
+  increaseStakedCapital: GenericContractTxCall<
+    (
+      user: AccountId32Like,
+      amount: bigint,
+      options?: ContractTxOptions,
+    ) => ContractSubmittableExtrinsic,
+    Type
+  >;
+
+  /**
+   * Decrease staked capital for a user (only callable by vouch contract)
+   * amount: in 10 decimals (storage format)
+   *
+   * @param {AccountId32Like} user
+   * @param {bigint} amount
+   * @param {ContractTxOptions} options
+   *
+   * @selector 0x96a5d2ba
+   **/
+  decreaseStakedCapital: GenericContractTxCall<
     (
       user: AccountId32Like,
       amount: bigint,

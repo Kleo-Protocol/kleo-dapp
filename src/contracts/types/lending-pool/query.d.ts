@@ -10,7 +10,11 @@ import type {
   ContractCallResult,
   MetadataType,
 } from "dedot/contracts";
-import type { LendingPoolError, InkPrimitivesLangError } from "./types.js";
+import type {
+  LendingPoolError,
+  InkPrimitivesLangError,
+  LendingPoolUserInfo,
+} from "./types.js";
 
 export interface ContractQuery<
   Type extends MetadataType,
@@ -234,6 +238,7 @@ export interface ContractQuery<
    * Slash part of the position of a voucher
    * Only callable by the authorized vouch contract
    * amount: in 10 decimals (storage format)
+   * Note: This function also decreases staked capital tracking automatically
    *
    * @param {AccountId32Like} user
    * @param {bigint} amount
@@ -251,6 +256,120 @@ export interface ContractQuery<
         Result<[], LendingPoolError>,
         ContractCallResult
       >
+    >,
+    Type
+  >;
+
+  /**
+   * Handle default recovery: compare total slashed capital to loan amount
+   * Only callable by the authorized vouch contract
+   * total_slashed_capital: Total capital slashed from all vouchers (in 10 decimals)
+   * loan_amount: The loan amount that defaulted (in 10 decimals)
+   *
+   * Logic:
+   * - If slashed capital >= loan amount: Add loan amount back to liquidity (covers the default)
+   * - If slashed capital < loan amount: Add slashed amount back to liquidity, add deficit to reserved_funds
+   *
+   * @param {bigint} totalSlashedCapital
+   * @param {bigint} loanAmount
+   * @param {ContractCallOptions} options
+   *
+   * @selector 0x738e7f80
+   **/
+  handleDefaultRecovery: GenericContractQueryCall<
+    (
+      totalSlashedCapital: bigint,
+      loanAmount: bigint,
+      options?: ContractCallOptions,
+    ) => Promise<
+      GenericContractCallResult<
+        Result<[], LendingPoolError>,
+        ContractCallResult
+      >
+    >,
+    Type
+  >;
+
+  /**
+   * Increase staked capital for a user (only callable by vouch contract)
+   * amount: in 10 decimals (storage format)
+   *
+   * @param {AccountId32Like} user
+   * @param {bigint} amount
+   * @param {ContractCallOptions} options
+   *
+   * @selector 0xdde18f09
+   **/
+  increaseStakedCapital: GenericContractQueryCall<
+    (
+      user: AccountId32Like,
+      amount: bigint,
+      options?: ContractCallOptions,
+    ) => Promise<
+      GenericContractCallResult<
+        Result<[], LendingPoolError>,
+        ContractCallResult
+      >
+    >,
+    Type
+  >;
+
+  /**
+   * Decrease staked capital for a user (only callable by vouch contract)
+   * amount: in 10 decimals (storage format)
+   *
+   * @param {AccountId32Like} user
+   * @param {bigint} amount
+   * @param {ContractCallOptions} options
+   *
+   * @selector 0x96a5d2ba
+   **/
+  decreaseStakedCapital: GenericContractQueryCall<
+    (
+      user: AccountId32Like,
+      amount: bigint,
+      options?: ContractCallOptions,
+    ) => Promise<
+      GenericContractCallResult<
+        Result<[], LendingPoolError>,
+        ContractCallResult
+      >
+    >,
+    Type
+  >;
+
+  /**
+   * Get user's staked capital
+   * Returns amount in 10 decimals (storage format)
+   *
+   * @param {AccountId32Like} user
+   * @param {ContractCallOptions} options
+   *
+   * @selector 0xf6dddcc5
+   **/
+  getUserStakedCapital: GenericContractQueryCall<
+    (
+      user: AccountId32Like,
+      options?: ContractCallOptions,
+    ) => Promise<GenericContractCallResult<bigint, ContractCallResult>>,
+    Type
+  >;
+
+  /**
+   * Get comprehensive user information
+   * Returns all user data including deposit, staked capital, available balance, and yield
+   *
+   * @param {AccountId32Like} accountId
+   * @param {ContractCallOptions} options
+   *
+   * @selector 0xf499d5d0
+   **/
+  getUserInfo: GenericContractQueryCall<
+    (
+      accountId: AccountId32Like,
+      options?: ContractCallOptions,
+    ) => Promise<
+      GenericContractCallResult<LendingPoolUserInfo, ContractCallResult>
     >,
     Type
   >;
