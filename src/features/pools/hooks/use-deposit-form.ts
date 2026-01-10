@@ -133,9 +133,14 @@ export function useDepositForm({ pool, onAmountChange }: UseDepositFormProps) {
       }
 
       // Execute deposit transaction
-      // The deposit function is payable, so we send the amount as the transaction value
+      // The deposit function requires accountId as first parameter and is payable, so we send the amount as the transaction value
+      // Ensure accountId is a string (AccountId32Like accepts string SS58 address)
+      const accountId = typeof connectedAccount.address === 'string' 
+        ? connectedAccount.address 
+        : String(connectedAccount.address);
+      
       await contract.tx
-        .deposit({
+        .deposit(accountId, {
           value: depositAmountBigInt,
         })
         .signAndSend(connectedAccount.address, (progress) => {
