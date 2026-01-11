@@ -378,7 +378,7 @@ import { useStars } from '@/features/profile/hooks/use-reputation-queries';
 function StarDisplay({ userAddress }: { userAddress: string }) {
   const { data: stars } = useStars(userAddress);
 
-  return <div>Stars: {stars ?? 0} ⭐</div>;
+  return <div>Stars: {stars ?? 0}</div>;
 }
 ```
 

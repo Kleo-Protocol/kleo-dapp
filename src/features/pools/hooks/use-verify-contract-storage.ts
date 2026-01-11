@@ -26,7 +26,7 @@ export function useVerifyContractStorage() {
       
       // Check for user_deposits (snake_case)
       if ('user_deposits' in root) {
-        console.log('✓ Found user_deposits (snake_case)');
+        console.log('[OK] Found user_deposits (snake_case)');
         const mapping = (root as any).user_deposits;
         console.log('  Type:', typeof mapping);
         console.log('  Has get method:', typeof mapping?.get === 'function');
@@ -36,12 +36,12 @@ export function useVerifyContractStorage() {
           console.log('  Test deposit value:', testDeposit);
         }
       } else {
-        console.log('✗ user_deposits (snake_case) NOT found');
+        console.log('[NOT FOUND] user_deposits (snake_case) NOT found');
       }
       
       // Check for userDeposits (camelCase)
       if ('userDeposits' in root) {
-        console.log('✓ Found userDeposits (camelCase)');
+        console.log('[OK] Found userDeposits (camelCase)');
         const mapping = (root as any).userDeposits;
         console.log('  Type:', typeof mapping);
         console.log('  Has get method:', typeof mapping?.get === 'function');
@@ -51,7 +51,7 @@ export function useVerifyContractStorage() {
           console.log('  Test deposit value:', testDeposit);
         }
       } else {
-        console.log('✗ userDeposits (camelCase) NOT found');
+        console.log('[NOT FOUND] userDeposits (camelCase) NOT found');
       }
       
       // Check other storage fields for reference

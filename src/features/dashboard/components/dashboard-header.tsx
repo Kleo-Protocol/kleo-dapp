@@ -42,10 +42,10 @@ export function DashboardHeader({ userRole, profile, isLoading }: DashboardHeade
   }
 
   const greeting = userRole === 'lender' 
-    ? 'Welcome back, Lender! 👋' 
+    ? 'Welcome back, Lender!' 
     : userRole === 'borrower'
-    ? 'Welcome back, Borrower! 👋'
-    : 'Welcome to Kleo! 👋';
+    ? 'Welcome back, Borrower!'
+    : 'Welcome to Kleo!';
 
   return (
     <div className="space-y-4">

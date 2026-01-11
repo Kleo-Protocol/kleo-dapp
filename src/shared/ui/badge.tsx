@@ -12,6 +12,7 @@ const badgeVariants = cva(
         rojo: "bg-atomic-tangerine/10 text-atomic-tangerine border border-atomic-tangerine/20",
         amarillo: "bg-amber-honey/10 text-amber-honey border border-amber-honey/20",
         verde: "bg-amber-honey/10 text-amber-honey border border-amber-honey/20",
+        secondary: "bg-secondary text-secondary-foreground border border-border",
       },
     },
     defaultVariants: {

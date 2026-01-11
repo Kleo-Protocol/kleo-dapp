@@ -100,7 +100,7 @@ function ProfileContent() {
         </div>
         {userRole && (
           <Badge variant='verde' className='text-base px-4 py-1.5'>
-            {userRole === 'lender' ? '💰 Lender' : '📊 Borrower'}
+            {userRole === 'lender' ? 'Lender' : 'Borrower'}
           </Badge>
         )}
       </div>
