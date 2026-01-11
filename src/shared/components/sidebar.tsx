@@ -8,11 +8,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shar
 import { cn } from '@/lib/utils';
 import { WalletDrawer } from './wallet-drawer';
 import { ProfileModal } from './profile-modal';
+import { useWalletDrawer } from './wallet-drawer-context';
 
 export function Sidebar() {
   const pathname = usePathname();
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [isWalletDrawerOpen, setIsWalletDrawerOpen] = useState(false);
+  const { isWalletDrawerOpen, setIsWalletDrawerOpen } = useWalletDrawer();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -87,15 +87,15 @@ export function Sidebar() {
             isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
           )}
         >
-          {/* Sidebar Collapse/Expand Button - Desktop Only */}
+          {/* Wallet Toggle Button - Desktop Only */}
           <div className="hidden md:flex items-center justify-center mb-4">
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
                   className="p-2 rounded-md hover:bg-muted transition-colors"
-                  onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
+                  onClick={() => setIsWalletDrawerOpen(!isWalletDrawerOpen)}
                 >
-                  {isSidebarExpanded ? (
+                  {isWalletDrawerOpen ? (
                     <ChevronLeft className="h-5 w-5" />
                   ) : (
                     <ChevronRight className="h-5 w-5" />
@@ -103,7 +103,7 @@ export function Sidebar() {
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">
-                {isSidebarExpanded ? 'Collapse Sidebar' : 'Expand Sidebar'}
+                {isWalletDrawerOpen ? 'Close Wallet' : 'Open Wallet'}
               </TooltipContent>
             </Tooltip>
           </div>

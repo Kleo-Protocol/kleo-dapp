@@ -44,7 +44,7 @@ export function PersonalKPICards({
     return (
       <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
         {[...Array(4)].map((_, i) => (
-          <Card key={i} className='border-amber-honey/20 bg-amber-honey/5 backdrop-blur-sm'>
+          <Card key={i} className='border-anti-flash-white/20 bg-anti-flash-white/10 backdrop-blur-sm'>
             <CardHeader>
               <Skeleton className='h-4 w-24' />
             </CardHeader>
@@ -78,7 +78,7 @@ export function PersonalKPICards({
   return (
     <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
       {/* Card 1: Mi Reputación */}
-      <Card className='border-amber-honey/20 bg-amber-honey/5 backdrop-blur-sm hover:border-amber-honey/40 transition-all duration-300 hover:scale-[1.02]'>
+      <Card className='border-anti-flash-white/20 bg-anti-flash-white/10 backdrop-blur-sm hover:border-anti-flash-white/40 transition-all duration-300 hover:scale-[1.02]'>
         <CardHeader className='pb-3'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
@@ -115,7 +115,7 @@ export function PersonalKPICards({
       </Card>
 
       {/* Card 2: Mis Depósitos */}
-      <Card className='border-forest-green/20 bg-forest-green/5 backdrop-blur-sm hover:border-forest-green/40 transition-all duration-300 hover:scale-[1.02]'>
+      <Card className='border-anti-flash-white/20 bg-anti-flash-white/10 backdrop-blur-sm hover:border-anti-flash-white/40 transition-all duration-300 hover:scale-[1.02]'>
         <CardHeader className='pb-3'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
@@ -146,7 +146,7 @@ export function PersonalKPICards({
       </Card>
 
       {/* Card 3: Mis Préstamos */}
-      <Card className='border-oxford-blue/20 bg-oxford-blue/5 backdrop-blur-sm hover:border-oxford-blue/40 transition-all duration-300 hover:scale-[1.02]'>
+      <Card className='border-anti-flash-white/20 bg-anti-flash-white/10 backdrop-blur-sm hover:border-anti-flash-white/40 transition-all duration-300 hover:scale-[1.02]'>
         <CardHeader className='pb-3'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
@@ -181,7 +181,7 @@ export function PersonalKPICards({
       </Card>
 
       {/* Card 4: Mis Vouches */}
-      <Card className='border-cetacean-blue/20 bg-cetacean-blue/5 backdrop-blur-sm hover:border-cetacean-blue/40 transition-all duration-300 hover:scale-[1.02]'>
+      <Card className='border-anti-flash-white/20 bg-anti-flash-white/10 backdrop-blur-sm hover:border-anti-flash-white/40 transition-all duration-300 hover:scale-[1.02]'>
         <CardHeader className='pb-3'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
