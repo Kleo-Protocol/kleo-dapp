@@ -50,7 +50,7 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #01091C;
+  --background: #090909;
   --foreground: #F2F2F2;
   --card: rgba(242, 242, 242, 0.25);
   --card-foreground: #F2F2F2;
@@ -89,13 +89,13 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-color: #01091C;
+    background-color: #090909;
     position: relative;
     overflow-x: hidden;
   }
 
   html.light body,
   html.dark body {
-    background-color: #01091C;
+    background-color: #090909;
   }
 }
