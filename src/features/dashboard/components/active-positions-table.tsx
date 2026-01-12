@@ -72,7 +72,7 @@ export function ActivePositionsTable({
         <CardHeader>
           <CardTitle className='font-sora text-lg font-semibold'>My Active Positions</CardTitle>
           <CardDescription className='font-inter text-sm'>
-            Tus posiciones activas de depósitos y préstamos
+            Your active deposit and loan positions
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -92,7 +92,7 @@ export function ActivePositionsTable({
       <CardHeader>
         <CardTitle className='font-sora text-lg font-semibold'>My Active Positions</CardTitle>
         <CardDescription className='font-inter text-sm'>
-          Tus posiciones activas de depósitos y préstamos
+          Your active deposit and loan positions
         </CardDescription>
       </CardHeader>
       <CardContent>

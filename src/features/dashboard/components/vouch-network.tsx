@@ -60,15 +60,15 @@ export function VouchNetwork({
 
   return (
     <div className='grid gap-4 lg:grid-cols-2'>
-      {/* Quién Me Respalda */}
+      {/* Who Backs Me */}
       <Card className='border-cetacean-blue/20 bg-cetacean-blue/5 backdrop-blur-sm'>
         <CardHeader>
           <div className='flex items-center gap-2'>
             <Shield className='h-5 w-5 text-cetacean-blue' />
             <div>
-              <CardTitle className='font-sora text-lg font-semibold'>Quién Me Respalda</CardTitle>
+              <CardTitle className='font-sora text-lg font-semibold'>Who Backs Me</CardTitle>
               <CardDescription className='font-inter text-sm'>
-                {vouchesForMe.length} {vouchesForMe.length === 1 ? 'voucher' : 'vouchers'} respaldándome
+                {vouchesForMe.length} {vouchesForMe.length === 1 ? 'voucher' : 'vouchers'} backing me
               </CardDescription>
             </div>
           </div>
@@ -77,7 +77,7 @@ export function VouchNetwork({
           {vouchesForMe.length === 0 ? (
             <div className='text-center py-8'>
               <p className='font-inter text-sm text-muted-foreground'>
-                Nadie te está respaldando todavía
+                No one is backing you yet
               </p>
             </div>
           ) : (
@@ -139,15 +139,15 @@ export function VouchNetwork({
         </CardContent>
       </Card>
 
-      {/* A Quién Respaldo */}
+      {/* Who I Back */}
       <Card className='border-amber-honey/20 bg-amber-honey/5 backdrop-blur-sm'>
         <CardHeader>
           <div className='flex items-center gap-2'>
             <User className='h-5 w-5 text-amber-honey' />
             <div>
-              <CardTitle className='font-sora text-lg font-semibold'>A Quién Respaldo</CardTitle>
+              <CardTitle className='font-sora text-lg font-semibold'>Who I Back</CardTitle>
               <CardDescription className='font-inter text-sm'>
-                {myVouches.length} {myVouches.length === 1 ? 'borrower' : 'borrowers'} que respaldo
+                {myVouches.length} {myVouches.length === 1 ? 'borrower' : 'borrowers'} I back
               </CardDescription>
             </div>
           </div>
@@ -156,7 +156,7 @@ export function VouchNetwork({
           {myVouches.length === 0 ? (
             <div className='text-center py-8'>
               <p className='font-inter text-sm text-muted-foreground'>
-                No estás respaldando a nadie todavía
+                You're not backing anyone yet
               </p>
             </div>
           ) : (

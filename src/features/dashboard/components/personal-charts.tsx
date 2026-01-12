@@ -58,9 +58,9 @@ export function PersonalCharts({
           <div className='flex items-center gap-2'>
             <TrendingUp className='h-5 w-5 text-amber-honey' />
             <div>
-              <CardTitle className='font-sora text-lg font-semibold'>Mi Reputación Timeline</CardTitle>
+              <CardTitle className='font-sora text-lg font-semibold'>My Reputation Timeline</CardTitle>
               <CardDescription className='font-inter text-sm'>
-                Evolución de tus estrellas en los últimos 6 meses
+                Evolution of your stars over the last 6 months
               </CardDescription>
             </div>
           </div>
@@ -115,9 +115,9 @@ export function PersonalCharts({
           <div className='flex items-center gap-2'>
             <DollarSign className='h-5 w-5 text-forest-green' />
             <div>
-              <CardTitle className='font-sora text-lg font-semibold'>Mis Ganancias por Interés</CardTitle>
+              <CardTitle className='font-sora text-lg font-semibold'>My Interest Earnings</CardTitle>
               <CardDescription className='font-inter text-sm'>
-                Intereses ganados en los últimos 6 meses
+                Interest earned over the last 6 months
               </CardDescription>
             </div>
           </div>
@@ -128,7 +128,7 @@ export function PersonalCharts({
               ${totalInterest.toFixed(2)}
             </p>
             <p className='font-inter text-xs text-muted-foreground mt-1'>
-              Total acumulado
+              Total accumulated
             </p>
           </div>
           <ResponsiveContainer width='100%' height={250}>
@@ -161,7 +161,7 @@ export function PersonalCharts({
                   backdropFilter: 'blur(8px)',
                 }}
                 labelStyle={{ color: '#f3f4f6', fontWeight: 600 }}
-formatter={(value?: number) => value !== undefined ? `$${value.toFixed(2)}` : ''}
+                formatter={(value?: number) => value !== undefined ? `$${value.toFixed(2)}` : ''}
               />
               <Line
                 type='monotone'

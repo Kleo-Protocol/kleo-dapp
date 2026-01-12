@@ -35,7 +35,7 @@ export function LoanHistoryTimeline({ loans, isLoading }: LoanHistoryTimelinePro
         <CardHeader>
           <CardTitle className='font-sora text-lg font-semibold'>My Loan History</CardTitle>
           <CardDescription className='font-inter text-sm'>
-            Historial completo de tus préstamos
+            Complete history of your loans
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -88,7 +88,7 @@ export function LoanHistoryTimeline({ loans, isLoading }: LoanHistoryTimelinePro
       <CardHeader>
         <CardTitle className='font-sora text-lg font-semibold'>My Loan History</CardTitle>
         <CardDescription className='font-inter text-sm'>
-          Historial completo de tus préstamos ({loans.length} {loans.length === 1 ? 'loan' : 'loans'})
+          Complete history of your loans ({loans.length} {loans.length === 1 ? 'loan' : 'loans'})
         </CardDescription>
       </CardHeader>
       <CardContent>

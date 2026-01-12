@@ -75,13 +75,13 @@ export function PersonalKPICards({
 
   return (
     <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-      {/* Card 1: Mi Reputación */}
+      {/* Card 1: My Reputation */}
       <Card className='border-anti-flash-white/20 bg-anti-flash-white/10 backdrop-blur-sm hover:border-anti-flash-white/40 transition-all duration-300 hover:scale-[1.02]'>
         <CardHeader className='pb-3'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
               <Star className='h-5 w-5 text-amber-honey' />
-              <span className='font-inter text-sm text-muted-foreground'>Mi Reputación</span>
+              <span className='font-inter text-sm text-muted-foreground'>My Reputation</span>
             </div>
             {reputation.canVouch ? (
               <Badge variant='secondary' className='bg-amber-honey/20 text-amber-honey border-amber-honey/30'>
@@ -112,13 +112,13 @@ export function PersonalKPICards({
         </CardContent>
       </Card>
 
-      {/* Card 2: Mis Depósitos */}
+      {/* Card 2: My Deposits */}
       <Card className='border-anti-flash-white/20 bg-anti-flash-white/10 backdrop-blur-sm hover:border-anti-flash-white/40 transition-all duration-300 hover:scale-[1.02]'>
         <CardHeader className='pb-3'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
               <DollarSign className='h-5 w-5 text-forest-green' />
-              <span className='font-inter text-sm text-muted-foreground'>Mis Depósitos</span>
+              <span className='font-inter text-sm text-muted-foreground'>My Deposits</span>
             </div>
             {currentAPY > 0 && (
               <Badge variant='secondary' className='bg-forest-green/20 text-forest-green border-forest-green/30'>
@@ -143,13 +143,13 @@ export function PersonalKPICards({
         </CardContent>
       </Card>
 
-      {/* Card 3: Mis Préstamos */}
+      {/* Card 3: My Loans */}
       <Card className='border-anti-flash-white/20 bg-anti-flash-white/10 backdrop-blur-sm hover:border-anti-flash-white/40 transition-all duration-300 hover:scale-[1.02]'>
         <CardHeader className='pb-3'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
               <TrendingDown className='h-5 w-5 text-oxford-blue' />
-              <span className='font-inter text-sm text-muted-foreground'>Mis Préstamos</span>
+              <span className='font-inter text-sm text-muted-foreground'>My Loans</span>
             </div>
             {activeLoansCount > 0 && (
               <Badge variant='secondary' className='bg-oxford-blue/20 text-oxford-blue border-oxford-blue/30'>
@@ -178,13 +178,13 @@ export function PersonalKPICards({
         </CardContent>
       </Card>
 
-      {/* Card 4: Mis Vouches */}
+      {/* Card 4: My Vouches */}
       <Card className='border-anti-flash-white/20 bg-anti-flash-white/10 backdrop-blur-sm hover:border-anti-flash-white/40 transition-all duration-300 hover:scale-[1.02]'>
         <CardHeader className='pb-3'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
               <Shield className='h-5 w-5 text-cetacean-blue' />
-              <span className='font-inter text-sm text-muted-foreground'>Mis Vouches</span>
+              <span className='font-inter text-sm text-muted-foreground'>My Vouches</span>
             </div>
           </div>
         </CardHeader>
