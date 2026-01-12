@@ -6,6 +6,8 @@ import { useTypink } from 'typink';
 import { borrowKeys } from './use-borrow-data';
 import { useRequestLoan } from './use-loan-transactions';
 import { useQueryClient } from '@tanstack/react-query';
+import { useStars } from '@/features/profile/hooks/use-reputation-queries';
+import { checkTierRequirements, getLoanTier } from '@/lib/loan-tiers';
 import type { Pool } from '@/lib/types';
 import { DEFAULTS } from '@/lib/constants';
 
@@ -33,6 +35,7 @@ export function useBorrowForm({ pool, maxBorrow, onRequestCreated }: UseBorrowFo
   const { connectedAccount } = useTypink();
   const { requestLoan } = useRequestLoan();
   const queryClient = useQueryClient();
+  const { data: userStars = 0 } = useStars(connectedAccount?.address);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -63,6 +66,27 @@ export function useBorrowForm({ pool, maxBorrow, onRequestCreated }: UseBorrowFo
 
     if (amountBigInt === 0n || isNaN(termDays)) {
       toast.error('Invalid amount or term');
+      return;
+    }
+
+    // Check tier requirements
+    const amountNum = parseFloat(amount);
+    const tier = getLoanTier(amountNum);
+    if (!tier) {
+      toast.error('Loan amount exceeds maximum tier limit (1000 tokens)');
+      return;
+    }
+
+    const tierCheck = checkTierRequirements(amountNum, userStars, 0);
+    if (!tierCheck.isValid) {
+      const errors: string[] = [];
+      if (tierCheck.missingStars > 0) {
+        errors.push(`Need ${tierCheck.missingStars} more stars`);
+      }
+      if (tierCheck.missingVouchers > 0) {
+        errors.push(`Need ${tierCheck.missingVouchers} more vouchers`);
+      }
+      toast.error(`Tier ${tier} requirements not met: ${errors.join(', ')}`);
       return;
     }
 

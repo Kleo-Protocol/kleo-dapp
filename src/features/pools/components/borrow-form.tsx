@@ -7,6 +7,7 @@ import { Label } from '@/shared/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select';
 import { ArrowDown, AlertCircle } from 'lucide-react';
 import { useBorrowForm } from '@/features/pools/hooks/use-borrow-form';
+import { TierRequirementsInfo } from '@/features/pools/components/tier-requirements-info';
 import type { Pool } from '@/lib/types';
 
 interface BorrowFormProps {
@@ -106,24 +107,27 @@ export function BorrowForm({ pool, maxBorrow, onRequestCreated }: BorrowFormProp
           </div>
 
           {amountNum > 0 && (
-            <div className="rounded-lg border border-border bg-secondary/50 p-4 space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Interest Rate</span>
-                <span className="font-semibold text-card-foreground">{interestRate.toFixed(2)}%</span>
+            <>
+              <div className="rounded-lg border border-border bg-secondary/50 p-4 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Interest Rate</span>
+                  <span className="font-semibold text-card-foreground">{interestRate.toFixed(2)}%</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Estimated Interest</span>
+                  <span className="font-semibold text-card-foreground">
+                    {estimatedInterest.toLocaleString('en-US', { maximumFractionDigits: 2 })} tokens
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm pt-2 border-t border-border">
+                  <span className="text-muted-foreground">Total Repayment</span>
+                  <span className="font-semibold text-card-foreground">
+                    {totalRepayment.toLocaleString('en-US', { maximumFractionDigits: 2 })} tokens
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Estimated Interest</span>
-                <span className="font-semibold text-card-foreground">
-                  {estimatedInterest.toLocaleString('en-US', { maximumFractionDigits: 2 })} tokens
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-sm pt-2 border-t border-border">
-                <span className="text-muted-foreground">Total Repayment</span>
-                <span className="font-semibold text-card-foreground">
-                  {totalRepayment.toLocaleString('en-US', { maximumFractionDigits: 2 })} tokens
-                </span>
-              </div>
-            </div>
+              <TierRequirementsInfo loanAmount={amountNum} />
+            </>
           )}
 
           <Button

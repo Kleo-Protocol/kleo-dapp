@@ -9,6 +9,7 @@ import { Label } from '@/shared/ui/label';
 import { DollarSign } from 'lucide-react';
 import { useLoan, useRepaymentAmount } from '@/features/pools/hooks/use-loan-queries';
 import { useRepayLoan } from '@/features/pools/hooks/use-loan-transactions';
+import { AddressConverter } from '@/lib/address-converter';
 import { toast } from 'sonner';
 
 export function RepayLoanSection() {
@@ -94,7 +95,7 @@ export function RepayLoanSection() {
                   <p>
                     <strong className="text-slate-700">Repayment:</strong>{' '}
                     <span className="text-slate-800">
-                      {formatTokenAmount(repaymentAmount, 10).toFixed(4)} tokens
+                      {formatTokenAmount(repaymentAmount, 18).toFixed(4)} tokens
                     </span>
                   </p>
                 )}

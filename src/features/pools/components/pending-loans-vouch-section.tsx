@@ -6,12 +6,14 @@ import { usePendingLoans, useLoan } from '@/features/pools/hooks/use-loan-querie
 import { useVouchesForLoan } from '@/features/pools/hooks/use-vouch-queries';
 import { useVouchForLoan } from '@/features/pools/hooks/use-loan-transactions';
 import { useStars } from '@/features/profile/hooks/use-reputation-queries';
+import { getLoanTier, getTierRequirements } from '@/lib/loan-tiers';
 import { toast } from 'sonner';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/card';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { Skeleton } from '@/shared/ui/skeleton';
+import { Badge } from '@/shared/ui/badge';
 
 /**
  * Component to display pending loans and allow vouching for them
@@ -222,6 +224,10 @@ function PendingLoanCard({
     ? (Number(loan.interestRate) / 100000000).toFixed(2)
     : '0.00';
 
+  const loanAmountTokens = formatTokenAmount(loan.amount, LOAN_DECIMALS);
+  const loanTier = getLoanTier(loanAmountTokens);
+  const tierRequirements = loanTier ? getTierRequirements(loanAmountTokens) : null;
+
   return (
     <Card>
       <CardHeader>
@@ -244,8 +250,13 @@ function PendingLoanCard({
                 <div>
                   <strong className="text-slate-600 font-medium">Amount:</strong>
                   <div className="mt-1 text-slate-800 font-medium">
-                    {formatTokenAmount(loan.amount, LOAN_DECIMALS).toFixed(4)} tokens
+                    {loanAmountTokens.toFixed(4)} tokens
                   </div>
+                  {loanTier && (
+                    <Badge variant="default" className="mt-1 text-xs">
+                      Tier {loanTier}
+                    </Badge>
+                  )}
                 </div>
                 <div>
                   <strong className="text-slate-600 font-medium">Interest Rate:</strong>
@@ -263,7 +274,17 @@ function PendingLoanCard({
                   <strong className="text-slate-600 font-medium">Vouches:</strong>
                   <div className="mt-1 text-slate-800">
                     {vouchCount ?? 0}
+                    {tierRequirements && (
+                      <span className="text-xs text-muted-foreground ml-1">
+                        / {tierRequirements.minVouchers} required
+                      </span>
+                    )}
                   </div>
+                  {tierRequirements && (
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      Needs: {tierRequirements.minStars} stars, {tierRequirements.minVouchers} vouchers
+                    </div>
+                  )}
                 </div>
               </div>
             </CardDescription>

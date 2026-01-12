@@ -3,6 +3,7 @@
 import { usePendingLoans, useActiveLoans, useLoan } from '@/features/pools/hooks/use-loan-queries';
 import { useVouchesForLoan } from '@/features/pools/hooks/use-vouch-queries';
 import { useMemo, useState } from 'react';
+import { AddressConverter } from '@/lib/address-converter';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/card';
 import {
   Table,
@@ -165,12 +166,12 @@ function LoanTableRow({ loanId, showVouchButton = false }: { loanId: bigint; sho
     // Calculate days remaining (in seconds)
     const secondsRemaining = dueTime - now;
     const daysRemaining = Math.floor(Number(secondsRemaining) / (60 * 60 * 24));
-    return daysRemaining;
+    return Math.floor(daysRemaining / 1000); // floor to avoid decimals.
   };
 
   // Calculate term in days (term is in seconds: 25920000 seconds = 300 days)
   const termInDays = loan?.term && loan.term > 0n 
-    ? Math.floor(Number(loan.term) / (60 * 60 * 24)) 
+    ? Math.floor(Number(loan.term) / (60 * 60 * 24 * 1000)) 
     : 0;
 
   // Use totalRepaymentAmount from contract if available, otherwise calculate
@@ -218,7 +219,7 @@ function LoanTableRow({ loanId, showVouchButton = false }: { loanId: bigint; sho
     amount: loan.amount,
     interestRate: loan.interestRate,
     term: loan.term,
-    purpose: loan.purpose || new Uint8Array(),
+    purpose: new Uint8Array(),
     startTime: loan.startTime || 0n,
     status: loan.status as 'Active' | 'Repaid' | 'Defaulted' | 'Pending',
     vouchers: [],
