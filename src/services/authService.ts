@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/client';
+import { getSiteUrl } from '@/utils/url';
 
 interface SignUpData {
   email: string;
@@ -33,6 +34,9 @@ export async function signUp(data: SignUpData): Promise<SignUpResponse> {
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
+      options: {
+        emailRedirectTo: `${getSiteUrl()}/auth/callback?next=/dashboard`,
+      },
     });
 
     if (signUpError) {
@@ -128,7 +132,7 @@ export async function signInWithGoogle(redirectTo?: string): Promise<{ error?: s
   try {
     const supabase = createClient();
 
-    const callbackUrl = redirectTo || `${window.location.origin}/auth/callback?next=/dashboard`;
+    const callbackUrl = redirectTo || `${getSiteUrl()}/auth/callback?next=/dashboard`;
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
