@@ -189,6 +189,22 @@ export function usePersonalDashboard() {
     })),
   });
 
+  // Helper function to format address to string
+  const formatAddress = (address: string | { raw?: string } | any): string => {
+    if (typeof address === 'string') {
+      return address;
+    }
+    if (typeof address === 'object' && address !== null) {
+      if ('raw' in address && typeof address.raw === 'string') {
+        return address.raw;
+      }
+      if (typeof address.toString === 'function') {
+        return address.toString();
+      }
+    }
+    return String(address);
+  };
+
   // Get borrower vouches (who vouches for me)
   // Using the existing hook for borrower vouchers - note: this may not work across all pools
   // For now, we'll simplify and just get basic voucher info
@@ -198,8 +214,11 @@ export function usePersonalDashboard() {
       if (!userAddress || !vouchContract) return [];
       
       try {
+        // Format userAddress to string
+        const userAddrStr = formatAddress(userAddress);
+        
         // Use getAllVouchers from the contract
-        const result = await vouchContract.query.getAllVouchers(userAddress);
+        const result = await vouchContract.query.getAllVouchers(userAddrStr);
         const vouchers = (result as any).data;
         
         if (!Array.isArray(vouchers) || vouchers.length === 0) return [];
@@ -208,12 +227,15 @@ export function usePersonalDashboard() {
         const allVouches: VouchForMe[] = [];
         for (const voucherAddress of vouchers) {
           try {
-            const voucherAddr = typeof voucherAddress === 'string' ? voucherAddress : voucherAddress.toString();
+            const voucherAddr = formatAddress(voucherAddress);
+            
+            // Skip if either address is invalid
+            if (!voucherAddr || !userAddrStr) continue;
             
             if (!vouchContract.storage) continue;
             
             const root = await vouchContract.storage.root();
-            const relationship = await root.relationships?.get([voucherAddr, userAddress]);
+            const relationship = await root.relationships?.get([voucherAddr, userAddrStr]);
             
             if (relationship) {
               allVouches.push({

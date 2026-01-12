@@ -11,8 +11,8 @@ import { DepositForm } from '@/features/pools/components/deposit-form';
 import { WithdrawForm } from '@/features/pools/components/withdraw-form';
 import { ApyPreview } from '@/features/pools/components/apy-preview';
 import { MyDepositsTable } from '@/features/pools/components/my-deposits-table';
-import { MaxBorrowInfo } from '@/features/pools/components/max-borrow-info';
 import { BorrowForm } from '@/features/pools/components/borrow-form';
+import { RepayLoanSection } from '@/features/pools/components/repay-loan-section';
 import { LoansListTable } from '@/features/pools/components/loans-list-table';
 import { LenderPositionCard } from '@/features/pools/components/lender-position-card';
 import { PendingRequestsTable } from '@/features/pools/components/pending-requests-table';
@@ -207,7 +207,7 @@ export function PoolDetailPage() {
           {pool && (
             <div className='space-y-6'>
               <div className='grid gap-6 lg:grid-cols-2'>
-                <MaxBorrowInfo pool={pool} />
+                <RepayLoanSection />
                 <BorrowForm pool={pool} maxBorrow={maxBorrow} />
               </div>
               <LoansListTable />
