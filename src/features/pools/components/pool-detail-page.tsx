@@ -167,6 +167,7 @@ export function PoolDetailPage() {
           <TabsTrigger value='overview'>Overview</TabsTrigger>
           <TabsTrigger value='lend'>Lend</TabsTrigger>
           <TabsTrigger value='borrow'>Borrow</TabsTrigger>
+          <TabsTrigger value='vouch'>Vouch</TabsTrigger>
           <TabsTrigger value='history'>History</TabsTrigger>
           {isPoolCreator && <TabsTrigger value='analytics'>Analytics</TabsTrigger>}
         </TabsList>
@@ -212,6 +213,10 @@ export function PoolDetailPage() {
               <LoansListTable />
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value='vouch'>
+          <LoansListTable showVouchButton={true} showOnlyPending={true} />
         </TabsContent>
 
         <TabsContent value='history'>

@@ -2,7 +2,7 @@
 
 import { usePendingLoans, useActiveLoans, useLoan } from '@/features/pools/hooks/use-loan-queries';
 import { useVouchesForLoan } from '@/features/pools/hooks/use-vouch-queries';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/card';
 import {
   Table,
@@ -13,25 +13,35 @@ import {
   TableRow,
 } from '@/shared/ui/table';
 import { Badge } from '@/shared/ui/badge';
+import { Button } from '@/shared/ui/button';
 import { Skeleton } from '@/shared/ui/skeleton';
-import { Clock, Users, DollarSign, Inbox } from 'lucide-react';
+import { Clock, Users, DollarSign, Inbox, Shield } from 'lucide-react';
 import { EmptyState } from '@/shared/components/empty-state';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
+import { VouchModal } from './vouch-modal';
+
+interface LoansListTableProps {
+  showVouchButton?: boolean;
+  showOnlyPending?: boolean;
+}
 
 /**
  * Component to display all loans in a table format
  * Gets loan IDs from pending/active loans, then fetches full loan details for each
  */
-export function LoansListTable() {
+export function LoansListTable({ showVouchButton = false, showOnlyPending = false }: LoansListTableProps = {}) {
   const { data: pendingLoans, isLoading: isLoadingPending } = usePendingLoans();
   const { data: activeLoans, isLoading: isLoadingActive } = useActiveLoans();
 
-  // Combine all loan IDs (pending + active)
+  // Combine all loan IDs (pending + active), or only pending if showOnlyPending is true
   const allLoanIds = useMemo(() => {
     const pending = (pendingLoans ?? []).map(id => typeof id === 'bigint' ? id : BigInt(id));
+    if (showOnlyPending) {
+      return pending;
+    }
     const active = (activeLoans ?? []).map(id => typeof id === 'bigint' ? id : BigInt(id));
     return [...pending, ...active];
-  }, [pendingLoans, activeLoans]);
+  }, [pendingLoans, activeLoans, showOnlyPending]);
 
   const isLoading = isLoadingPending || isLoadingActive;
 
@@ -81,13 +91,14 @@ export function LoansListTable() {
               <TableHead>Vouches</TableHead>
               <TableHead>Days Left</TableHead>
               <TableHead>Status</TableHead>
+              {showVouchButton && <TableHead>Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {allLoanIds.map((loanId) => {
               const loanIdStr = typeof loanId === 'bigint' ? loanId.toString() : String(loanId);
               return (
-                <LoanTableRow key={loanIdStr} loanId={loanId} />
+                <LoanTableRow key={loanIdStr} loanId={loanId} showVouchButton={showVouchButton} />
               );
             })}
           </TableBody>
@@ -98,7 +109,8 @@ export function LoansListTable() {
 }
 
 // Component for each loan row - uses useLoan directly like LoanCard
-function LoanTableRow({ loanId }: { loanId: bigint }) {
+function LoanTableRow({ loanId, showVouchButton = false }: { loanId: bigint; showVouchButton?: boolean }) {
+  const [vouchModalOpen, setVouchModalOpen] = useState(false);
   // Fetch full loan details using getLoan - same as LoansList
   const { data: loan, isLoading } = useLoan(loanId);
   const { data: vouchCount } = useVouchesForLoan(loanId);
@@ -173,10 +185,12 @@ function LoanTableRow({ loanId }: { loanId: bigint }) {
     ? (Number(loan.interestRate) / 100000000).toFixed(2)
     : '0.00';
 
+  const colSpan = showVouchButton ? 10 : 9;
+
   if (isLoading) {
     return (
       <TableRow>
-        <TableCell colSpan={9}>
+        <TableCell colSpan={colSpan}>
           <Skeleton className="h-12 w-full" />
         </TableCell>
       </TableRow>
@@ -186,7 +200,7 @@ function LoanTableRow({ loanId }: { loanId: bigint }) {
   if (!loan) {
     return (
       <TableRow>
-        <TableCell colSpan={9} className="text-center text-muted-foreground">
+        <TableCell colSpan={colSpan} className="text-center text-muted-foreground">
           Loan {loanId.toString()} not found
         </TableCell>
       </TableRow>
@@ -196,6 +210,23 @@ function LoanTableRow({ loanId }: { loanId: bigint }) {
   // Calculate days left once
   const daysLeft = calculateDaysLeft();
   const borrowerAddress = formatAddress(loan.borrower);
+
+  // Convert loan to LoanDetails format for the modal (only if showVouchButton is true)
+  const loanDetails = showVouchButton ? {
+    loanId: BigInt(loanId),
+    borrower: borrowerAddress,
+    amount: loan.amount,
+    interestRate: loan.interestRate,
+    term: loan.term,
+    purpose: loan.purpose || new Uint8Array(),
+    startTime: loan.startTime || 0n,
+    status: loan.status as 'Active' | 'Repaid' | 'Defaulted' | 'Pending',
+    vouchers: [],
+    dueTime: (loan.startTime || 0n) + loan.term,
+    totalRepayment: totalRepayment || 0n,
+    daysRemaining: typeof daysLeft === 'number' ? daysLeft : 0,
+    isOverdue: false,
+  } : null;
 
   return (
     <TableRow>
@@ -242,6 +273,34 @@ function LoanTableRow({ loanId }: { loanId: bigint }) {
           {loan.status}
         </Badge>
       </TableCell>
+      {showVouchButton && (
+        <TableCell>
+          {loan.status === 'Pending' ? (
+            <>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setVouchModalOpen(true)}
+                className="gap-2"
+                disabled={!loanDetails}
+              >
+                <Shield className="size-4" />
+                Vouch
+              </Button>
+              {loanDetails && (
+                <VouchModal
+                  loanId={loanId.toString()}
+                  loan={loanDetails}
+                  open={vouchModalOpen}
+                  onOpenChange={setVouchModalOpen}
+                />
+              )}
+            </>
+          ) : (
+            <span className="text-muted-foreground text-sm">N/A</span>
+          )}
+        </TableCell>
+      )}
     </TableRow>
   );
 }
