@@ -5,11 +5,13 @@ export async function updateSession(request: NextRequest) {
   // Check if there's a code parameter on the home page and redirect to auth callback
   if (request.nextUrl.pathname === '/' && request.nextUrl.searchParams.has('code')) {
     const code = request.nextUrl.searchParams.get('code');
-    const next = request.nextUrl.searchParams.get('next') || '/dashboard';
-    const callbackUrl = new URL('/auth/callback', request.nextUrl.origin);
-    callbackUrl.searchParams.set('code', code);
-    callbackUrl.searchParams.set('next', next);
-    return NextResponse.redirect(callbackUrl);
+    if (code) {
+      const next = request.nextUrl.searchParams.get('next') || '/dashboard';
+      const callbackUrl = new URL('/auth/callback', request.nextUrl.origin);
+      callbackUrl.searchParams.set('code', code);
+      callbackUrl.searchParams.set('next', next);
+      return NextResponse.redirect(callbackUrl);
+    }
   }
 
   let supabaseResponse = NextResponse.next({
