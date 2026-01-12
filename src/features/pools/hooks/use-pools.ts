@@ -142,14 +142,11 @@ export function useUpdatePoolLiquidity() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ poolId, liquidityDelta }: { poolId: string; liquidityDelta: bigint }) => {
+    mutationFn: () => {
       throw new Error('Update pool liquidity not implemented - mock removed');
     },
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       // Invalidate pool-related queries
-      queryClient.invalidateQueries({ queryKey: poolsKeys.detail(variables.poolId) });
-      queryClient.invalidateQueries({ queryKey: poolsKeys.stats(variables.poolId) });
-      queryClient.invalidateQueries({ queryKey: poolsKeys.state(variables.poolId) });
       queryClient.invalidateQueries({ queryKey: poolsKeys.lists.all });
       queryClient.invalidateQueries({ queryKey: poolsKeys.lists.available });
     },

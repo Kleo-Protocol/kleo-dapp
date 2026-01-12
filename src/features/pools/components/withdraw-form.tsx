@@ -19,7 +19,6 @@ export function WithdrawForm({ pool, onAmountChange }: WithdrawFormProps) {
     amount,
     isSubmitting,
     availableToWithdraw,
-    withdrawAmount,
     isValid,
     hasInsufficientBalance,
     isFormDisabled,

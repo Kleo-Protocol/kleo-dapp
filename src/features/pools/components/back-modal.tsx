@@ -13,7 +13,6 @@ import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { Button } from '@/shared/ui/button';
 import { AlertTriangle, DollarSign, Shield } from 'lucide-react';
-import { toast } from 'sonner';
 import { useVouchForLoan } from '@/features/pools/hooks/use-loan-transactions';
 import { useStars } from '@/features/profile/hooks/use-reputation-queries';
 import { useTypink } from 'typink';

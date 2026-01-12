@@ -5,13 +5,9 @@ import { useTypink, useContract } from 'typink';
 import { ContractId } from '@/contracts/deployments';
 import { useKleoClient } from '@/providers/kleo-client-provider';
 import { useStars, useCanVouch } from '@/features/profile/hooks/use-reputation-queries';
-import { useUserDeposits, useCurrentRate } from '@/features/pools/hooks/use-lending-pool-data';
-import { useBorrowerVouchers, useBorrowerExposure, useVouchRelationship } from '@/features/pools/hooks/use-vouch-queries';
-import { useBorrowerLoans } from '@/features/pools/hooks/use-borrow-data';
+import { useCurrentRate } from '@/features/pools/hooks/use-lending-pool-data';
 import { useAvailablePools } from '@/features/pools/hooks/use-pools';
-import type { Loan, LoanStatus } from '@/lib/types';
-import type { AccountId32 } from 'dedot/codecs';
-import type { VouchVouchRelationship } from '@/contracts/types/vouch/types';
+import type { LoanStatus } from '@/lib/types';
 
 /**
  * User reputation data
@@ -47,9 +43,15 @@ export interface UserLoanPosition {
   totalRepayment: bigint;
   amountToRepay: bigint;
   status: LoanStatus;
+  startTime: bigint;
   dueTime: bigint;
   daysRemaining: number;
   isOverdue: boolean;
+  interestRate: bigint;
+  term: bigint;
+  borrower: string;
+  vouchers: string[];
+  purpose?: Uint8Array;
 }
 
 /**
@@ -83,8 +85,6 @@ export function usePersonalDashboard() {
   const { connectedAccount, network } = useTypink();
   const { client: kleoClient } = useKleoClient();
   const { contract: vouchContract } = useContract(ContractId.VOUCH);
-  const { contract: loanManagerContract } = useContract(ContractId.LOAN_MANAGER);
-  const { contract: reputationContract } = useContract(ContractId.REPUTATION);
   
   const userAddress = connectedAccount?.address;
   const decimals = network?.decimals ?? 12;
@@ -111,7 +111,6 @@ export function usePersonalDashboard() {
           if (!deposit || deposit === '0' || BigInt(deposit) === 0n) return null;
           
           const depositAmount = BigInt(deposit);
-          const poolState = await kleoClient.getPoolState(pool.poolId, userAddress);
           
           // Calculate APY from current rate (convert to percentage)
           const apy = currentRate ? currentRate * 100 : 0;
@@ -147,26 +146,37 @@ export function usePersonalDashboard() {
         try {
           const loans = await kleoClient.getUserLoans(pool.poolId, userAddress);
           
-          return loans.map((loan): UserLoanPosition => {
+          return loans.map((loan: any): UserLoanPosition => {
             const now = BigInt(Math.floor(Date.now() / 1000));
-            const dueTime = loan.startTime + loan.term;
+            const startTime = BigInt(loan.startTime || 0);
+            const term = BigInt(loan.term || 0);
+            const dueTime = startTime + term;
             const daysRemaining = Number((dueTime - now) / 86400n);
             const isOverdue = loan.status === 'Active' && now > dueTime;
             
             // Calculate total repayment (amount + interest)
             // Interest = amount * interestRate * term / (365 * 86400 * 10000)
-            const interestAmount = (loan.amount * loan.interestRate * loan.term) / (365n * 86400n * 10000n);
-            const totalRepayment = loan.amount + interestAmount;
+            const amount = BigInt(loan.amount || 0);
+            const interestRate = BigInt(loan.interestRate || 0);
+            const divisor = 365n * 86400n * 10000n;
+            const interestAmount = (amount * interestRate * term) / divisor;
+            const totalRepayment = amount + interestAmount;
             
             return {
-              loanId: loan.loanId,
-              amount: loan.amount,
+              loanId: BigInt(loan.loanId || 0),
+              amount,
               totalRepayment,
               amountToRepay: loan.status === 'Active' ? totalRepayment : 0n,
               status: loan.status,
+              startTime,
               dueTime,
               daysRemaining: Math.max(0, daysRemaining),
               isOverdue,
+              interestRate,
+              term,
+              borrower: typeof loan.borrower === 'string' ? loan.borrower : String(loan.borrower),
+              vouchers: loan.vouchers?.map((v: any) => typeof v === 'string' ? v : String(v)) || [],
+              purpose: loan.purpose,
             };
           });
         } catch (error) {

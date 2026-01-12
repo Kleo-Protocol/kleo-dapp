@@ -15,7 +15,6 @@ import { useUserStore } from '@/store/user.store';
 import { useUserReputation } from '@/features/profile/hooks/use-user-reputation';
 
 function ProfileContent() {
-  const router = useRouter();
   const { connectedAccount, network, accounts } = useTypink();
   const { userRole, isRegistered } = useAuthStore();
   const { tier } = useUserStore();

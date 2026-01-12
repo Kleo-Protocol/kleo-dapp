@@ -21,15 +21,6 @@ import { borrowKeys } from '@/features/pools/hooks/use-borrow-data';
 import { useQueryClient } from '@tanstack/react-query';
 import type { LoanDetails } from '@/lib/types';
 
-/**
- * Convert a token amount (human-readable) to bigint (smallest unit)
- */
-function parseTokenAmount(amount: string, decimals: number): bigint {
-  const num = parseFloat(amount);
-  if (isNaN(num) || num <= 0) return 0n;
-  return BigInt(Math.floor(num * 10 ** decimals));
-}
-
 interface RepayModalProps {
   loanId: string;
   loan: LoanDetails | undefined;
@@ -44,7 +35,7 @@ export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
   
   const { connectedAccount, network } = useTypink();
   const { repayLoan } = useRepayLoan();
-  const { data: repaymentAmount } = useRepaymentAmount(BigInt(loan.loanId));
+  const { data: repaymentAmount } = useRepaymentAmount(loan ? BigInt(loan.loanId) : 0n);
   const queryClient = useQueryClient();
 
   // Get network decimals (default to 12 for Asset Hub chains, fallback to 18)
@@ -87,9 +78,6 @@ export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
     }
 
     const amountNum = parseFloat(amount);
-    // Loans use 10 decimals for amounts
-    const LOAN_DECIMALS = 10;
-    const repaymentAmountBigInt = parseTokenAmount(amount, LOAN_DECIMALS);
     
     if (!amount || amountNum <= 0) {
       setError('Amount must be greater than 0');

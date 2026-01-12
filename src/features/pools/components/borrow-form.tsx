@@ -5,10 +5,8 @@ import { Input } from '@/shared/ui/input';
 import { Button } from '@/shared/ui/button';
 import { Label } from '@/shared/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 import { ArrowDown, AlertCircle } from 'lucide-react';
 import { useBorrowForm } from '@/features/pools/hooks/use-borrow-form';
-import { useTypink } from 'typink';
 import type { Pool } from '@/lib/types';
 
 interface BorrowFormProps {
@@ -18,7 +16,6 @@ interface BorrowFormProps {
 }
 
 export function BorrowForm({ pool, maxBorrow, onRequestCreated }: BorrowFormProps) {
-  const { connectedAccount } = useTypink();
   const {
     amount,
     duration,

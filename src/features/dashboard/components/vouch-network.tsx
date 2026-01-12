@@ -3,8 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
-import { formatBalance } from 'typink';
-import { useTypink } from 'typink';
+import { formatBalance, useTypink } from 'typink';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { Shield, User, AlertCircle } from 'lucide-react';
 import { shortenAddress } from '@/lib/utils';

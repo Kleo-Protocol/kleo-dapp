@@ -17,7 +17,6 @@ export function PersonalDashboard() {
     totalDeposits,
     totalInterestEarned,
     currentAPY,
-    loans,
     activeLoans,
     totalBorrowed,
     totalToRepay,
@@ -131,7 +130,23 @@ export function PersonalDashboard() {
       />
 
       {/* Loan History Timeline */}
-      <LoanHistoryTimeline loans={loans} isLoading={isLoading} />
+      {/* Map activeLoans (UserLoanPosition[]) to Loan[] for LoanHistoryTimeline */}
+      <LoanHistoryTimeline loans={activeLoans.map(loan => ({
+        loanId: loan.loanId,
+        borrower: loan.borrower,
+        amount: loan.amount,
+        interestRate: loan.interestRate,
+        term: loan.term,
+        purpose: loan.purpose || new Uint8Array(),
+        startTime: loan.startTime,
+        status: loan.status,
+        vouchers: loan.vouchers,
+        dueTime: loan.dueTime,
+        totalRepayment: loan.totalRepayment,
+        daysRemaining: loan.daysRemaining,
+        isOverdue: loan.isOverdue,
+        purposeText: undefined,
+      }))} isLoading={isLoading} />
     </div>
   );
 }

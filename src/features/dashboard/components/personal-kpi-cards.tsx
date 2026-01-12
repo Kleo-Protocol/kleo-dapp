@@ -1,11 +1,10 @@
 'use client';
 
-import { Star, DollarSign, TrendingDown, Shield, Loader2 } from 'lucide-react';
+import { Star, DollarSign, TrendingDown, Shield } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { Progress } from '@/shared/ui/progress';
-import { formatBalance } from 'typink';
-import { useTypink } from 'typink';
+import { formatBalance, useTypink } from 'typink';
 import { Skeleton } from '@/shared/ui/skeleton';
 import type { UserReputation } from '../hooks/use-personal-dashboard';
 
@@ -36,7 +35,6 @@ export function PersonalKPICards({
   myVouchesCount,
   starsAtStake,
   isLoading,
-  decimals,
 }: PersonalKPICardsProps) {
   const { network } = useTypink();
 

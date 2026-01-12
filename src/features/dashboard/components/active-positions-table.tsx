@@ -3,8 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
-import { formatBalance } from 'typink';
-import { useTypink } from 'typink';
+import { formatBalance, useTypink } from 'typink';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { ArrowDownCircle, ArrowUpCircle } from 'lucide-react';
 import type { UserDepositPosition, UserLoanPosition } from '../hooks/use-personal-dashboard';
@@ -164,7 +163,7 @@ export function ActivePositionsTable({
                       <Badge variant='secondary' className='bg-muted text-muted-foreground'>
                         Repaid
                       </Badge>
-                    ) : position.isOverdue ? (
+                    ) : position.type === 'loan' && position.isOverdue ? (
                       <Badge variant='rojo'>Overdue</Badge>
                     ) : (
                       <Badge variant='secondary'>{position.status}</Badge>

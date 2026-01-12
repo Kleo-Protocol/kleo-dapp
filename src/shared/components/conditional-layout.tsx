@@ -3,7 +3,6 @@
 import { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { AppLayout } from './app-layout';
-import { LandingLayout } from './landing-layout';
 
 interface ConditionalLayoutProps {
   children: ReactNode;

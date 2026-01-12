@@ -40,7 +40,7 @@ export function MapAccountModal() {
   const handleMapClick = async () => {
     try {
       await handleMapAccount();
-    } catch (error) {
+    } catch {
       // Error is handled by the hook
     }
   };

@@ -35,7 +35,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         </DialogHeader>
         <div className="flex flex-col gap-3 py-4">
           <Button
-            variant="outline"
+            variant="secondary"
             className="w-full justify-start gap-2"
             onClick={handleProfileClick}
           >
@@ -44,7 +44,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           </Button>
           {user && (
             <Button
-              variant="destructive"
+              variant="danger"
               className="w-full justify-start gap-2"
               onClick={handleSignOut}
             >

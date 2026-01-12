@@ -5,7 +5,6 @@ import { useQueries } from '@tanstack/react-query';
 import { useActiveLoans } from './use-loan-queries';
 import { useContract } from 'typink';
 import { ContractId } from '@/contracts/deployments';
-import { contractLoanToLoan } from '@/lib/loan-utils';
 import type { LoanDetails } from '@/lib/types';
 import type { LoanManagerLoan } from '@/contracts/types/loan-manager/types';
 

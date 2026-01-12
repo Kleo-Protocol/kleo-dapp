@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
-import { useContract, useTypink, useBalances, txToaster, checkBalanceSufficiency } from 'typink';
+import { useContract, useTypink, txToaster, checkBalanceSufficiency } from 'typink';
 import { ContractId } from '@/contracts/deployments';
 import { useQueryClient } from '@tanstack/react-query';
 import { poolsKeys } from './use-pools';
@@ -18,7 +18,7 @@ interface UseWithdrawFormProps {
  * Convert a token amount (human-readable) to bigint (smallest unit)
  * Note: Withdraw uses 10 decimals (storage format)
  */
-function parseTokenAmount(amount: string, decimals: number): bigint {
+function parseTokenAmount(amount: string): bigint {
   const num = parseFloat(amount);
   if (isNaN(num) || num <= 0) return 0n;
   // Withdraw uses 10 decimals (storage format)
@@ -29,7 +29,7 @@ function parseTokenAmount(amount: string, decimals: number): bigint {
  * Convert bigint (smallest unit) to human-readable token amount
  * Note: Withdraw uses 10 decimals (storage format)
  */
-function formatTokenAmount(amount: bigint, decimals: number): number {
+function formatTokenAmount(amount: bigint): number {
   // Withdraw amounts are in 10 decimals (storage format)
   return Number(amount) / 10 ** 10;
 }
@@ -38,15 +38,8 @@ export function useWithdrawForm({ pool, onAmountChange }: UseWithdrawFormProps) 
   const [amount, setAmount] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { contract } = useContract(ContractId.LENDING_POOL);
-  const { client, connectedAccount, network } = useTypink();
+  const { client, connectedAccount } = useTypink();
   const queryClient = useQueryClient();
-
-  // Get network decimals (default to 12 for Asset Hub chains, fallback to 18)
-  const decimals = network?.decimals ?? 12;
-
-  // Get addresses array for useBalances
-  const addresses = useMemo(() => (connectedAccount ? [connectedAccount.address] : []), [connectedAccount]);
-  const balances = useBalances(addresses);
 
   // Get user deposit amount (available to withdraw)
   const { data: userDeposit } = useUserDeposits(connectedAccount?.address);
@@ -54,7 +47,7 @@ export function useWithdrawForm({ pool, onAmountChange }: UseWithdrawFormProps) 
   // Available to withdraw (in human-readable format, 10 decimals)
   const availableToWithdraw = useMemo(() => {
     if (!userDeposit) return 0;
-    return formatTokenAmount(userDeposit, 10);
+    return formatTokenAmount(userDeposit);
   }, [userDeposit]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,9 +68,9 @@ export function useWithdrawForm({ pool, onAmountChange }: UseWithdrawFormProps) 
     }
   };
 
-  const withdrawAmount = parseFloat(amount) || 0;
-  const withdrawAmountBigInt = parseTokenAmount(amount, 10); // Withdraw uses 10 decimals
+  const withdrawAmountBigInt = parseTokenAmount(amount); // Withdraw uses 10 decimals
   
+  const withdrawAmount = parseFloat(amount) || 0;
   const isValid = useMemo(() => {
     return withdrawAmount > 0 && withdrawAmount <= availableToWithdraw && !!contract && !!connectedAccount;
   }, [withdrawAmount, availableToWithdraw, contract, connectedAccount]);
@@ -170,7 +163,6 @@ export function useWithdrawForm({ pool, onAmountChange }: UseWithdrawFormProps) 
     amount,
     isSubmitting,
     availableToWithdraw,
-    withdrawAmount,
     isValid,
     hasInsufficientBalance,
     isFormDisabled,

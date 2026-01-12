@@ -12,7 +12,7 @@ import { toast } from 'sonner';
  */
 export function useRequestLoan() {
   const { contract } = useContract(ContractId.LOAN_MANAGER);
-  const { client, connectedAccount, network } = useTypink();
+  const { client, connectedAccount } = useTypink();
   const queryClient = useQueryClient();
 
   const requestLoan = useCallback(

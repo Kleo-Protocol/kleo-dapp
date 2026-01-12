@@ -1,14 +1,13 @@
 'use client';
 
 import { useMemo } from 'react';
-import { cn } from '@/lib/utils';
+import { cn, shortenAddress } from '@/lib/utils';
 import { AccountSelection } from './account-selection';
 import { WalletSelection } from './wallet-selection';
 import { useTypink, formatBalance, useBalances } from 'typink';
 import { Card, CardContent, CardHeader } from '@/shared/ui/card';
 import { Wallet, Network, CreditCard, Activity } from 'lucide-react';
 import { AccountAvatar } from './account-avatar';
-import { shortenAddress } from '@/lib/utils';
 
 interface WalletDrawerProps {
   isOpen: boolean;

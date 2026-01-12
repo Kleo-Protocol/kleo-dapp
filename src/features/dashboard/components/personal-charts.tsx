@@ -161,7 +161,7 @@ export function PersonalCharts({
                   backdropFilter: 'blur(8px)',
                 }}
                 labelStyle={{ color: '#f3f4f6', fontWeight: 600 }}
-                formatter={(value: number) => `$${value.toFixed(2)}`}
+formatter={(value?: number) => value !== undefined ? `$${value.toFixed(2)}` : ''}
               />
               <Line
                 type='monotone'

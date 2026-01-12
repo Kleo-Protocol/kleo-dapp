@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useContract, useTypink } from 'typink';
+import { useContract } from 'typink';
 import { ContractId } from '@/contracts/deployments';
 
 /**
@@ -7,8 +7,6 @@ import { ContractId } from '@/contracts/deployments';
  */
 export function useCurrentRate() {
   const { contract } = useContract(ContractId.LENDING_POOL);
-  const { network } = useTypink();
-  const decimals = network?.decimals ?? 12;
 
   return useQuery({
     queryKey: ['lendingPool', 'currentRate'],
@@ -57,8 +55,6 @@ export function useCurrentRate() {
  */
 export function useUserDeposits(userAddress: string | undefined) {
   const { contract } = useContract(ContractId.LENDING_POOL);
-  const { network } = useTypink();
-  const decimals = network?.decimals ?? 12;
 
   return useQuery({
     queryKey: ['lendingPool', 'userDeposits', userAddress],

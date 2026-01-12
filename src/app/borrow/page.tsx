@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/sha
 import { TrendingDown, DollarSign, Clock, Shield, Plus } from 'lucide-react';
 
 function BorrowContent() {
-  const router = useRouter();
   const { accounts } = useTypink();
 
   // Sincronizar estado de typink con nuestro store

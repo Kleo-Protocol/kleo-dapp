@@ -2,8 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
-import { formatBalance } from 'typink';
-import { useTypink } from 'typink';
+import { formatBalance, useTypink } from 'typink';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { Clock, CheckCircle2, XCircle, TrendingUp } from 'lucide-react';
 import type { Loan } from '@/lib/types';
@@ -99,7 +98,7 @@ export function LoanHistoryTimeline({ loans, isLoading }: LoanHistoryTimelinePro
           
           {/* Timeline items */}
           <div className='space-y-6'>
-            {sortedLoans.map((loan, index) => {
+            {sortedLoans.map((loan) => {
               const startDate = new Date(Number(loan.startTime) * 1000);
               const dueDate = new Date(Number(loan.dueTime) * 1000);
               
