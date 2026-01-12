@@ -53,4 +53,5 @@ export type LoanManagerError =
   | "Unauthorized"
   | "RepaymentFailed"
   | "InvalidRepaymentAmount"
+  | "InsufficientAmount"
   | "Overflow";

@@ -46,18 +46,29 @@ export function decodePurpose(purpose: Uint8Array | string): string {
 
 /**
  * Convert contract loan (LoanManagerLoan) to UI loan
+ * Note: startTime is a block timestamp in seconds, term is in seconds
  */
 export function contractLoanToLoan(contractLoan: LoanManagerLoan | ContractLoan, currentTime?: bigint): Loan {
+  // Block timestamps are in seconds (Unix timestamp)
+  // Current time in seconds
   const now = currentTime || BigInt(Math.floor(Date.now() / 1000));
+  // Both startTime and term are in seconds
   const dueTime = contractLoan.startTime + contractLoan.term;
+  // Convert seconds to days: divide by (60 * 60 * 24) = 86400
   const daysRemaining = Number((dueTime - now) / 86400n);
   const isOverdue = contractLoan.status === 'Active' && now > dueTime;
 
-  // Calculate total repayment (principal + interest)
-  // Interest calculation: amount * interestRate * term / (365 * 86400 * 10000)
-  // Assuming interestRate is in basis points (per 10000)
-  const interestAmount = (contractLoan.amount * contractLoan.interestRate * contractLoan.term) / (365n * 86400n * 10000n);
-  const totalRepayment = contractLoan.amount + interestAmount;
+  // Use totalRepaymentAmount from contract if available (LoanManagerLoan has it)
+  // Otherwise calculate it
+  const totalRepayment = 'totalRepaymentAmount' in contractLoan && contractLoan.totalRepaymentAmount
+    ? contractLoan.totalRepaymentAmount
+    : (() => {
+        // Calculate total repayment (principal + interest)
+        // Interest calculation: amount * interestRate * term / (365 * 86400 * 10000)
+        // Assuming interestRate is in basis points (per 10000)
+        const interestAmount = (contractLoan.amount * contractLoan.interestRate * contractLoan.term) / (365n * 86400n * 10000n);
+        return contractLoan.amount + interestAmount;
+      })();
 
   // Decode purpose (only if it exists - LoanManagerLoan doesn't have purpose)
   const purposeText = 'purpose' in contractLoan && contractLoan.purpose 
@@ -123,9 +134,11 @@ export function calculateTotalRepayment(amount: bigint, interestRate: bigint, te
 
 /**
  * Check if loan is overdue
+ * Note: startTime is a block timestamp in seconds, term is in seconds
  */
 export function isLoanOverdue(loan: Loan | ContractLoan, currentTime?: bigint): boolean {
   if (loan.status !== 'Active') return false;
+  // Block timestamps are in seconds
   const now = currentTime || BigInt(Math.floor(Date.now() / 1000));
   const dueTime = loan.startTime + loan.term;
   return now > dueTime;
@@ -133,10 +146,13 @@ export function isLoanOverdue(loan: Loan | ContractLoan, currentTime?: bigint): 
 
 /**
  * Get days remaining until loan is due
+ * Note: startTime is a block timestamp in seconds, term is in seconds
  */
 export function getDaysRemaining(loan: Loan | ContractLoan, currentTime?: bigint): number {
+  // Block timestamps are in seconds
   const now = currentTime || BigInt(Math.floor(Date.now() / 1000));
   const dueTime = loan.startTime + loan.term;
+  // Convert seconds to days: divide by (60 * 60 * 24) = 86400
   const secondsRemaining = dueTime - now;
   return Math.max(0, Number(secondsRemaining / 86400n));
 }

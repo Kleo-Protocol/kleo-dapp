@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x42444e7883f42e7fd926a20169074243c9d7bc99f994ebcb1b7d3300722e58f1",
+    "hash": "0xa85a7d33dc0399c84ac6dc536e7129c9369f237d9dc1751b716b1aa8c71bed79",
     "language": "ink! 6.0.0-beta.1",
     "compiler": "rustc 1.91.1",
     "build_info": {
@@ -937,13 +937,55 @@
     {
       "id": 38,
       "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 11
+          },
+          {
+            "name": "E",
+            "type": 32
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 11
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 32
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 39,
+      "type": {
         "def": {
           "primitive": "bool"
         }
       }
     },
     {
-      "id": 39,
+      "id": 40,
       "type": {
         "path": [
           "ink_primitives",
@@ -1425,6 +1467,44 @@
         "default": false
       },
       {
+        "label": "get_total_staked_capital_for_loan",
+        "selector": "0xd3d77eab",
+        "mutates": false,
+        "payable": false,
+        "args": [
+          {
+            "label": "loan_id",
+            "type": {
+              "type": 9,
+              "displayName": [
+                "u64"
+              ]
+            }
+          },
+          {
+            "label": "borrower",
+            "type": {
+              "type": 14,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 38,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Get total staked capital for a specific loan",
+          " Returns the sum of all staked capital from active vouches for this loan"
+        ],
+        "default": false
+      },
+      {
         "label": "get_vouches_for",
         "selector": "0x479d9ad6",
         "mutates": false,
@@ -1507,9 +1587,18 @@
           {
             "label": "success",
             "type": {
-              "type": 38,
+              "type": 39,
               "displayName": [
                 "bool"
+              ]
+            }
+          },
+          {
+            "label": "loan_amount",
+            "type": {
+              "type": 11,
+              "displayName": [
+                "Balance"
               ]
             }
           },
@@ -1532,7 +1621,8 @@
         },
         "docs": [
           " Resolve all vouch relationships for a loan upon loan completion",
-          " Only callable by the authorized loan manager contract"
+          " Only callable by the authorized loan manager contract",
+          " loan_amount: The loan amount (in 10 decimals). Only used when success=false to calculate recovery."
         ],
         "default": false
       },
@@ -1554,7 +1644,7 @@
           {
             "label": "success",
             "type": {
-              "type": 38,
+              "type": 39,
               "displayName": [
                 "bool"
               ]
@@ -1751,7 +1841,7 @@
             "label": "success",
             "indexed": false,
             "type": {
-              "type": 38,
+              "type": 39,
               "displayName": [
                 "bool"
               ]
@@ -1786,7 +1876,7 @@
         ]
       },
       "hash": {
-        "type": 39,
+        "type": 40,
         "displayName": [
           "Hash"
         ]

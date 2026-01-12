@@ -98,6 +98,25 @@ export interface ContractQuery<
   >;
 
   /**
+   * Get total staked capital for a specific loan
+   * Returns the sum of all staked capital from active vouches for this loan
+   *
+   * @param {bigint} loanId
+   * @param {AccountId32Like} borrower
+   * @param {ContractCallOptions} options
+   *
+   * @selector 0xd3d77eab
+   **/
+  getTotalStakedCapitalForLoan: GenericContractQueryCall<
+    (
+      loanId: bigint,
+      borrower: AccountId32Like,
+      options?: ContractCallOptions,
+    ) => Promise<GenericContractCallResult<bigint, ContractCallResult>>,
+    Type
+  >;
+
+  /**
    * Get count of active vouches for a borrower (backward compatibility)
    *
    * @param {AccountId32Like} borrower
