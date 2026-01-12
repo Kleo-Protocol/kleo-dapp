@@ -4,6 +4,7 @@ import { deployments } from '@/contracts/deployments';
 import { Props } from '@/lib/types';
 import { polkadotjs, setupTxToaster, SonnerAdapter, subwallet, talisman, TypinkProvider, paseoAssetHub } from 'typink';
 import { toast } from 'sonner';
+import { KleoClientProvider } from './kleo-client-provider';
 
 // Supported networks configuration
 const SUPPORTED_NETWORKS = [paseoAssetHub];
@@ -28,7 +29,9 @@ export function AppProvider({ children }: Props) {
       defaultNetworkId={paseoAssetHub.id}
       cacheMetadata={true}
       wallets={SUPPORTED_WALLETS}>
-      {children}
+      <KleoClientProvider>
+        {children}
+      </KleoClientProvider>
     </TypinkProvider>
   );
 }

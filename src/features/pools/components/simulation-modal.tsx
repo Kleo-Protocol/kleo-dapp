@@ -12,7 +12,7 @@ import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { Button } from '@/shared/ui/button';
 import { AlertTriangle, TrendingUp, DollarSign, Shield } from 'lucide-react';
-import type { LoanDetails } from '@/services/mock/loans.mock';
+import type { LoanDetails } from '@/lib/types';
 
 interface SimulationModalProps {
   loanId: string;
@@ -21,7 +21,7 @@ interface SimulationModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function SimulationModal({ loanId, loan, open, onOpenChange }: SimulationModalProps) {
+export function SimulationModal({ loan, open, onOpenChange }: SimulationModalProps) {
   const [amount, setAmount] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -46,7 +46,7 @@ export function SimulationModal({ loanId, loan, open, onOpenChange }: Simulation
 
   const amountNum = parseFloat(amount) || 0;
   const interestRate = Number(loan.interestRate) / 100;
-  const durationDays = Math.floor(Number(loan.duration) / (24 * 60 * 60));
+  const durationDays = Math.floor(Number(loan.term) / (24 * 60 * 60));
   
   // Mock calculations
   const estimatedReturn = amountNum > 0 ? (amountNum * interestRate * durationDays) / 365 : 0;
@@ -58,7 +58,6 @@ export function SimulationModal({ loanId, loan, open, onOpenChange }: Simulation
   const riskScore = interestRate > 10 ? 'high' : interestRate > 6 ? 'medium' : 'low';
 
   const maxAmount = Number(loan.remainingAmount) / 1e18;
-  const isValid = amountNum > 0 && amountNum <= maxAmount;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -75,10 +74,10 @@ export function SimulationModal({ loanId, loan, open, onOpenChange }: Simulation
 
         <div className="space-y-6">
           {/* Loan Details */}
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2">
+          <div className="rounded-lg border border-slate-200 bg-anti-flash-white/50 p-4 space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-600">Loan Amount</span>
-              <span className="font-semibold text-slate-900">{formatBalance(Number(loan.requestedAmount) / 1e18)} tokens</span>
+              <span className="font-semibold text-slate-900">{formatBalance(Number(loan.amount) / 1e18)} tokens</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-600">Interest Rate</span>
@@ -128,7 +127,7 @@ export function SimulationModal({ loanId, loan, open, onOpenChange }: Simulation
 
           {/* Returns Preview */}
           {amountNum > 0 && (
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-3">
+            <div className="rounded-lg border border-slate-200 bg-anti-flash-white/50 p-4 space-y-3">
               <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                 <DollarSign className="size-4" />
                 Expected Returns
@@ -152,7 +151,7 @@ export function SimulationModal({ loanId, loan, open, onOpenChange }: Simulation
 
           {/* Risk Assessment */}
           {amountNum > 0 && (
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-3">
+            <div className="rounded-lg border border-slate-200 bg-anti-flash-white/50 p-4 space-y-3">
               <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                 <Shield className="size-4" />
                 Risk Assessment
@@ -167,7 +166,7 @@ export function SimulationModal({ loanId, loan, open, onOpenChange }: Simulation
                     <span className="font-medium text-yellow-600">Medium Risk</span>
                   )}
                   {riskScore === 'low' && (
-                    <span className="font-medium text-green-600">Low Risk</span>
+                    <span className="font-medium text-forest-green">Low Risk</span>
                   )}
                 </div>
                 <div className="flex items-center justify-between text-sm">

@@ -1,35 +1,52 @@
 'use client';
 
-import { useEffect, Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
-import { Copy, User, Wallet, Shield, TrendingUp, Settings } from 'lucide-react';
+import { Copy, User, Wallet, Shield, TrendingUp, Star, History, CheckCircle2, XCircle } from 'lucide-react';
 import { formatBalance, useBalances, useTypink } from 'typink';
-import { useMemo } from 'react';
 import { toast } from 'sonner';
 import { shortenAddress } from '@/lib/utils';
 import { AccountAvatar } from '@/shared/components/account-avatar';
 import { useAuthStore } from '@/store/authStore';
 import { useSyncWalletState } from '@/features/auth/hooks/use-sync-wallet-state';
+import { useUserStore } from '@/store/user.store';
+import { useUserReputation } from '@/features/profile/hooks/use-user-reputation';
 
 function ProfileContent() {
-  const router = useRouter();
   const { connectedAccount, network, accounts } = useTypink();
   const { userRole, isRegistered } = useAuthStore();
+  const { tier } = useUserStore();
 
   // Sincronizar estado de typink con nuestro store
   useSyncWalletState();
 
+  // Query user reputation from contract
+  const { data: userReputation, isLoading: isLoadingReputation } = useUserReputation(
+    connectedAccount?.address
+  );
+
+  // Get stars from contract or fallback to 0
+  const stars = userReputation?.stars ?? 0;
+  const starsAtStake = userReputation?.starsAtStake ?? 0;
+  const loanHistory = userReputation?.loanHistory ?? [];
+  const vouchHistory = userReputation?.vouchHistory ?? [];
+
+  // Get tier display info
+  const tierInfo = useMemo(() => {
+    const tierMap = {
+      rojo: { label: 'Rojo', color: 'rojo' as const, description: 'Basic Tier' },
+      amarillo: { label: 'Amarillo', color: 'amarillo' as const, description: 'Intermediate Tier' },
+      verde: { label: 'Verde', color: 'verde' as const, description: 'Premium Tier' },
+    };
+    return tierMap[tier] || tierMap.rojo;
+  }, [tier]);
+
   const addresses = useMemo(() => (connectedAccount ? [connectedAccount.address] : []), [connectedAccount]);
   const balances = useBalances(addresses);
 
-  useEffect(() => {
-    if (accounts.length === 0) {
-      router.replace('/');
-    }
-  }, [accounts.length, router]);
+  // No redirigir automáticamente - permitir que el usuario vea la página sin wallet
 
   const copyAddress = () => {
     if (connectedAccount) {
@@ -64,7 +81,7 @@ function ProfileContent() {
         <AccountAvatar account={connectedAccount} size={80} className='border-4 border-background shadow-lg' />
         <div className='text-center space-y-2'>
           <h1 className='text-3xl font-bold'>{connectedAccount.name || 'Unnamed Account'}</h1>
-          <div className='flex items-center gap-2 text-muted-foreground'>
+          <div className='flex items-center justify-center gap-2 text-muted-foreground'>
             <span className='font-mono text-sm'>{shortenAddress(connectedAccount.address)}</span>
             <Button
               variant='ghost'
@@ -76,8 +93,8 @@ function ProfileContent() {
           </div>
         </div>
         {userRole && (
-          <Badge variant='outline' className='text-base px-4 py-1.5'>
-            {userRole === 'lender' ? '💰 Lender' : '📊 Borrower'}
+          <Badge variant='verde' className='text-base px-4 py-1.5'>
+            {userRole === 'lender' ? 'Lender' : 'Borrower'}
           </Badge>
         )}
       </div>
@@ -108,7 +125,7 @@ function ProfileContent() {
             </div>
             <div className='flex justify-between items-center py-2'>
               <span className='text-sm text-muted-foreground'>Registration Status</span>
-              <Badge variant={isRegistered ? 'default' : 'outline'}>
+              <Badge variant={isRegistered ? 'verde' : 'amarillo'}>
                 {isRegistered ? 'Registered' : 'Not Registered'}
               </Badge>
             </div>
@@ -161,12 +178,36 @@ function ProfileContent() {
             <CardDescription>Your reputation in the Kleo network</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className='flex flex-col items-center justify-center py-8 space-y-4'>
-              <div className='text-4xl font-bold text-primary'>—</div>
-              <p className='text-sm text-muted-foreground text-center'>
-                Trust score will be displayed here once available
-              </p>
-            </div>
+            {isLoadingReputation ? (
+              <div className='flex flex-col items-center justify-center py-8'>
+                <p className='text-sm text-muted-foreground'>Loading reputation data...</p>
+              </div>
+            ) : (
+              <div className='flex flex-col items-center justify-center py-6 space-y-6'>
+                {/* Tier Badge */}
+                <div className='flex flex-col items-center gap-2'>
+                  <Badge variant={tierInfo.color} className='text-base px-4 py-1.5'>
+                    {tierInfo.label} Tier
+                  </Badge>
+                  <p className='text-xs text-muted-foreground'>{tierInfo.description}</p>
+                </div>
+
+                {/* Star Rating */}
+                <div className='flex flex-col items-center gap-3'>
+                  <div className='flex items-center gap-2'>
+                    <Star className='h-6 w-6 fill-amber-honey text-amber-honey' />
+                    <p className='text-lg font-semibold text-card-foreground'>
+                      {stars > 0 ? stars : '0'}
+                    </p>
+                  </div>
+                  {starsAtStake > 0 && (
+                    <p className='text-xs text-muted-foreground'>
+                      {starsAtStake} stars at stake
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -182,62 +223,104 @@ function ProfileContent() {
           <CardContent className='space-y-4'>
             <div className='flex justify-between items-center py-2 border-b'>
               <span className='text-sm text-muted-foreground'>User Role</span>
-              <Badge variant='outline' className='capitalize'>
+              <Badge variant='verde' className='capitalize'>
                 {userRole || 'Not Set'}
               </Badge>
             </div>
             <div className='flex justify-between items-center py-2 border-b'>
               <span className='text-sm text-muted-foreground'>Total Loans</span>
-              <span className='text-sm font-medium'>—</span>
+              <span className='text-sm font-medium'>{loanHistory.length}</span>
+            </div>
+            <div className='flex justify-between items-center py-2 border-b'>
+              <span className='text-sm text-muted-foreground'>Repaid Loans</span>
+              <span className='text-sm font-medium'>
+                {loanHistory.filter((loan) => loan.repaid).length}
+              </span>
             </div>
             <div className='flex justify-between items-center py-2'>
-              <span className='text-sm text-muted-foreground'>Total Lends</span>
-              <span className='text-sm font-medium'>—</span>
+              <span className='text-sm text-muted-foreground'>Total Vouches</span>
+              <span className='text-sm font-medium'>{vouchHistory.length}</span>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Actions Section */}
-      <Card>
-        <CardHeader>
-          <div className='flex items-center gap-2'>
-            <Settings className='h-5 w-5' />
-            <CardTitle>Quick Actions</CardTitle>
-          </div>
-          <CardDescription>Manage your account and preferences</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className='flex flex-wrap gap-3'>
-            <Button
-              variant='outline'
-              onClick={() => router.push('/dashboard')}>
-              Go to Dashboard
-            </Button>
-            {userRole === 'lender' && (
-              <Button
-                variant='outline'
-                onClick={() => router.push('/lend')}>
-                Lend Assets
-              </Button>
+      {/* History Section */}
+      {(loanHistory.length > 0 || vouchHistory.length > 0) && (
+        <Card>
+          <CardHeader>
+            <div className='flex items-center gap-2'>
+              <History className='h-5 w-5' />
+              <CardTitle>History</CardTitle>
+            </div>
+            <CardDescription>Your loan and vouch history</CardDescription>
+          </CardHeader>
+          <CardContent className='space-y-6'>
+            {/* Loan History */}
+            {loanHistory.length > 0 && (
+              <div className='space-y-3'>
+                <h3 className='text-sm font-semibold text-card-foreground'>Loan History</h3>
+                <div className='space-y-2'>
+                  {loanHistory.map((loan, index) => {
+                    const amount = Number(loan.amount) / 1e18;
+                    return (
+                      <div
+                        key={index}
+                        className='flex items-center justify-between p-3 rounded-lg border border-border bg-card'>
+                        <div className='flex items-center gap-3'>
+                          {loan.repaid ? (
+                            <CheckCircle2 className='h-4 w-4 text-green-600' />
+                          ) : (
+                            <XCircle className='h-4 w-4 text-atomic-tangerine' />
+                          )}
+                          <div>
+                            <p className='text-sm font-medium'>
+                              {amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} tokens
+                            </p>
+                            <p className='text-xs text-muted-foreground'>
+                              {loan.repaid ? 'Repaid' : 'Not Repaid'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             )}
-            {userRole === 'borrower' && (
-              <Button
-                variant='outline'
-                onClick={() => router.push('/borrow')}>
-                Borrow Assets
-              </Button>
+
+            {/* Vouch History */}
+            {vouchHistory.length > 0 && (
+              <div className='space-y-3'>
+                <h3 className='text-sm font-semibold text-card-foreground'>Vouch History</h3>
+                <div className='space-y-2'>
+                  {vouchHistory.map((vouch, index) => (
+                    <div
+                      key={index}
+                      className='flex items-center justify-between p-3 rounded-lg border border-border bg-card'>
+                      <div className='flex items-center gap-3'>
+                        {vouch.successful ? (
+                          <CheckCircle2 className='h-4 w-4 text-green-600' />
+                        ) : (
+                          <XCircle className='h-4 w-4 text-atomic-tangerine' />
+                        )}
+                        <div>
+                          <p className='text-sm font-medium font-mono'>
+                            {shortenAddress(vouch.borrower.toString())}
+                          </p>
+                          <p className='text-xs text-muted-foreground'>
+                            {vouch.successful ? 'Successful' : 'Failed'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
-            {!userRole && (
-              <Button
-                variant='outline'
-                onClick={() => router.push('/')}>
-                Select Role
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

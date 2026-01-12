@@ -33,47 +33,7 @@ interface MyBacksTableProps {
   isLoading?: boolean;
 }
 
-// Mock backed loans data
-const mockBacks: BackedLoan[] = [
-  {
-    loanId: '0x1111111111111111111111111111111111111111111111111111111111111111',
-    borrower: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
-    loanAmount: 10000000000000000000n,
-    myContribution: 2000000000000000000n, // 2 tokens
-    interestRate: 500n,
-    dueDate: BigInt(Math.floor((Date.now() + 60 * 24 * 60 * 60 * 1000) / 1000)),
-    status: 'active',
-    expectedReturn: 100000000000000000n, // 0.1 tokens
-    isOverdue: false,
-    backedAt: Date.now() - 30 * 24 * 60 * 60 * 1000,
-  },
-  {
-    loanId: '0x3333333333333333333333333333333333333333333333333333333333333333',
-    borrower: '5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y',
-    loanAmount: 20000000000000000000n,
-    myContribution: 2500000000000000000n, // 2.5 tokens
-    interestRate: 300n,
-    dueDate: BigInt(Math.floor((Date.now() - 10 * 24 * 60 * 60 * 1000) / 1000)),
-    status: 'active',
-    expectedReturn: 62500000000000000n, // 0.0625 tokens
-    isOverdue: true,
-    backedAt: Date.now() - 120 * 24 * 60 * 60 * 1000,
-  },
-  {
-    loanId: '0x4444444444444444444444444444444444444444444444444444444444444444',
-    borrower: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
-    loanAmount: 15000000000000000000n,
-    myContribution: 3000000000000000000n, // 3 tokens
-    interestRate: 450n,
-    dueDate: BigInt(Math.floor((Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000)),
-    status: 'completed',
-    expectedReturn: 135000000000000000n, // 0.135 tokens
-    isOverdue: false,
-    backedAt: Date.now() - 150 * 24 * 60 * 60 * 1000,
-  },
-];
-
-export function MyBacksTable({ backs = mockBacks, isLoading = false }: MyBacksTableProps) {
+export function MyBacksTable({ backs = [], isLoading = false }: MyBacksTableProps) {
 
   const calculateDaysRemaining = (dueDate: bigint) => {
     const now = Math.floor(Date.now() / 1000);

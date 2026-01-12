@@ -28,32 +28,7 @@ interface MyDepositsTableProps {
   isLoading?: boolean;
 }
 
-// Mock deposits data
-const mockDeposits: Deposit[] = [
-  {
-    id: '1',
-    amount: 100000000000000000000n, // 100 tokens
-    depositedAt: Date.now() - 30 * 24 * 60 * 60 * 1000, // 30 days ago
-    status: 'active',
-    estimatedReturn: 5000000000000000000n, // 5 tokens
-  },
-  {
-    id: '2',
-    amount: 50000000000000000000n, // 50 tokens
-    depositedAt: Date.now() - 60 * 24 * 60 * 60 * 1000, // 60 days ago
-    status: 'active',
-    estimatedReturn: 2500000000000000000n, // 2.5 tokens
-  },
-  {
-    id: '3',
-    amount: 75000000000000000000n, // 75 tokens
-    depositedAt: Date.now() - 90 * 24 * 60 * 60 * 1000, // 90 days ago
-    status: 'withdrawn',
-    estimatedReturn: 3750000000000000000n, // 3.75 tokens
-  },
-];
-
-export function MyDepositsTable({ deposits = mockDeposits, isLoading = false }: MyDepositsTableProps) {
+export function MyDepositsTable({ deposits = [], isLoading = false }: MyDepositsTableProps) {
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleDateString('en-US', {
       year: 'numeric',

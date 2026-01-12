@@ -1,5 +1,6 @@
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { hexToU8a, isHex, u8aToHex } from '@polkadot/util';
+import { logger } from '@/lib/logger';
 
 function sanitize(value?: string | null) {
   if (!value) return undefined;
@@ -58,7 +59,7 @@ export class AddressConverter {
       const ss58AsH160 = this.ss58ToH160(ss58Address);
       return ss58AsH160.toLowerCase() === ensureHex(h160Address).toLowerCase();
     } catch (error) {
-      console.error('Error comparing addresses:', error);
+      logger.error('Error comparing addresses', { error: error instanceof Error ? error.message : String(error) }, error instanceof Error ? error : undefined);
       return false;
     }
   }

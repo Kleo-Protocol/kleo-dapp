@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { AddressConverter } from '@/lib/address-converter';
 import type { ContractCallResult, GenericContractCallResult } from '@dedot/contracts';
 import type { GenericSubstrateApi } from 'dedot/types';
+import { logger } from '@/lib/logger';
 
 type LegacyOwnerQueryResult = {
   result?: { isErr?: boolean };
@@ -30,6 +31,35 @@ function normalizeOwnerResponse(response: OwnerQueryResult) {
   } as const;
 }
 
+interface OutputWithValue {
+  value?: string;
+}
+
+interface OutputWithOk {
+  Ok?: string;
+  ok?: string;
+}
+
+interface OutputWithToHuman {
+  toHuman?: () => string | OutputWithOk | null;
+}
+
+interface OutputWithToString {
+  toString?: () => string;
+}
+
+interface OutputWithToJSON {
+  toJSON?: () => string | OutputWithOk | null;
+}
+
+type ExtractableOutput = 
+  | string 
+  | OutputWithValue 
+  | OutputWithOk 
+  | OutputWithToHuman 
+  | OutputWithToString 
+  | OutputWithToJSON;
+
 function extractOwnerString(output: unknown): string | null {
   if (!output) return null;
 
@@ -37,51 +67,59 @@ function extractOwnerString(output: unknown): string | null {
     return output;
   }
 
-  if (typeof (output as any).value === 'string') {
-    return (output as any).value;
-  }
+  const typedOutput = output as ExtractableOutput;
 
-  if (typeof (output as any)?.Ok === 'string') {
-    return (output as any).Ok;
-  }
-
-  if (typeof (output as any)?.ok === 'string') {
-    return (output as any).ok;
-  }
-
-  if (typeof (output as any)?.toHuman === 'function') {
-    const human = (output as any).toHuman();
-    if (typeof human === 'string') {
-      return human;
+  if (typeof typedOutput === 'object' && typedOutput !== null) {
+    // Check for .value property
+    if ('value' in typedOutput && typeof typedOutput.value === 'string') {
+      return typedOutput.value;
     }
-    if (human && typeof human === 'object') {
-      if (typeof (human as any).Ok === 'string') {
-        return (human as any).Ok;
+
+    // Check for .Ok or .ok properties
+    if ('Ok' in typedOutput && typeof typedOutput.Ok === 'string') {
+      return typedOutput.Ok;
+    }
+    if ('ok' in typedOutput && typeof typedOutput.ok === 'string') {
+      return typedOutput.ok;
+    }
+
+    // Check for .toHuman() method
+    if ('toHuman' in typedOutput && typeof typedOutput.toHuman === 'function') {
+      const human = typedOutput.toHuman();
+      if (typeof human === 'string') {
+        return human;
       }
-      if (typeof (human as any).ok === 'string') {
-        return (human as any).ok;
+      if (human && typeof human === 'object') {
+        if ('Ok' in human && typeof (human as OutputWithOk).Ok === 'string') {
+          return (human as OutputWithOk).Ok ?? null;
+        }
+        if ('ok' in human && typeof (human as OutputWithOk).ok === 'string') {
+          return (human as OutputWithOk).ok ?? null;
+        }
       }
     }
-  }
 
-  if (typeof (output as any)?.toString === 'function') {
-    const value = (output as any).toString();
-    if (value && value !== '[object Object]') {
-      return value;
-    }
-  }
-
-  if (typeof (output as any)?.toJSON === 'function') {
-    const jsonValue = (output as any).toJSON();
-    if (typeof jsonValue === 'string') {
-      return jsonValue;
-    }
-    if (jsonValue && typeof jsonValue === 'object') {
-      if (typeof (jsonValue as any).Ok === 'string') {
-        return (jsonValue as any).Ok;
+    // Check for .toString() method
+    if ('toString' in typedOutput && typeof typedOutput.toString === 'function') {
+      const value = typedOutput.toString();
+      if (value && value !== '[object Object]') {
+        return value;
       }
-      if (typeof (jsonValue as any).ok === 'string') {
-        return (jsonValue as any).ok;
+    }
+
+    // Check for .toJSON() method
+    if ('toJSON' in typedOutput && typeof typedOutput.toJSON === 'function') {
+      const jsonValue = typedOutput.toJSON();
+      if (typeof jsonValue === 'string') {
+        return jsonValue;
+      }
+      if (jsonValue && typeof jsonValue === 'object') {
+        if ('Ok' in jsonValue && typeof (jsonValue as OutputWithOk).Ok === 'string') {
+          return (jsonValue as OutputWithOk).Ok ?? null;
+        }
+        if ('ok' in jsonValue && typeof (jsonValue as OutputWithOk).ok === 'string') {
+          return (jsonValue as OutputWithOk).ok ?? null;
+        }
       }
     }
   }
@@ -91,7 +129,7 @@ function extractOwnerString(output: unknown): string | null {
 
 type ContractLike = {
   query: {
-    getOwner: (...args: any[]) => Promise<OwnerQueryResult>;
+    getOwner: (addressOrOptions?: string | { gasLimit?: unknown }, options?: { gasLimit?: unknown }) => Promise<OwnerQueryResult>;
   };
   api?: {
     registry?: {
@@ -158,7 +196,7 @@ export function useContractOwner(contract?: ContractLike | null, userAccount?: A
         const rawOwner = extractOwnerString(ownerPayload);
 
         if (!rawOwner) {
-          console.warn('Owner query returned empty response', ownerPayload);
+          logger.warn('Owner query returned empty response', { ownerPayload });
           updateState(() => {
             setOwnerH160(null);
             setOwnerSS58(null);
@@ -172,7 +210,7 @@ export function useContractOwner(contract?: ContractLike | null, userAccount?: A
         const ownerSs58 = AddressConverter.h160ToSS58(ownerHex);
         const userIsOwner = AddressConverter.isEqual(userAccount.address, ownerHex);
 
-        console.log('Contract owner resolved', {
+        logger.debug('Contract owner resolved', {
           ownerHex: ownerHex.toLowerCase(),
           ownerSs58,
           userAddress: userAccount.address,
@@ -184,10 +222,11 @@ export function useContractOwner(contract?: ContractLike | null, userAccount?: A
           setOwnerSS58(ownerSs58);
           setIsOwner(userIsOwner);
         });
-      } catch (err: any) {
-        console.error('Error fetching owner:', err);
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        logger.error('Error fetching owner', { error: error.message }, error);
         updateState(() => {
-          setError(err?.message ?? 'Unknown error');
+          setError(error.message ?? 'Unknown error');
         });
       } finally {
         updateState(() => setLoading(false));

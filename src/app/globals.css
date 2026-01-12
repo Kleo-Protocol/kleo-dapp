@@ -45,41 +45,42 @@
   --color-cetacean-blue: #01091C;
   --color-oxford-blue: #061A4B;
   --color-anti-flash-white: #F2F2F2;
+  --color-forest-green: #00282C;
 }
 
 :root {
   --radius: 0.625rem;
-  --background: #0d0300;
-  --foreground: #fff3e4;
-  --card: #150701;
-  --card-foreground: #fff3e4;
-  --popover: #1f0a03;
-  --popover-foreground: #fff3e4;
-  --primary: #ff7b2d;
-  --primary-foreground: #160700;
-  --secondary: #2d1307;
-  --secondary-foreground: #ffd9b4;
-  --muted: #3c1507;
-  --muted-foreground: #f9c093;
-  --accent: #ff9452;
-  --accent-foreground: #1c0802;
-  --destructive: #a1281d;
-  --border: #3f1a09;
-  --input: #4d1e0b;
-  --ring: #ff7b2d;
-  --chart-1: #ff7b2d;
-  --chart-2: #f25c18;
-  --chart-3: #ffae68;
-  --chart-4: #c23a08;
-  --chart-5: #863106;
-  --sidebar: #150701;
-  --sidebar-foreground: #fff3e4;
-  --sidebar-primary: #ff7b2d;
-  --sidebar-primary-foreground: #160700;
-  --sidebar-accent: #2f1205;
-  --sidebar-accent-foreground: #ffdab7;
-  --sidebar-border: #3f1a09;
-  --sidebar-ring: #ff9452;
+  --background: #090909;
+  --foreground: #F2F2F2;
+  --card: rgba(242, 242, 242, 0.25);
+  --card-foreground: #F2F2F2;
+  --popover: rgba(242, 242, 242, 0.3);
+  --popover-foreground: #F2F2F2;
+  --primary: #ff6b35;
+  --primary-foreground: #090909;
+  --secondary: rgba(242, 242, 242, 0.3);
+  --secondary-foreground: #F2F2F2;
+  --muted: rgba(242, 242, 242, 0.2);
+  --muted-foreground: rgba(242, 242, 242, 0.8);
+  --accent: #eca406;
+  --accent-foreground: #090909;
+  --destructive: #dc2626;
+  --border: rgba(242, 242, 242, 0.3);
+  --input: rgba(242, 242, 242, 0.25);
+  --ring: #ff6b35;
+  --chart-1: #ff6b35;
+  --chart-2: #eca406;
+  --chart-3: #ff6b35;
+  --chart-4: #eca406;
+  --chart-5: #F2F2F2;
+  --sidebar: rgba(242, 242, 242, 0.25);
+  --sidebar-foreground: #F2F2F2;
+  --sidebar-primary: #ff6b35;
+  --sidebar-primary-foreground: #090909;
+  --sidebar-accent: rgba(255, 107, 53, 0.1);
+  --sidebar-accent-foreground: #F2F2F2;
+  --sidebar-border: rgba(242, 242, 242, 0.3);
+  --sidebar-ring: #ff6b35;
 }
 
 @layer base {
@@ -88,20 +89,13 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-color: #01091C;
-    background-image:
-      radial-gradient(circle at 20% 25%, rgba(255, 107, 53, 0.3) 0%, transparent 55%),
-      radial-gradient(circle at 75% 70%, rgba(236, 164, 6, 0.25) 0%, transparent 45%),
-      linear-gradient(140deg, #01091C 0%, #061A4B 35%, #090909 60%, #01091C 100%);
+    background-color: #090909;
     position: relative;
     overflow-x: hidden;
   }
 
   html.light body,
   html.dark body {
-    background-image:
-      radial-gradient(circle at 18% 20%, rgba(255, 107, 53, 0.3) 0%, transparent 55%),
-      radial-gradient(circle at 80% 75%, rgba(236, 164, 6, 0.25) 0%, transparent 45%),
-      linear-gradient(140deg, #01091C 0%, #061A4B 35%, #090909 60%, #01091C 100%);
+    background-color: #090909;
   }
 }

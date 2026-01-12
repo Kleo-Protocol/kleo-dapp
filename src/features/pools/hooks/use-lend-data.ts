@@ -1,36 +1,30 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  getLoansByLender,
-  getLoansByPool,
-  getLoansByStatus,
-  getActiveLoans,
-  getFundingLoans,
-  getLoanDetails,
-  updateLoanFunding,
-  type LoanStatus,
-} from '@/services/mock/loans.mock';
+import type { LoanStatus, Loan } from '@/lib/types';
 import { poolsKeys, useAvailablePools } from './use-pools';
 import { borrowKeys } from './use-borrow-data';
 
-// Query keys
+// Query keys - base keys to avoid circular reference
+const lendBaseKey = ['lend'] as const;
+const lendLoansBaseKey = [...lendBaseKey, 'loans'] as const;
+
 export const lendKeys = {
-  all: ['lend'] as const,
+  all: lendBaseKey,
   loans: {
-    all: [...lendKeys.all, 'loans'] as const,
-    byLender: (address: string) => [...lendKeys.loans.all, 'lender', address] as const,
-    byPool: (poolId: string) => [...lendKeys.loans.all, 'pool', poolId] as const,
-    byStatus: (status: LoanStatus) => [...lendKeys.loans.all, 'status', status] as const,
-    active: [...lendKeys.loans.all, 'active'] as const,
-    funding: [...lendKeys.loans.all, 'funding'] as const,
+    all: lendLoansBaseKey,
+    byLender: (address: string) => [...lendLoansBaseKey, 'lender', address] as const,
+    byPool: (poolId: string) => [...lendLoansBaseKey, 'pool', poolId] as const,
+    byStatus: (status: LoanStatus) => [...lendLoansBaseKey, 'status', status] as const,
+    active: [...lendLoansBaseKey, 'active'] as const,
+    funding: [...lendLoansBaseKey, 'funding'] as const,
   },
-  detail: (loanId: string) => [...lendKeys.all, 'loan', loanId] as const,
+  detail: (loanId: string) => [...lendBaseKey, 'loan', loanId] as const,
 };
 
 /**
  * Hook to fetch loans by lender address
  */
 export function useLenderLoans(lenderAddress: string | undefined) {
-  return useQuery({
+  return useQuery<Loan[]>({
     queryKey: lenderAddress
       ? lendKeys.loans.byLender(lenderAddress)
       : ['lend', 'loans', 'lender', 'null'],
@@ -38,9 +32,9 @@ export function useLenderLoans(lenderAddress: string | undefined) {
       if (!lenderAddress) {
         throw new Error('Lender address is required');
       }
-      return getLoansByLender(lenderAddress);
+      throw new Error('getLoansByLender not implemented - mock removed');
     },
-    enabled: !!lenderAddress,
+    enabled: false, // Disabled until real implementation
     staleTime: 30000, // 30 seconds
   });
 }
@@ -55,9 +49,9 @@ export function useLoansByPool(poolId: string | undefined) {
       if (!poolId) {
         throw new Error('Pool ID is required');
       }
-      return getLoansByPool(poolId);
+      throw new Error('getLoansByPool not implemented - mock removed');
     },
-    enabled: !!poolId,
+    enabled: false, // Disabled until real implementation
     staleTime: 30000, // 30 seconds
   });
 }
@@ -68,7 +62,10 @@ export function useLoansByPool(poolId: string | undefined) {
 export function useLendLoansByStatus(status: LoanStatus) {
   return useQuery({
     queryKey: lendKeys.loans.byStatus(status),
-    queryFn: () => getLoansByStatus(status),
+    queryFn: () => {
+      throw new Error('getLoansByStatus not implemented - mock removed');
+    },
+    enabled: false, // Disabled until real implementation
     staleTime: 30000, // 30 seconds
   });
 }
@@ -79,7 +76,10 @@ export function useLendLoansByStatus(status: LoanStatus) {
 export function useLendActiveLoans() {
   return useQuery({
     queryKey: lendKeys.loans.active,
-    queryFn: () => getActiveLoans(),
+    queryFn: () => {
+      throw new Error('getActiveLoans not implemented - mock removed');
+    },
+    enabled: false, // Disabled until real implementation
     staleTime: 30000, // 30 seconds
   });
 }
@@ -90,7 +90,10 @@ export function useLendActiveLoans() {
 export function useLendFundingLoans() {
   return useQuery({
     queryKey: lendKeys.loans.funding,
-    queryFn: () => getFundingLoans(),
+    queryFn: () => {
+      throw new Error('getFundingLoans not implemented - mock removed');
+    },
+    enabled: false, // Disabled until real implementation
     staleTime: 15000, // 15 seconds (more frequent for funding opportunities)
   });
 }
@@ -105,9 +108,9 @@ export function useLendLoanDetail(loanId: string | undefined) {
       if (!loanId) {
         throw new Error('Loan ID is required');
       }
-      return getLoanDetails(loanId);
+      throw new Error('getLoanDetails not implemented - mock removed');
     },
-    enabled: !!loanId,
+    enabled: false, // Disabled until real implementation
     staleTime: 30000, // 30 seconds
   });
 }
@@ -119,8 +122,10 @@ export function useContributeToLoan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: { loanId: string; lenderAddress: string; amount: bigint }) =>
-      updateLoanFunding(params.loanId, params.lenderAddress, params.amount),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mutationFn: (_params: { loanId: string; lenderAddress: string; amount: bigint }) => {
+      throw new Error('updateLoanFunding not implemented - mock removed');
+    },
     onSuccess: (_, variables) => {
       // Invalidate loan detail
       queryClient.invalidateQueries({ queryKey: lendKeys.detail(variables.loanId) });

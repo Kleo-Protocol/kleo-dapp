@@ -6,23 +6,34 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shar
 import { Shield, Info } from 'lucide-react';
 import { formatBalance } from '@/shared/utils/format';
 import { useUserStore } from '@/store/user.store';
-import type { Pool } from '@/services/mock/pools.mock';
+import type { Pool } from '@/lib/types';
 
 interface MaxBorrowInfoProps {
   pool: Pool;
 }
 
 export function MaxBorrowInfo({ pool }: MaxBorrowInfoProps) {
-  const { reputation, tier, capital } = useUserStore();
+  const { reputation, tier } = useUserStore();
 
-  // Mock calculation: max borrow based on reputation and tier
+  // Calculate max borrow based on reputation and tier
+  // This is a client-side estimation. The actual borrowing capacity is determined by the contract
+  // based on tier requirements (stars and vouches) as per the protocol:
+  // Tier 1: 0-50 tokens, Min Stars: 5, Min Vouches: 1
+  // Tier 2: 50-100 tokens, Min Stars: 20, Min Vouches: 2
+  // Tier 3: 100-1000 tokens, Min Stars: 50, Min Vouches: 3
   const calculateMaxBorrow = () => {
     const baseMultiplier = tier === 'verde' ? 10 : tier === 'amarillo' ? 5 : 2;
     const reputationMultiplier = Math.floor(reputation / 100);
     const maxBorrow = baseMultiplier * reputationMultiplier * 1000; // in tokens
     
-    // Cap at pool's available liquidity
-    const poolAvailable = Number(pool.availableLiquidity) / 1e18;
+    // Cap at pool's available liquidity (if pool has this field)
+    const poolAvailable = pool.availableLiquidity 
+      ? Number(pool.availableLiquidity) / 1e18 
+      : Infinity;
+    
+    // Also consider exposure cap if available in pool state
+    // Note: This component receives Pool, not PoolState, so we use availableLiquidity
+    // The actual max borrow calculation in use-pool-detail.ts uses exposureCap from PoolState
     return Math.min(maxBorrow, poolAvailable);
   };
 
@@ -80,7 +91,8 @@ export function MaxBorrowInfo({ pool }: MaxBorrowInfoProps) {
             <TooltipContent className="max-w-xs">
               <p>
                 Verde tier: 10x multiplier, Amarillo: 5x, Rojo: 2x. Reputation multiplier = floor(reputation / 100).
-                Final amount is capped by pool's available liquidity.
+                Final amount is capped by pool's available liquidity. Loan tiers: Tier 1 (0-50 tokens, 5 stars, 1 voucher),
+                Tier 2 (50-100 tokens, 20 stars, 2 vouchers), Tier 3 (100-1000 tokens, 50 stars, 3 vouchers).
               </p>
             </TooltipContent>
           </Tooltip>

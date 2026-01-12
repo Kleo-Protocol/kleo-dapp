@@ -2,20 +2,27 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
-import { AlertTriangle, DollarSign, TrendingDown, Shield } from 'lucide-react';
-import { formatBalance } from '@/shared/utils/format';
+import { AlertTriangle, TrendingDown, Shield } from 'lucide-react';
 import { useUserStore } from '@/store/user.store';
+import { useUserDeposits } from '@/features/pools/hooks/use-lending-pool-data';
+import { useTypink } from 'typink';
+import { Skeleton } from '@/shared/ui/skeleton';
 
 interface LenderPositionCardProps {
-  totalBacked: bigint;
-  activeBacks: number;
-  defaultedBacks: number;
+  activeBacks?: number;
+  defaultedBacks?: number;
 }
 
-export function LenderPositionCard({ totalBacked, activeBacks, defaultedBacks }: LenderPositionCardProps) {
-  const { capital, reputation, tier } = useUserStore();
+export function LenderPositionCard({ activeBacks = 0, defaultedBacks = 0 }: LenderPositionCardProps) {
+  const { capital, reputation } = useUserStore();
+  const { connectedAccount } = useTypink();
+  const { data: userDeposits = 0n, isLoading: isLoadingDeposits } = useUserDeposits(connectedAccount?.address);
+  const { network } = useTypink();
+  const decimals = network?.decimals ?? 12;
 
-  const capitalAtRisk = Number(totalBacked) / 1e18;
+  // Convert user deposits from bigint to number
+  const totalDeposited = Number(userDeposits) / 10 ** decimals;
+  const capitalAtRisk = totalDeposited;
   const capitalPercentage = capital > 0 ? (capitalAtRisk / capital) * 100 : 0;
   
   // Mock reputation exposure calculation
@@ -31,10 +38,10 @@ export function LenderPositionCard({ totalBacked, activeBacks, defaultedBacks }:
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Capital at Risk */}
+        {/* Total Deposited */}
         <div className="rounded-lg border border-border bg-secondary/50 p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-card-foreground">Capital at Risk</span>
+            <span className="text-sm font-medium text-card-foreground">Total Deposited</span>
             {riskLevel === 'high' && (
               <Badge variant="rojo" className="gap-1">
                 <AlertTriangle className="size-3" />
@@ -53,14 +60,31 @@ export function LenderPositionCard({ totalBacked, activeBacks, defaultedBacks }:
               </Badge>
             )}
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-card-foreground">{formatBalance(totalBacked)}</span>
-            <span className="text-sm text-muted-foreground">tokens</span>
-          </div>
-          <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-            <span>{capitalPercentage.toFixed(1)}% of your capital</span>
-            <span>Available: {formatBalance(BigInt(Math.max(0, capital - capitalAtRisk) * 1e18))} tokens</span>
-          </div>
+          {isLoadingDeposits ? (
+            <Skeleton className="h-8 w-32" />
+          ) : (
+            <>
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-bold text-card-foreground">
+                  {totalDeposited > 0 
+                    ? totalDeposited.toLocaleString('en-US', { maximumFractionDigits: 2 })
+                    : '0.00'}
+                </span>
+                <span className="text-sm text-muted-foreground">tokens</span>
+              </div>
+              {totalDeposited > 0 && (
+                <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                  <span>{capitalPercentage.toFixed(1)}% of your capital</span>
+                  <span>
+                    Available: {(capital - capitalAtRisk).toLocaleString('en-US', { maximumFractionDigits: 2 })} tokens
+                  </span>
+                </div>
+              )}
+              {!connectedAccount && (
+                <p className="text-xs text-muted-foreground mt-2">Connect your wallet to see your deposits</p>
+              )}
+            </>
+          )}
         </div>
 
         {/* Reputation Exposure */}

@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 import { useTypink } from 'typink';
 import { useSyncWalletState } from '@/features/auth/hooks/use-sync-wallet-state';
 import { Button } from '@/shared/ui/button';
@@ -9,18 +8,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/sha
 import { TrendingUp, DollarSign, Users, Shield } from 'lucide-react';
 
 function LendContent() {
-  const router = useRouter();
   const { accounts } = useTypink();
 
   // Sincronizar estado de typink con nuestro store
   useSyncWalletState();
 
-  // Verificar que haya wallet conectada
-  useEffect(() => {
-    if (accounts.length === 0) {
-      router.replace('/');
-    }
-  }, [accounts.length, router]);
+  // No redirigir automáticamente - permitir que el usuario vea la página sin wallet
 
   if (accounts.length === 0) {
     return (
@@ -96,7 +89,7 @@ function LendContent() {
               <p className='text-sm text-muted-foreground'>
                 No loan requests available at the moment.
               </p>
-              <Button className='w-full' variant='outline'>
+              <Button className='w-full' variant='secondary'>
                 Browse Loans
               </Button>
             </div>
@@ -113,7 +106,7 @@ function LendContent() {
               <p className='text-sm text-muted-foreground'>
                 You haven't funded any loans yet.
               </p>
-              <Button className='w-full' variant='outline'>
+              <Button className='w-full' variant='secondary'>
                 View Portfolio
               </Button>
             </div>

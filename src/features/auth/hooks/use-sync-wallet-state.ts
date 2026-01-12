@@ -5,8 +5,8 @@ import { useTypink } from 'typink';
 import { useAuthStore } from '@/store/authStore';
 
 /**
- * Hook que sincroniza el estado de typink con nuestro authStore de Zustand
- * Esto mantiene ambos sistemas en sincronía
+ * Hook that synchronizes typink state with our Zustand authStore
+ * This keeps both systems in sync
  */
 export function useSyncWalletState() {
   const { accounts, connectedAccount, connectedWallets } = useTypink();
@@ -14,7 +14,7 @@ export function useSyncWalletState() {
   const setSelectedAddress = useAuthStore((state) => state.setSelectedAddress);
   const setError = useAuthStore((state) => state.setError);
   
-  // Usar refs para evitar loops infinitos
+  // Use refs to avoid infinite loops
   const accountsRef = useRef<string[]>([]);
   const connectedAddressRef = useRef<string | undefined>(undefined);
 
@@ -22,11 +22,11 @@ export function useSyncWalletState() {
     const currentAddresses = accounts.map((a) => a.address).join(',');
     const connectedAddress = connectedAccount?.address;
 
-    // Solo actualizar si realmente cambió
+    // Only update if it actually changed
     if (currentAddresses !== accountsRef.current.join(',')) {
       accountsRef.current = accounts.map((a) => a.address);
 
-      // Convertir cuentas de typink al formato de InjectedAccountWithMeta
+      // Convert typink accounts to InjectedAccountWithMeta format
       const injectedAccounts = accounts.map((account) => ({
         address: account.address,
         meta: {
@@ -36,7 +36,7 @@ export function useSyncWalletState() {
         },
       }));
 
-      // Sincronizar cuentas
+      // Sync accounts
       if (injectedAccounts.length > 0) {
         setAccounts(injectedAccounts);
       } else {
@@ -45,7 +45,7 @@ export function useSyncWalletState() {
       }
     }
 
-    // Sincronizar cuenta seleccionada
+    // Sync selected account
     if (connectedAddress !== connectedAddressRef.current) {
       connectedAddressRef.current = connectedAddress;
       
@@ -59,7 +59,7 @@ export function useSyncWalletState() {
     }
   }, [accounts, connectedAccount, connectedWallets, setAccounts, setSelectedAddress]);
 
-  // Limpiar errores cuando se conecta exitosamente
+  // Clear errors when successfully connected
   useEffect(() => {
     if (accounts.length > 0 && connectedAccount) {
       setError(undefined);

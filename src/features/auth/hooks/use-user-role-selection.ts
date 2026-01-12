@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useTypink } from 'typink';
 import { useAuthStore } from '@/store/authStore';
 import { verifyAndRegisterUser, registerUser } from '@/services/userService';
+import { logger } from '@/lib/logger';
 
 export function useUserRoleSelection() {
   const router = useRouter();
@@ -16,17 +17,17 @@ export function useUserRoleSelection() {
   const address = connectedAccount?.address;
   const hasCheckedRef = useRef<string | undefined>(undefined);
 
-  // Verificar registro cuando se conecta la wallet
+  // Check registration when wallet connects
   useEffect(() => {
-    // Solo verificar si hay una nueva wallet conectada (address diferente) y estamos en la página principal
+    // Only check if there's a new connected wallet (different address) and we're on the home page
     if (address && address !== hasCheckedRef.current && pathname === '/') {
       hasCheckedRef.current = address;
 
-      // Verificar si el usuario está registrado
+      // Check if user is registered
       if (!isCheckingRegistration) {
         verifyAndRegisterUser(address)
           .then((result) => {
-            // Si el usuario ya está registrado y tiene rol, redirigir automáticamente
+            // If user is already registered and has a role, redirect automatically
             if (result.isRegistered && result.role) {
               setIsRegistered(true);
               setUserRole(result.role);
@@ -35,12 +36,12 @@ export function useUserRoleSelection() {
             }
           })
           .catch(() => {
-            // Error ya está manejado en el store
+            // Error is already handled in the store
           });
       }
     }
 
-    // Resetear el flag si el address cambia o se desconecta
+    // Reset flag if address changes or disconnects
     if (!address) {
       hasCheckedRef.current = undefined;
     }
@@ -53,33 +54,34 @@ export function useUserRoleSelection() {
       setIsRegistering(true);
       useAuthStore.setState({ error: undefined });
 
-      // Registrar usuario con el rol seleccionado
+      // Register user with selected role
       await registerUser(address, role);
       setIsRegistered(true);
       setUserRole(role);
 
-      // Navegar a la página correspondiente según el rol
+      // Navigate to the corresponding page based on role
       const targetPath = role === 'lender' ? '/lend' : '/borrow';
       router.replace(targetPath);
     } catch (error) {
-      // Error ya está manejado en el store
-      console.error('Error registering user:', error);
+      // Error is already handled in the store
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Error registering user', { error: err.message }, err);
     } finally {
       setIsRegistering(false);
     }
   };
 
-  // El modal solo se muestra para first timers (usuarios no registrados)
-  // - Estamos en la página principal
-  // - Hay wallet conectada
-  // - Usuario NO está registrado
-  // - No está verificando registro (para evitar flash)
-  // - No está en proceso de registro
+  // Modal only shows for first timers (unregistered users)
+  // - We're on the home page
+  // - Wallet is connected
+  // - User is NOT registered
+  // - Not checking registration (to avoid flash)
+  // - Not in registration process
   const shouldShowModal = Boolean(
     pathname === '/' && address && !isRegistered && !isCheckingRegistration && !isRegistering,
   );
 
-  // No mostrar el modal si no estamos en la página principal o si el usuario ya está registrado
+  // Don't show modal if we're not on the home page or if user is already registered
   const shouldRender = pathname === '/' && !isRegistered;
 
   return {

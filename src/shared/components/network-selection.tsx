@@ -8,7 +8,7 @@ function NetworkStatusIndicator() {
   const { ready } = useTypink();
 
   if (ready) {
-    return <div className='w-3 h-3 bg-green-500 rounded-full' />;
+    return <div className='w-3 h-3 bg-forest-green rounded-full' />;
   } else {
     return <Loader2Icon className='w-3 h-3 animate-spin' />;
   }

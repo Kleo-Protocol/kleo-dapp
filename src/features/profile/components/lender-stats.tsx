@@ -3,8 +3,8 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/card';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
-import { TrendingUp, DollarSign, Percent } from 'lucide-react';
-import type { ProfileStats } from '@/services/mock/profile.mock';
+import { TrendingUp } from 'lucide-react';
+import type { ProfileStats } from '@/lib/types';
 
 interface LenderStatsProps {
   stats: ProfileStats | undefined;
@@ -101,7 +101,7 @@ export function LenderStats({ stats, isLoading }: LenderStatsProps) {
                   <YAxis stroke='#64748b' />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#fff',
+                      backgroundColor: '#F2F2F2',
                       border: '1px solid #e2e8f0',
                       borderRadius: '6px',
                     }}
@@ -121,7 +121,7 @@ export function LenderStats({ stats, isLoading }: LenderStatsProps) {
                   <YAxis stroke='#64748b' />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#fff',
+                      backgroundColor: '#F2F2F2',
                       border: '1px solid #e2e8f0',
                       borderRadius: '6px',
                     }}

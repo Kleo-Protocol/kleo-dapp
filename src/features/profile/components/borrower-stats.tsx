@@ -3,8 +3,8 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/card';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { TrendingDown, DollarSign, Clock, CheckCircle } from 'lucide-react';
-import type { ProfileStats } from '@/services/mock/profile.mock';
+import { TrendingDown } from 'lucide-react';
+import type { ProfileStats } from '@/lib/types';
 
 interface BorrowerStatsProps {
   stats: ProfileStats | undefined;
@@ -99,7 +99,7 @@ export function BorrowerStats({ stats, isLoading }: BorrowerStatsProps) {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }) => `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
@@ -122,7 +122,7 @@ export function BorrowerStats({ stats, isLoading }: BorrowerStatsProps) {
                   <YAxis stroke="#64748b" />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#fff',
+                      backgroundColor: '#F2F2F2',
                       border: '1px solid #e2e8f0',
                       borderRadius: '6px',
                     }}

@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useUpdateIncomeReference } from '@/features/profile/hooks/use-profile';
-import type { Profile } from '@/services/mock/profile.mock';
+import type { Profile } from '@/lib/types';
 
 interface UseIncomeReferenceFormProps {
-  profile: Profile | undefined;
+  profile: Profile | null | undefined;
   walletAddress: string | undefined;
 }
 

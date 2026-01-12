@@ -1,12 +1,12 @@
 {
   "source": {
-    "hash": "0x7c1b61be3a4edbb5011e3a9e40ace2e46d034a160dad469d914af0395491eed6",
+    "hash": "0xaa38cf17a5dd97c5e1cef2e95325b48ba41c623fcf1dc8029b9f25431daadb01",
     "language": "ink! 6.0.0-beta.1",
     "compiler": "rustc 1.91.1",
     "build_info": {
       "rust_toolchain": "stable-aarch64-apple-darwin",
       "cargo_contract_version": "6.0.0-beta.1",
-      "build_mode": "Debug"
+      "build_mode": "Release"
     }
   },
   "contract": {
@@ -61,35 +61,15 @@
       "id": 3,
       "type": {
         "def": {
-          "primitive": "u32"
+          "primitive": "u64"
         }
       }
     },
     {
       "id": 4,
       "type": {
-        "path": [
-          "ink_storage",
-          "lazy",
-          "mapping",
-          "Mapping"
-        ],
-        "params": [
-          {
-            "name": "K",
-            "type": 0
-          },
-          {
-            "name": "V",
-            "type": 3
-          },
-          {
-            "name": "KeyType",
-            "type": 5
-          }
-        ],
         "def": {
-          "composite": {}
+          "primitive": "u128"
         }
       }
     },
@@ -97,78 +77,15 @@
       "id": 5,
       "type": {
         "path": [
-          "ink_storage_traits",
-          "impls",
-          "ResolverKey"
-        ],
-        "params": [
-          {
-            "name": "L",
-            "type": 6
-          },
-          {
-            "name": "R",
-            "type": 7
-          }
-        ],
-        "def": {
-          "composite": {}
-        }
-      }
-    },
-    {
-      "id": 6,
-      "type": {
-        "path": [
-          "ink_storage_traits",
-          "impls",
-          "AutoKey"
-        ],
-        "def": {
-          "composite": {}
-        }
-      }
-    },
-    {
-      "id": 7,
-      "type": {
-        "path": [
-          "ink_storage_traits",
-          "impls",
-          "ManualKey"
-        ],
-        "params": [
-          {
-            "name": "ParentKey",
-            "type": 8
-          }
-        ],
-        "def": {
-          "composite": {}
-        }
-      }
-    },
-    {
-      "id": 8,
-      "type": {
-        "def": {
-          "tuple": []
-        }
-      }
-    },
-    {
-      "id": 9,
-      "type": {
-        "path": [
           "ink_primitives",
           "types",
-          "Hash"
+          "AccountId"
         ],
         "def": {
           "composite": {
             "fields": [
               {
-                "type": 10,
+                "type": 6,
                 "typeName": "[u8; 32]"
               }
             ]
@@ -177,7 +94,7 @@
       }
     },
     {
-      "id": 10,
+      "id": 6,
       "type": {
         "def": {
           "array": {
@@ -188,23 +105,7 @@
       }
     },
     {
-      "id": 11,
-      "type": {
-        "def": {
-          "primitive": "u128"
-        }
-      }
-    },
-    {
-      "id": 12,
-      "type": {
-        "def": {
-          "primitive": "u64"
-        }
-      }
-    },
-    {
-      "id": 13,
+      "id": 7,
       "type": {
         "path": [
           "ink_storage",
@@ -215,15 +116,15 @@
         "params": [
           {
             "name": "K",
-            "type": 9
+            "type": 3
           },
           {
             "name": "V",
-            "type": 14
+            "type": 8
           },
           {
             "name": "KeyType",
-            "type": 16
+            "type": 10
           }
         ],
         "def": {
@@ -232,7 +133,7 @@
       }
     },
     {
-      "id": 14,
+      "id": 8,
       "type": {
         "path": [
           "loan_manager",
@@ -244,67 +145,42 @@
             "fields": [
               {
                 "name": "loan_id",
-                "type": 9,
-                "typeName": "Hash"
-              },
-              {
-                "name": "borrower",
-                "type": 0,
-                "typeName": "Address"
-              },
-              {
-                "name": "requested_amount",
-                "type": 11,
-                "typeName": "Balance"
-              },
-              {
-                "name": "funded_amount",
-                "type": 11,
-                "typeName": "Balance"
-              },
-              {
-                "name": "lender_count",
                 "type": 3,
-                "typeName": "u32"
+                "typeName": "u64"
               },
               {
                 "name": "interest_rate",
-                "type": 12,
+                "type": 3,
                 "typeName": "u64"
               },
               {
-                "name": "penalty_rate",
-                "type": 12,
-                "typeName": "u64"
-              },
-              {
-                "name": "duration",
-                "type": 12,
-                "typeName": "u64"
+                "name": "term",
+                "type": 3,
+                "typeName": "Timestamp"
               },
               {
                 "name": "start_time",
-                "type": 12,
+                "type": 3,
                 "typeName": "Timestamp"
               },
               {
-                "name": "due_time",
-                "type": 12,
-                "typeName": "Timestamp"
-              },
-              {
-                "name": "repaid_amount",
-                "type": 11,
+                "name": "amount",
+                "type": 4,
                 "typeName": "Balance"
               },
               {
+                "name": "borrower",
+                "type": 5,
+                "typeName": "AccountId"
+              },
+              {
                 "name": "status",
-                "type": 15,
+                "type": 9,
                 "typeName": "LoanStatus"
               },
               {
-                "name": "reserve",
-                "type": 11,
+                "name": "total_repayment_amount",
+                "type": 4,
                 "typeName": "Balance"
               }
             ]
@@ -313,7 +189,7 @@
       }
     },
     {
-      "id": 15,
+      "id": 9,
       "type": {
         "path": [
           "loan_manager",
@@ -345,7 +221,7 @@
       }
     },
     {
-      "id": 16,
+      "id": 10,
       "type": {
         "path": [
           "ink_storage_traits",
@@ -355,138 +231,11 @@
         "params": [
           {
             "name": "L",
-            "type": 6
-          },
-          {
-            "name": "R",
-            "type": 17
-          }
-        ],
-        "def": {
-          "composite": {}
-        }
-      }
-    },
-    {
-      "id": 17,
-      "type": {
-        "path": [
-          "ink_storage_traits",
-          "impls",
-          "ManualKey"
-        ],
-        "params": [
-          {
-            "name": "ParentKey",
-            "type": 8
-          }
-        ],
-        "def": {
-          "composite": {}
-        }
-      }
-    },
-    {
-      "id": 18,
-      "type": {
-        "def": {
-          "sequence": {
-            "type": 9
-          }
-        }
-      }
-    },
-    {
-      "id": 19,
-      "type": {
-        "path": [
-          "ink_storage",
-          "lazy",
-          "mapping",
-          "Mapping"
-        ],
-        "params": [
-          {
-            "name": "K",
-            "type": 0
-          },
-          {
-            "name": "V",
-            "type": 18
-          },
-          {
-            "name": "KeyType",
-            "type": 20
-          }
-        ],
-        "def": {
-          "composite": {}
-        }
-      }
-    },
-    {
-      "id": 20,
-      "type": {
-        "path": [
-          "ink_storage_traits",
-          "impls",
-          "ResolverKey"
-        ],
-        "params": [
-          {
-            "name": "L",
-            "type": 6
-          },
-          {
-            "name": "R",
-            "type": 21
-          }
-        ],
-        "def": {
-          "composite": {}
-        }
-      }
-    },
-    {
-      "id": 21,
-      "type": {
-        "path": [
-          "ink_storage_traits",
-          "impls",
-          "ManualKey"
-        ],
-        "params": [
-          {
-            "name": "ParentKey",
-            "type": 8
-          }
-        ],
-        "def": {
-          "composite": {}
-        }
-      }
-    },
-    {
-      "id": 22,
-      "type": {
-        "path": [
-          "ink_storage",
-          "lazy",
-          "mapping",
-          "Mapping"
-        ],
-        "params": [
-          {
-            "name": "K",
-            "type": 23
-          },
-          {
-            "name": "V",
             "type": 11
           },
           {
-            "name": "KeyType",
-            "type": 24
+            "name": "R",
+            "type": 12
           }
         ],
         "def": {
@@ -495,33 +244,12 @@
       }
     },
     {
-      "id": 23,
-      "type": {
-        "def": {
-          "tuple": [
-            9,
-            0
-          ]
-        }
-      }
-    },
-    {
-      "id": 24,
+      "id": 11,
       "type": {
         "path": [
           "ink_storage_traits",
           "impls",
-          "ResolverKey"
-        ],
-        "params": [
-          {
-            "name": "L",
-            "type": 6
-          },
-          {
-            "name": "R",
-            "type": 25
-          }
+          "AutoKey"
         ],
         "def": {
           "composite": {}
@@ -529,7 +257,7 @@
       }
     },
     {
-      "id": 25,
+      "id": 12,
       "type": {
         "path": [
           "ink_storage_traits",
@@ -539,7 +267,7 @@
         "params": [
           {
             "name": "ParentKey",
-            "type": 8
+            "type": 13
           }
         ],
         "def": {
@@ -548,7 +276,15 @@
       }
     },
     {
-      "id": 26,
+      "id": 13,
+      "type": {
+        "def": {
+          "tuple": []
+        }
+      }
+    },
+    {
+      "id": 14,
       "type": {
         "path": [
           "loan_manager",
@@ -559,34 +295,39 @@
           "composite": {
             "fields": [
               {
-                "name": "config_address",
+                "name": "config",
                 "type": 0,
-                "typeName": "<ConfigRef as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<3203843720u32, ()>,>>::Type"
+                "typeName": "<ConfigRef as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<2831555835u32, ()>,>>::Type"
               },
               {
-                "name": "trust_graph_address",
+                "name": "reputation",
                 "type": 0,
-                "typeName": "<TrustGraphRef as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<4037065552u32, ()>,>>::Type"
+                "typeName": "<ReputationRef as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<3777150528u32, ()>,>>::Type"
               },
               {
-                "name": "credit_score",
-                "type": 4,
-                "typeName": "<Mapping<Address, u32> as::ink::storage::traits::AutoStorableHint\n<::ink::storage::traits::ManualKey<1876626826u32, ()>,>>::Type"
+                "name": "lending_pool",
+                "type": 0,
+                "typeName": "<LendingPoolRef as::ink::storage::traits::AutoStorableHint<::ink\n::storage::traits::ManualKey<1619951998u32, ()>,>>::Type"
+              },
+              {
+                "name": "vouch",
+                "type": 0,
+                "typeName": "<VouchRef as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<3682806405u32, ()>,>>::Type"
+              },
+              {
+                "name": "lending_pool_address",
+                "type": 0,
+                "typeName": "<Address as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<1682214820u32, ()>,>>::Type"
               },
               {
                 "name": "loans",
-                "type": 13,
-                "typeName": "<Mapping<Hash, Loan> as::ink::storage::traits::AutoStorableHint<\n::ink::storage::traits::ManualKey<3383396540u32, ()>,>>::Type"
+                "type": 7,
+                "typeName": "<Mapping<u64, Loan> as::ink::storage::traits::AutoStorableHint<\n::ink::storage::traits::ManualKey<3383396540u32, ()>,>>::Type"
               },
               {
-                "name": "borrower_loans",
-                "type": 19,
-                "typeName": "<Mapping<Address, Vec<Hash>> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<2470988373u32,\n()>,>>::Type"
-              },
-              {
-                "name": "lenders",
-                "type": 22,
-                "typeName": "<Mapping<(Hash, Address), Balance> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<2004412553u32,\n()>,>>::Type"
+                "name": "next_loan_id",
+                "type": 3,
+                "typeName": "<u64 as::ink::storage::traits::AutoStorableHint<::ink::storage\n::traits::ManualKey<462418257u32, ()>,>>::Type"
               }
             ]
           }
@@ -594,7 +335,7 @@
       }
     },
     {
-      "id": 27,
+      "id": 15,
       "type": {
         "path": [
           "Result"
@@ -602,11 +343,11 @@
         "params": [
           {
             "name": "T",
-            "type": 8
+            "type": 13
           },
           {
             "name": "E",
-            "type": 28
+            "type": 16
           }
         ],
         "def": {
@@ -616,7 +357,7 @@
                 "name": "Ok",
                 "fields": [
                   {
-                    "type": 8
+                    "type": 13
                   }
                 ],
                 "index": 0
@@ -625,7 +366,7 @@
                 "name": "Err",
                 "fields": [
                   {
-                    "type": 28
+                    "type": 16
                   }
                 ],
                 "index": 1
@@ -636,7 +377,7 @@
       }
     },
     {
-      "id": 28,
+      "id": 16,
       "type": {
         "path": [
           "ink_primitives",
@@ -655,247 +396,7 @@
       }
     },
     {
-      "id": 29,
-      "type": {
-        "path": [
-          "Result"
-        ],
-        "params": [
-          {
-            "name": "T",
-            "type": 30
-          },
-          {
-            "name": "E",
-            "type": 28
-          }
-        ],
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "name": "Ok",
-                "fields": [
-                  {
-                    "type": 30
-                  }
-                ],
-                "index": 0
-              },
-              {
-                "name": "Err",
-                "fields": [
-                  {
-                    "type": 28
-                  }
-                ],
-                "index": 1
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": 30,
-      "type": {
-        "path": [
-          "Result"
-        ],
-        "params": [
-          {
-            "name": "T",
-            "type": 9
-          },
-          {
-            "name": "E",
-            "type": 31
-          }
-        ],
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "name": "Ok",
-                "fields": [
-                  {
-                    "type": 9
-                  }
-                ],
-                "index": 0
-              },
-              {
-                "name": "Err",
-                "fields": [
-                  {
-                    "type": 31
-                  }
-                ],
-                "index": 1
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": 31,
-      "type": {
-        "path": [
-          "loan_manager",
-          "loan_manager",
-          "Error"
-        ],
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "name": "NotTrusted",
-                "index": 0
-              },
-              {
-                "name": "LoanNotFound",
-                "index": 1
-              },
-              {
-                "name": "InvalidDuration",
-                "index": 2
-              },
-              {
-                "name": "InsufficientOverfunding",
-                "index": 3
-              },
-              {
-                "name": "NotEnoughLenders",
-                "index": 4
-              },
-              {
-                "name": "Unauthorized",
-                "index": 5
-              },
-              {
-                "name": "LoanNotPending",
-                "index": 6
-              },
-              {
-                "name": "LoanNotActive",
-                "index": 7
-              },
-              {
-                "name": "Overdue",
-                "index": 8
-              },
-              {
-                "name": "InsufficientPayment",
-                "index": 9
-              },
-              {
-                "name": "CrossContractCallFailed",
-                "index": 10
-              },
-              {
-                "name": "TransferFailed",
-                "index": 11
-              },
-              {
-                "name": "ZeroAmount",
-                "index": 12
-              },
-              {
-                "name": "AlreadyDefaulted",
-                "index": 13
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": 32,
-      "type": {
-        "path": [
-          "Result"
-        ],
-        "params": [
-          {
-            "name": "T",
-            "type": 33
-          },
-          {
-            "name": "E",
-            "type": 28
-          }
-        ],
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "name": "Ok",
-                "fields": [
-                  {
-                    "type": 33
-                  }
-                ],
-                "index": 0
-              },
-              {
-                "name": "Err",
-                "fields": [
-                  {
-                    "type": 28
-                  }
-                ],
-                "index": 1
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": 33,
-      "type": {
-        "path": [
-          "Result"
-        ],
-        "params": [
-          {
-            "name": "T",
-            "type": 8
-          },
-          {
-            "name": "E",
-            "type": 31
-          }
-        ],
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "name": "Ok",
-                "fields": [
-                  {
-                    "type": 8
-                  }
-                ],
-                "index": 0
-              },
-              {
-                "name": "Err",
-                "fields": [
-                  {
-                    "type": 31
-                  }
-                ],
-                "index": 1
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": 34,
+      "id": 17,
       "type": {
         "path": [
           "Result"
@@ -907,7 +408,7 @@
           },
           {
             "name": "E",
-            "type": 28
+            "type": 16
           }
         ],
         "def": {
@@ -926,7 +427,7 @@
                 "name": "Err",
                 "fields": [
                   {
-                    "type": 28
+                    "type": 16
                   }
                 ],
                 "index": 1
@@ -937,82 +438,7 @@
       }
     },
     {
-      "id": 35,
-      "type": {
-        "path": [
-          "Result"
-        ],
-        "params": [
-          {
-            "name": "T",
-            "type": 36
-          },
-          {
-            "name": "E",
-            "type": 28
-          }
-        ],
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "name": "Ok",
-                "fields": [
-                  {
-                    "type": 36
-                  }
-                ],
-                "index": 0
-              },
-              {
-                "name": "Err",
-                "fields": [
-                  {
-                    "type": 28
-                  }
-                ],
-                "index": 1
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": 36,
-      "type": {
-        "path": [
-          "Option"
-        ],
-        "params": [
-          {
-            "name": "T",
-            "type": 14
-          }
-        ],
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "name": "None",
-                "index": 0
-              },
-              {
-                "name": "Some",
-                "fields": [
-                  {
-                    "type": 14
-                  }
-                ],
-                "index": 1
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": 37,
+      "id": 18,
       "type": {
         "path": [
           "Result"
@@ -1024,7 +450,7 @@
           },
           {
             "name": "E",
-            "type": 28
+            "type": 19
           }
         ],
         "def": {
@@ -1043,7 +469,7 @@
                 "name": "Err",
                 "fields": [
                   {
-                    "type": 28
+                    "type": 19
                   }
                 ],
                 "index": 1
@@ -1054,7 +480,91 @@
       }
     },
     {
-      "id": 38,
+      "id": 19,
+      "type": {
+        "path": [
+          "loan_manager",
+          "loan_manager",
+          "Error"
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "InsufficientReputation",
+                "index": 0
+              },
+              {
+                "name": "InsufficientVouches",
+                "index": 1
+              },
+              {
+                "name": "ZeroAmount",
+                "index": 2
+              },
+              {
+                "name": "DisbursementFailed",
+                "index": 3
+              },
+              {
+                "name": "LoanNotFound",
+                "index": 4
+              },
+              {
+                "name": "LoanNotActive",
+                "index": 5
+              },
+              {
+                "name": "LoanNotPending",
+                "index": 6
+              },
+              {
+                "name": "LoanNotOverdue",
+                "index": 7
+              },
+              {
+                "name": "SlashFailed",
+                "index": 8
+              },
+              {
+                "name": "ResolveFailed",
+                "index": 9
+              },
+              {
+                "name": "Unauthorized",
+                "index": 10
+              },
+              {
+                "name": "RepaymentFailed",
+                "index": 11
+              },
+              {
+                "name": "InvalidRepaymentAmount",
+                "index": 12
+              },
+              {
+                "name": "InsufficientAmount",
+                "index": 13
+              },
+              {
+                "name": "Overflow",
+                "index": 14
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 20,
+      "type": {
+        "def": {
+          "primitive": "u32"
+        }
+      }
+    },
+    {
+      "id": 21,
       "type": {
         "path": [
           "Result"
@@ -1062,11 +572,11 @@
         "params": [
           {
             "name": "T",
-            "type": 39
+            "type": 22
           },
           {
             "name": "E",
-            "type": 28
+            "type": 16
           }
         ],
         "def": {
@@ -1076,7 +586,7 @@
                 "name": "Ok",
                 "fields": [
                   {
-                    "type": 39
+                    "type": 22
                   }
                 ],
                 "index": 0
@@ -1085,7 +595,7 @@
                 "name": "Err",
                 "fields": [
                   {
-                    "type": 28
+                    "type": 16
                   }
                 ],
                 "index": 1
@@ -1096,28 +606,279 @@
       }
     },
     {
-      "id": 39,
+      "id": 22,
       "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 13
+          },
+          {
+            "name": "E",
+            "type": 19
+          }
+        ],
         "def": {
-          "sequence": {
-            "type": 14
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 13
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 19
+                  }
+                ],
+                "index": 1
+              }
+            ]
           }
         }
       }
     },
     {
-      "id": 40,
+      "id": 23,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 24
+          },
+          {
+            "name": "E",
+            "type": 16
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 24
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 16
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 24,
+      "type": {
+        "path": [
+          "Option"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 8
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "None",
+                "index": 0
+              },
+              {
+                "name": "Some",
+                "fields": [
+                  {
+                    "type": 8
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 25,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 26
+          },
+          {
+            "name": "E",
+            "type": 16
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 26
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 16
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 26,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 4
+          },
+          {
+            "name": "E",
+            "type": 19
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 4
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 19
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 27,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 28
+          },
+          {
+            "name": "E",
+            "type": 16
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 28
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 16
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 28,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 3
+          }
+        }
+      }
+    },
+    {
+      "id": 29,
+      "type": {
+        "def": {
+          "primitive": "bool"
+        }
+      }
+    },
+    {
+      "id": 30,
       "type": {
         "path": [
           "ink_primitives",
           "types",
-          "AccountId"
+          "Hash"
         ],
         "def": {
           "composite": {
             "fields": [
               {
-                "type": 10,
+                "type": 6,
                 "typeName": "[u8; 32]"
               }
             ]
@@ -1134,7 +895,7 @@
           "name": "LoanManager",
           "fields": [
             {
-              "name": "config_address",
+              "name": "config",
               "layout": {
                 "struct": {
                   "name": "ConfigRefFor",
@@ -1163,10 +924,10 @@
               }
             },
             {
-              "name": "trust_graph_address",
+              "name": "reputation",
               "layout": {
                 "struct": {
-                  "name": "TrustGraphRefFor",
+                  "name": "ReputationRefFor",
                   "fields": [
                     {
                       "name": "inner",
@@ -1192,17 +953,69 @@
               }
             },
             {
-              "name": "credit_score",
+              "name": "lending_pool",
               "layout": {
-                "root": {
-                  "root_key": "0x8a0ddb6f",
-                  "layout": {
-                    "leaf": {
-                      "key": "0x8a0ddb6f",
-                      "ty": 3
+                "struct": {
+                  "name": "LendingPoolRefFor",
+                  "fields": [
+                    {
+                      "name": "inner",
+                      "layout": {
+                        "struct": {
+                          "name": "CallBuilder",
+                          "fields": [
+                            {
+                              "name": "addr",
+                              "layout": {
+                                "leaf": {
+                                  "key": "0x00000000",
+                                  "ty": 0
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
                     }
-                  },
-                  "ty": 4
+                  ]
+                }
+              }
+            },
+            {
+              "name": "vouch",
+              "layout": {
+                "struct": {
+                  "name": "VouchRefFor",
+                  "fields": [
+                    {
+                      "name": "inner",
+                      "layout": {
+                        "struct": {
+                          "name": "CallBuilder",
+                          "fields": [
+                            {
+                              "name": "addr",
+                              "layout": {
+                                "leaf": {
+                                  "key": "0x00000000",
+                                  "ty": 0
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "lending_pool_address",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 0
                 }
               }
             },
@@ -1220,42 +1033,6 @@
                           "layout": {
                             "leaf": {
                               "key": "0xbc88aac9",
-                              "ty": 9
-                            }
-                          }
-                        },
-                        {
-                          "name": "borrower",
-                          "layout": {
-                            "leaf": {
-                              "key": "0xbc88aac9",
-                              "ty": 0
-                            }
-                          }
-                        },
-                        {
-                          "name": "requested_amount",
-                          "layout": {
-                            "leaf": {
-                              "key": "0xbc88aac9",
-                              "ty": 11
-                            }
-                          }
-                        },
-                        {
-                          "name": "funded_amount",
-                          "layout": {
-                            "leaf": {
-                              "key": "0xbc88aac9",
-                              "ty": 11
-                            }
-                          }
-                        },
-                        {
-                          "name": "lender_count",
-                          "layout": {
-                            "leaf": {
-                              "key": "0xbc88aac9",
                               "ty": 3
                             }
                           }
@@ -1265,25 +1042,16 @@
                           "layout": {
                             "leaf": {
                               "key": "0xbc88aac9",
-                              "ty": 12
+                              "ty": 3
                             }
                           }
                         },
                         {
-                          "name": "penalty_rate",
+                          "name": "term",
                           "layout": {
                             "leaf": {
                               "key": "0xbc88aac9",
-                              "ty": 12
-                            }
-                          }
-                        },
-                        {
-                          "name": "duration",
-                          "layout": {
-                            "leaf": {
-                              "key": "0xbc88aac9",
-                              "ty": 12
+                              "ty": 3
                             }
                           }
                         },
@@ -1292,25 +1060,25 @@
                           "layout": {
                             "leaf": {
                               "key": "0xbc88aac9",
-                              "ty": 12
+                              "ty": 3
                             }
                           }
                         },
                         {
-                          "name": "due_time",
+                          "name": "amount",
                           "layout": {
                             "leaf": {
                               "key": "0xbc88aac9",
-                              "ty": 12
+                              "ty": 4
                             }
                           }
                         },
                         {
-                          "name": "repaid_amount",
+                          "name": "borrower",
                           "layout": {
                             "leaf": {
                               "key": "0xbc88aac9",
-                              "ty": 11
+                              "ty": 5
                             }
                           }
                         },
@@ -1342,55 +1110,34 @@
                           }
                         },
                         {
-                          "name": "reserve",
+                          "name": "total_repayment_amount",
                           "layout": {
                             "leaf": {
                               "key": "0xbc88aac9",
-                              "ty": 11
+                              "ty": 4
                             }
                           }
                         }
                       ]
                     }
                   },
-                  "ty": 13
+                  "ty": 7
                 }
               }
             },
             {
-              "name": "borrower_loans",
+              "name": "next_loan_id",
               "layout": {
-                "root": {
-                  "root_key": "0x554a4893",
-                  "layout": {
-                    "leaf": {
-                      "key": "0x554a4893",
-                      "ty": 18
-                    }
-                  },
-                  "ty": 19
-                }
-              }
-            },
-            {
-              "name": "lenders",
-              "layout": {
-                "root": {
-                  "root_key": "0x89e87877",
-                  "layout": {
-                    "leaf": {
-                      "key": "0x89e87877",
-                      "ty": 11
-                    }
-                  },
-                  "ty": 22
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 3
                 }
               }
             }
           ]
         }
       },
-      "ty": 26
+      "ty": 14
     }
   },
   "spec": {
@@ -1410,7 +1157,25 @@
             }
           },
           {
-            "label": "trust_graph_address",
+            "label": "reputation_address",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "Address"
+              ]
+            }
+          },
+          {
+            "label": "lending_pool_address",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "Address"
+              ]
+            }
+          },
+          {
+            "label": "vouch_address",
             "type": {
               "type": 0,
               "displayName": [
@@ -1420,7 +1185,7 @@
           }
         ],
         "returnType": {
-          "type": 27,
+          "type": 15,
           "displayName": [
             "ink_primitives",
             "ConstructorResult"
@@ -1432,136 +1197,96 @@
     ],
     "messages": [
       {
-        "label": "create_loan",
-        "selector": "0x36469ae4",
+        "label": "request_loan",
+        "selector": "0x3177501d",
         "mutates": true,
         "payable": false,
         "args": [
           {
-            "label": "requested_amount",
+            "label": "amount",
             "type": {
-              "type": 11,
+              "type": 4,
               "displayName": [
                 "Balance"
               ]
             }
           },
           {
-            "label": "duration",
+            "label": "loan_term",
             "type": {
-              "type": 12,
+              "type": 3,
+              "displayName": [
+                "Timestamp"
+              ]
+            }
+          },
+          {
+            "label": "account_id",
+            "type": {
+              "type": 5,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 17,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Request a loan from the lending pool",
+          " Creates a pending loan that requires vouches before disbursement"
+        ],
+        "default": false
+      },
+      {
+        "label": "vouch_for_loan",
+        "selector": "0xdeb14168",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "loan_id",
+            "type": {
+              "type": 3,
               "displayName": [
                 "u64"
               ]
             }
-          }
-        ],
-        "returnType": {
-          "type": 29,
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ]
-        },
-        "docs": [
-          " Creates a loan request, with caller being the borrower",
-          " The borrower must have at least one trusted address in their TrustGraph"
-        ],
-        "default": false
-      },
-      {
-        "label": "fund_loan",
-        "selector": "0x7b59dea2",
-        "mutates": true,
-        "payable": true,
-        "args": [
+          },
           {
-            "label": "loan_id",
+            "label": "stars",
             "type": {
-              "type": 9,
+              "type": 20,
               "displayName": [
-                "Hash"
+                "u32"
               ]
             }
-          }
-        ],
-        "returnType": {
-          "type": 32,
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ]
-        },
-        "docs": [
-          " Lenders can lend to a loan by sending funds into it",
-          " The lender must trust the borrower in their TrustGraph"
-        ],
-        "default": false
-      },
-      {
-        "label": "pay_loan",
-        "selector": "0xe36ebe8c",
-        "mutates": true,
-        "payable": true,
-        "args": [
+          },
           {
-            "label": "loan_id",
+            "label": "capital_percent",
             "type": {
-              "type": 9,
+              "type": 2,
               "displayName": [
-                "Hash"
+                "u8"
               ]
             }
-          }
-        ],
-        "returnType": {
-          "type": 32,
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ]
-        },
-        "docs": [
-          " Borrower can pay back their loan partially or fully"
-        ],
-        "default": false
-      },
-      {
-        "label": "check_default",
-        "selector": "0x711f1285",
-        "mutates": true,
-        "payable": false,
-        "args": [
+          },
           {
-            "label": "loan_id",
+            "label": "voucher_account_id",
             "type": {
-              "type": 9,
+              "type": 5,
               "displayName": [
-                "Hash"
+                "AccountId"
               ]
             }
-          }
-        ],
-        "returnType": {
-          "type": 32,
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ]
-        },
-        "docs": [
-          " Check and mark loan as defaulted if overdue and not repaid"
-        ],
-        "default": false
-      },
-      {
-        "label": "get_user_loans",
-        "selector": "0x62af3bd0",
-        "mutates": false,
-        "payable": false,
-        "args": [
+          },
           {
-            "label": "borrower",
+            "label": "loan_manager_address",
             "type": {
               "type": 0,
               "displayName": [
@@ -1571,15 +1296,13 @@
           }
         ],
         "returnType": {
-          "type": 34,
+          "type": 21,
           "displayName": [
             "ink",
             "MessageResult"
           ]
         },
-        "docs": [
-          " Getter functions for frontend"
-        ],
+        "docs": [],
         "default": false
       },
       {
@@ -1591,15 +1314,15 @@
           {
             "label": "loan_id",
             "type": {
-              "type": 9,
+              "type": 3,
               "displayName": [
-                "Hash"
+                "u64"
               ]
             }
           }
         ],
         "returnType": {
-          "type": 35,
+          "type": 23,
           "displayName": [
             "ink",
             "MessageResult"
@@ -1609,13 +1332,31 @@
         "default": false
       },
       {
-        "label": "get_credit_score",
-        "selector": "0x8a24ad50",
-        "mutates": false,
-        "payable": false,
+        "label": "repay_loan",
+        "selector": "0x2a01c432",
+        "mutates": true,
+        "payable": true,
         "args": [
           {
-            "label": "addr",
+            "label": "loan_id",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "u64"
+              ]
+            }
+          },
+          {
+            "label": "borrower_account_id",
+            "type": {
+              "type": 5,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          },
+          {
+            "label": "loan_manager_address",
             "type": {
               "type": 0,
               "displayName": [
@@ -1625,7 +1366,7 @@
           }
         ],
         "returnType": {
-          "type": 37,
+          "type": 21,
           "displayName": [
             "ink",
             "MessageResult"
@@ -1635,37 +1376,143 @@
         "default": false
       },
       {
-        "label": "get_trusted_loans",
-        "selector": "0x010076ad",
-        "mutates": false,
+        "label": "check_default",
+        "selector": "0x711f1285",
+        "mutates": true,
         "payable": false,
-        "args": [],
+        "args": [
+          {
+            "label": "loan_id",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "u64"
+              ]
+            }
+          },
+          {
+            "label": "loan_manager_address",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "Address"
+              ]
+            }
+          },
+          {
+            "label": "vouch_contract_address",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "Address"
+              ]
+            }
+          }
+        ],
         "returnType": {
-          "type": 38,
+          "type": 21,
           "displayName": [
             "ink",
             "MessageResult"
           ]
         },
         "docs": [
-          " Get all loans from trusted borrowers that are pending funding"
+          " Check if a loan is overdue and handle defaulting",
+          " ",
+          " This function can be called by anyone to trigger default processing for overdue loans.",
+          " It includes safeguards to prevent premature defaults:",
+          " - Only active loans can be defaulted (prevents double-processing)",
+          " - Loan must be past due date + grace period (configurable buffer)",
+          " ",
+          " The grace period provides a buffer after the due date, allowing borrowers time to",
+          " repay and preventing race conditions with repayment transactions.",
+          " ",
+          " Slashes borrower's stars and resolves vouches as failed"
+        ],
+        "default": false
+      },
+      {
+        "label": "get_repayment_amount",
+        "selector": "0xc37cebb4",
+        "mutates": false,
+        "payable": false,
+        "args": [
+          {
+            "label": "loan_id",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "u64"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 25,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Get the repayment amount for a loan",
+          " Returns the fixed repayment amount (principal + interest) calculated at loan creation",
+          " Returns value in 18 decimals (chain format) for consistency with total liquidity"
+        ],
+        "default": false
+      },
+      {
+        "label": "get_all_pending_loans",
+        "selector": "0xa64be167",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 27,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Get all pending loans",
+          " Returns a vector of loan IDs that are currently pending"
+        ],
+        "default": false
+      },
+      {
+        "label": "get_all_active_loans",
+        "selector": "0xe3c98be0",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 27,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Get all active loans",
+          " Returns a vector of loan IDs that are currently active"
         ],
         "default": false
       }
     ],
     "events": [
       {
-        "label": "LoanEnded",
-        "module_path": "loan_manager::loan_manager",
-        "signature_topic": "0x61a5e43da9e1cbae8d864354c0ac1a51d8500577fc99a9c668987a9242ddc294",
+        "label": "RepaymentReceived",
+        "module_path": "lending_pool::lending_pool",
+        "signature_topic": "0x654b646a1cd4aa283b63883350204bf2108d445e09b97e4ff732aecd8fb07d2b",
         "args": [
           {
-            "label": "loan_id",
+            "label": "amount",
             "indexed": false,
             "type": {
-              "type": 9,
+              "type": 4,
               "displayName": [
-                "Hash"
+                "Balance"
               ]
             },
             "docs": []
@@ -1674,28 +1521,17 @@
         "docs": []
       },
       {
-        "label": "LoanFunded",
-        "module_path": "loan_manager::loan_manager",
-        "signature_topic": "0xc827ea01c5bb95fe14d8f84a9d18b02c542f0dbff335c29ab14877ea95f014fa",
+        "label": "Deposit",
+        "module_path": "lending_pool::lending_pool",
+        "signature_topic": "0xcec721a438a262e1d7866c1b39464ad44a551ab736f11d09127d0b9ac849a16b",
         "args": [
           {
-            "label": "loan_id",
+            "label": "depositor",
             "indexed": false,
             "type": {
-              "type": 9,
+              "type": 5,
               "displayName": [
-                "Hash"
-              ]
-            },
-            "docs": []
-          },
-          {
-            "label": "lender",
-            "indexed": false,
-            "type": {
-              "type": 0,
-              "displayName": [
-                "Address"
+                "AccountId"
               ]
             },
             "docs": []
@@ -1704,7 +1540,39 @@
             "label": "amount",
             "indexed": false,
             "type": {
-              "type": 11,
+              "type": 4,
+              "displayName": [
+                "Balance"
+              ]
+            },
+            "docs": []
+          }
+        ],
+        "docs": [
+          "Events for lending pool actions"
+        ]
+      },
+      {
+        "label": "Withdraw",
+        "module_path": "lending_pool::lending_pool",
+        "signature_topic": "0x246a5b254e2e059ff24e5b754b864041f6e1a0fecc5946a65c1aa051cf8c0148",
+        "args": [
+          {
+            "label": "withdrawer",
+            "indexed": false,
+            "type": {
+              "type": 5,
+              "displayName": [
+                "AccountId"
+              ]
+            },
+            "docs": []
+          },
+          {
+            "label": "amount",
+            "indexed": false,
+            "type": {
+              "type": 4,
               "displayName": [
                 "Balance"
               ]
@@ -1717,15 +1585,26 @@
       {
         "label": "LoanRepaid",
         "module_path": "loan_manager::loan_manager",
-        "signature_topic": "0x1f1942216b95c142889996ce818713bc5009dfc42dfe83492089456eaecfa3a2",
+        "signature_topic": "0xcd4efa0805586f1d3ce08c96fce90276ece561570ecb8cfb1ef02f59cb7b6134",
         "args": [
           {
-            "label": "loan_id",
+            "label": "id",
             "indexed": false,
             "type": {
-              "type": 9,
+              "type": 3,
               "displayName": [
-                "Hash"
+                "u64"
+              ]
+            },
+            "docs": []
+          },
+          {
+            "label": "borrower",
+            "indexed": false,
+            "type": {
+              "type": 5,
+              "displayName": [
+                "AccountId"
               ]
             },
             "docs": []
@@ -1734,7 +1613,7 @@
             "label": "amount",
             "indexed": false,
             "type": {
-              "type": 11,
+              "type": 4,
               "displayName": [
                 "Balance"
               ]
@@ -1745,17 +1624,17 @@
         "docs": []
       },
       {
-        "label": "LoanCreated",
+        "label": "LoanDefaulted",
         "module_path": "loan_manager::loan_manager",
-        "signature_topic": "0x4e33e9dd73ccae4041e97121893402b9f33452c2d741a34aeeecd58fa7975611",
+        "signature_topic": "0xa3caebecfe3120ef11869115c6fdc9ca28a25a732c85612c82f34f439a941bb5",
         "args": [
           {
-            "label": "loan_id",
+            "label": "id",
             "indexed": false,
             "type": {
-              "type": 9,
+              "type": 3,
               "displayName": [
-                "Hash"
+                "u64"
               ]
             },
             "docs": []
@@ -1764,41 +1643,20 @@
             "label": "borrower",
             "indexed": false,
             "type": {
-              "type": 0,
+              "type": 5,
               "displayName": [
-                "Address"
-              ]
-            },
-            "docs": []
-          }
-        ],
-        "docs": [
-          "Events for the loans lifecycle"
-        ]
-      },
-      {
-        "label": "LoanActivated",
-        "module_path": "loan_manager::loan_manager",
-        "signature_topic": "0x4d72310c8b19483fd9803c07dc626d1c82692e3cd6447287cd8409d768220c5d",
-        "args": [
-          {
-            "label": "loan_id",
-            "indexed": false,
-            "type": {
-              "type": 9,
-              "displayName": [
-                "Hash"
+                "AccountId"
               ]
             },
             "docs": []
           },
           {
-            "label": "borrower",
+            "label": "amount",
             "indexed": false,
             "type": {
-              "type": 0,
+              "type": 4,
               "displayName": [
-                "Address"
+                "Balance"
               ]
             },
             "docs": []
@@ -1807,17 +1665,147 @@
         "docs": []
       },
       {
-        "label": "LoanDefaulted",
+        "label": "LoanRequested",
         "module_path": "loan_manager::loan_manager",
-        "signature_topic": "0x798205ae124ca767f6bb17fc6645bc74ca8cb5fd7c5c736d32ecae6d8119e35b",
+        "signature_topic": "0x9cce15932425538f923993bc1d3f892175cb235d6755e8addaf242fb846dd34e",
         "args": [
           {
-            "label": "loan_id",
+            "label": "id",
             "indexed": false,
             "type": {
-              "type": 9,
+              "type": 3,
               "displayName": [
-                "Hash"
+                "u64"
+              ]
+            },
+            "docs": []
+          },
+          {
+            "label": "borrower",
+            "indexed": false,
+            "type": {
+              "type": 5,
+              "displayName": [
+                "AccountId"
+              ]
+            },
+            "docs": []
+          },
+          {
+            "label": "amount",
+            "indexed": false,
+            "type": {
+              "type": 4,
+              "displayName": [
+                "Balance"
+              ]
+            },
+            "docs": []
+          },
+          {
+            "label": "term",
+            "indexed": false,
+            "type": {
+              "type": 3,
+              "displayName": [
+                "Timestamp"
+              ]
+            },
+            "docs": []
+          }
+        ],
+        "docs": [
+          "Events for lending pool actions"
+        ]
+      },
+      {
+        "label": "VouchCreated",
+        "module_path": "vouch::vouch",
+        "signature_topic": "0x09139a0968715659f89ce1d5c3f3fa35aa3a61c99017f50d3533927b25d0c896",
+        "args": [
+          {
+            "label": "voucher",
+            "indexed": false,
+            "type": {
+              "type": 5,
+              "displayName": [
+                "AccountId"
+              ]
+            },
+            "docs": []
+          },
+          {
+            "label": "borrower",
+            "indexed": false,
+            "type": {
+              "type": 5,
+              "displayName": [
+                "AccountId"
+              ]
+            },
+            "docs": []
+          },
+          {
+            "label": "stars",
+            "indexed": false,
+            "type": {
+              "type": 20,
+              "displayName": [
+                "u32"
+              ]
+            },
+            "docs": []
+          },
+          {
+            "label": "capital",
+            "indexed": false,
+            "type": {
+              "type": 4,
+              "displayName": [
+                "Balance"
+              ]
+            },
+            "docs": []
+          }
+        ],
+        "docs": [
+          "Events for the vouch contract"
+        ]
+      },
+      {
+        "label": "VouchResolved",
+        "module_path": "vouch::vouch",
+        "signature_topic": "0x007b299ae7219755ab93f6b2ac0aeaf19698ae184d39f228e0e17156fa317cda",
+        "args": [
+          {
+            "label": "voucher",
+            "indexed": false,
+            "type": {
+              "type": 5,
+              "displayName": [
+                "AccountId"
+              ]
+            },
+            "docs": []
+          },
+          {
+            "label": "borrower",
+            "indexed": false,
+            "type": {
+              "type": 5,
+              "displayName": [
+                "AccountId"
+              ]
+            },
+            "docs": []
+          },
+          {
+            "label": "success",
+            "indexed": false,
+            "type": {
+              "type": 29,
+              "displayName": [
+                "bool"
               ]
             },
             "docs": []
@@ -1827,13 +1815,10 @@
       }
     ],
     "docs": [
-      " This is 100% based on microloans, where borrowers can request small loans from multiple lenders.",
-      " The loans are managed by the LoanManager contract, which interacts with the Config and TrustGraph",
-      " contracts to get configuration parameters and verify trust relationships.",
-      " The idea is that the loans have a duration of less than a month, exactly because they are microloans."
+      " The loans are managed by the LoanManager contract, which interacts with all other contracts"
     ],
     "lang_error": {
-      "type": 28,
+      "type": 16,
       "displayName": [
         "ink",
         "LangError"
@@ -1841,31 +1826,31 @@
     },
     "environment": {
       "accountId": {
-        "type": 40,
+        "type": 5,
         "displayName": [
           "AccountId"
         ]
       },
       "balance": {
-        "type": 11,
+        "type": 4,
         "displayName": [
           "Balance"
         ]
       },
       "hash": {
-        "type": 9,
+        "type": 30,
         "displayName": [
           "Hash"
         ]
       },
       "timestamp": {
-        "type": 12,
+        "type": 3,
         "displayName": [
           "Timestamp"
         ]
       },
       "blockNumber": {
-        "type": 3,
+        "type": 20,
         "displayName": [
           "BlockNumber"
         ]

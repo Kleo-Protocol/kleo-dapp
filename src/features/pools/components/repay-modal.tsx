@@ -14,7 +14,12 @@ import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { AlertCircle, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
-import type { LoanDetails } from '@/services/mock/loans.mock';
+import { useRepayLoan } from '@/features/pools/hooks/use-loan-transactions';
+import { useRepaymentAmount } from '@/features/pools/hooks/use-loan-queries';
+import { useTypink } from 'typink';
+import { borrowKeys } from '@/features/pools/hooks/use-borrow-data';
+import { useQueryClient } from '@tanstack/react-query';
+import type { LoanDetails } from '@/lib/types';
 
 interface RepayModalProps {
   loanId: string;
@@ -23,14 +28,24 @@ interface RepayModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function RepayModal({ loanId, loan, open, onOpenChange }: RepayModalProps) {
+export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
   const [amount, setAmount] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const { connectedAccount, network } = useTypink();
+  const { repayLoan } = useRepayLoan();
+  const { data: repaymentAmount } = useRepaymentAmount(loan ? BigInt(loan.loanId) : 0n);
+  const queryClient = useQueryClient();
+
+  // Get network decimals (default to 12 for Asset Hub chains, fallback to 18)
+  const decimals = network?.decimals ?? 12;
 
   if (!loan) return null;
 
-  const totalRepayment = Number(loan.totalRepayment) / 1e18;
+  // Convert bigint to number for display (loans use 10 decimals)
+  const LOAN_DECIMALS = 10;
+  const totalRepayment = Number(loan.totalRepayment) / 10 ** LOAN_DECIMALS;
   const formatBalance = (tokens: number) => {
     return tokens.toLocaleString('en-US', { maximumFractionDigits: 2 });
   };
@@ -47,9 +62,21 @@ export function RepayModal({ loanId, loan, open, onOpenChange }: RepayModalProps
     setAmount(totalRepayment.toString());
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!connectedAccount) {
+      toast.error('Wallet not connected', {
+        description: 'Please connect your wallet to repay the loan',
+      });
+      return;
+    }
+
+    if (!repaymentAmount) {
+      setError('Repayment amount not available');
+      return;
+    }
+
     const amountNum = parseFloat(amount);
     
     if (!amount || amountNum <= 0) {
@@ -62,19 +89,46 @@ export function RepayModal({ loanId, loan, open, onOpenChange }: RepayModalProps
       return;
     }
 
-    // Mock submission - no side effects
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      setIsSubmitting(true);
+      setError(null);
+
+      // Convert repayment amount from 18 decimals (loan contract) to network decimals
+      const loanDecimals = 18;
+      const conversionFactor = 10n ** BigInt(loanDecimals - decimals);
+      const repaymentAmountInNetworkDecimals = repaymentAmount / conversionFactor;
+      
+      // For partial payments, calculate the amount in network decimals
+      const paymentRatio = amountNum / totalRepayment;
+      const paymentAmountInNetworkDecimals = (repaymentAmountInNetworkDecimals * BigInt(Math.floor(paymentRatio * 10000))) / 10000n;
+      
+      const loanId = BigInt(loan.loanId);
+      await repayLoan(loanId, paymentAmountInNetworkDecimals);
+      
       setAmount('');
       setError(null);
       const isFullPayment = amountNum >= totalRepayment;
+      
+      // Invalidate loan-related queries to refresh data
+      if (connectedAccount.address) {
+        queryClient.invalidateQueries({
+          queryKey: borrowKeys.loans.byBorrower(connectedAccount.address),
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: borrowKeys.loans.active });
+      queryClient.invalidateQueries({ queryKey: borrowKeys.detail(loan.loanId.toString()) });
+      
       toast.success(isFullPayment ? 'Loan repaid in full' : 'Payment processed', {
         description: `${amountNum.toLocaleString()} tokens paid towards loan`,
       });
       onOpenChange(false);
-      // In a real app, this would trigger a mutation
-    }, 1000);
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      console.error('Error repaying loan:', err);
+      setError(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const amountNum = parseFloat(amount) || 0;
@@ -94,7 +148,7 @@ export function RepayModal({ loanId, loan, open, onOpenChange }: RepayModalProps
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-2">
+          <div className="rounded-lg border border-slate-200 bg-anti-flash-white/50 p-4 space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-slate-600">Total Repayment</span>
               <span className="font-semibold text-slate-900">{formatBalance(totalRepayment)} tokens</span>
@@ -103,7 +157,8 @@ export function RepayModal({ loanId, loan, open, onOpenChange }: RepayModalProps
               <div className="flex items-center justify-between text-sm text-red-600">
                 <span>Overdue Penalty</span>
                 <span className="font-semibold">
-                  {formatBalance((Number(loan.fundedAmount) * Number(loan.penaltyRate)) / 1e20)} tokens
+                  {/* Penalty calculation - contract may handle this differently */}
+                  {formatBalance(0)} tokens
                 </span>
               </div>
             )}
@@ -146,7 +201,7 @@ export function RepayModal({ loanId, loan, open, onOpenChange }: RepayModalProps
           </div>
 
           {amountNum > 0 && (
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <div className="rounded-lg border border-slate-200 bg-anti-flash-white/50 p-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-600">Remaining After Payment</span>
                 <span className="font-semibold text-slate-900">

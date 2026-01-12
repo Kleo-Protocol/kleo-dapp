@@ -36,55 +36,7 @@ interface AnalyticsLoanHistoryProps {
   isCreator?: boolean;
 }
 
-// Mock loan history data
-const mockLoans: LoanHistoryItem[] = [
-  {
-    loanId: '0x1111111111111111111111111111111111111111111111111111111111111111',
-    borrower: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
-    amount: 10000000000000000000n,
-    interestRate: 500n,
-    dueDate: BigInt(Math.floor((Date.now() + 60 * 24 * 60 * 60 * 1000) / 1000)),
-    status: 'active',
-    repaidAmount: 0n,
-    isOverdue: false,
-    createdAt: Date.now() - 30 * 24 * 60 * 60 * 1000,
-  },
-  {
-    loanId: '0x2222222222222222222222222222222222222222222222222222222222222222',
-    borrower: '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty',
-    amount: 5000000000000000000n,
-    interestRate: 800n,
-    dueDate: BigInt(Math.floor((Date.now() - 5 * 24 * 60 * 60 * 1000) / 1000)),
-    status: 'overdue',
-    repaidAmount: 0n,
-    isOverdue: true,
-    createdAt: Date.now() - 65 * 24 * 60 * 60 * 1000,
-  },
-  {
-    loanId: '0x4444444444444444444444444444444444444444444444444444444444444444',
-    borrower: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
-    amount: 15000000000000000000n,
-    interestRate: 450n,
-    dueDate: BigInt(Math.floor((Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000)),
-    status: 'completed',
-    repaidAmount: 15750000000000000000n,
-    isOverdue: false,
-    createdAt: Date.now() - 150 * 24 * 60 * 60 * 1000,
-  },
-  {
-    loanId: '0x6666666666666666666666666666666666666666666666666666666666666666',
-    borrower: '5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y',
-    amount: 8000000000000000000n,
-    interestRate: 1200n,
-    dueDate: BigInt(Math.floor((Date.now() - 45 * 24 * 60 * 60 * 1000) / 1000)),
-    status: 'defaulted',
-    repaidAmount: 0n,
-    isOverdue: true,
-    createdAt: Date.now() - 120 * 24 * 60 * 60 * 1000,
-  },
-];
-
-export function AnalyticsLoanHistory({ loans = mockLoans, isLoading = false, isCreator = true }: AnalyticsLoanHistoryProps) {
+export function AnalyticsLoanHistory({ loans = [], isLoading = false, isCreator = true }: AnalyticsLoanHistoryProps) {
   const [defaultLoanId, setDefaultLoanId] = useState<string | null>(null);
 
   const getStatusBadge = (status: string, isOverdue: boolean) => {
@@ -188,7 +140,7 @@ export function AnalyticsLoanHistory({ loans = mockLoans, isLoading = false, isC
                   </TableCell>
                   <TableCell>
                     {loan.status === 'completed' ? (
-                      <span className="font-medium text-green-600">
+                      <span className="font-medium text-forest-green">
                         {formatBalance(loan.repaidAmount)} tokens
                       </span>
                     ) : (

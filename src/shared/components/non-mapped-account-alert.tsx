@@ -3,7 +3,7 @@
 import { useCheckMappedAccount } from 'typink';
 import { Alert, AlertTitle, AlertDescription } from '@/shared/ui/alert';
 import { AlertTriangle } from 'lucide-react';
-import MapAccountButton from './map-account-button';
+import MapAccountButton from '@/features/auth/components/map-account-button';
 
 export function NonMappedAccountAlert() {
   const { isMapped, isLoading, refresh } = useCheckMappedAccount();
@@ -23,7 +23,7 @@ export function NonMappedAccountAlert() {
           Your account needs to be mapped before interacting with ink! v6 contracts on this network.
         </p>
         <div className='mt-2 flex items-center'>
-          <MapAccountButton variant='default' onSuccess={handleMappingSuccess} />
+          <MapAccountButton variant='primary' onSuccess={handleMappingSuccess} />
         </div>
       </AlertDescription>
     </Alert>

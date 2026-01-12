@@ -21,7 +21,7 @@ const getNetworkType = (type: NetworkType) => {
 const getConnectionStatus = (status: string) => {
   switch (status) {
     case 'Connected':
-      return { color: 'bg-green-500', label: 'Connected' };
+      return { color: 'bg-forest-green', label: 'Connected' };
     case 'Connecting':
       return { color: 'bg-yellow-500', label: 'Connecting', isLoading: true };
     case 'Error':
@@ -41,7 +41,7 @@ export function ChainInfo({ className = '' }: Props) {
   const connectionStatus = getConnectionStatus(status);
 
   return (
-    <Card className={`bg-gray-200/70 dark:bg-white/5 border-none shadow-none gap-4 ${className}`}>
+    <Card className={`bg-anti-flash-white/70 dark:bg-white/5 border-none shadow-none gap-4 ${className}`}>
       <CardHeader className='pb-4'>
         <div className='flex items-center justify-between'>
           <CardTitle className='text-2xl font-medium'>Chain Info</CardTitle>
@@ -105,7 +105,7 @@ export function ChainInfo({ className = '' }: Props) {
 
           <div className='flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-gray-800'>
             <span className='text-sm text-muted-foreground'>Finalized block</span>
-            <span className='text-sm font-mono text-green-500'>{finalized?.number?.toLocaleString()}</span>
+            <span className='text-sm font-mono text-forest-green'>{finalized?.number?.toLocaleString()}</span>
           </div>
 
           {/* Token Section */}

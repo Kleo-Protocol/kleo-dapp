@@ -1,0 +1,1549 @@
+{
+  "source": {
+    "hash": "0x6791e90bc888adf5b4d0d300aeb7b3a444c76b508f78e2d4719b100337bce4ac",
+    "language": "ink! 6.0.0-beta.1",
+    "compiler": "rustc 1.91.1",
+    "build_info": {
+      "rust_toolchain": "stable-aarch64-apple-darwin",
+      "cargo_contract_version": "6.0.0-beta.1",
+      "build_mode": "Release"
+    }
+  },
+  "contract": {
+    "name": "reputation",
+    "version": "0.1.0",
+    "authors": [
+      "Fabian Sanchez <fabiansanchezd@outlook.com>"
+    ]
+  },
+  "image": null,
+  "version": 6,
+  "types": [
+    {
+      "id": 0,
+      "type": {
+        "path": [
+          "ink_primitives",
+          "types",
+          "AccountId"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 1,
+                "typeName": "[u8; 32]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 1,
+      "type": {
+        "def": {
+          "array": {
+            "len": 32,
+            "type": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": {
+        "def": {
+          "primitive": "u8"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": {
+        "path": [
+          "primitive_types",
+          "H160"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 4,
+                "typeName": "[u8; 20]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": {
+        "def": {
+          "array": {
+            "len": 20,
+            "type": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": {
+        "def": {
+          "primitive": "u32"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 7
+          }
+        }
+      }
+    },
+    {
+      "id": 7,
+      "type": {
+        "path": [
+          "reputation",
+          "reputation",
+          "LoanStat"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "amount",
+                "type": 8,
+                "typeName": "Balance"
+              },
+              {
+                "name": "repaid",
+                "type": 9,
+                "typeName": "bool"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 8,
+      "type": {
+        "def": {
+          "primitive": "u128"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": {
+        "def": {
+          "primitive": "bool"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "type": {
+        "def": {
+          "sequence": {
+            "type": 11
+          }
+        }
+      }
+    },
+    {
+      "id": 11,
+      "type": {
+        "path": [
+          "reputation",
+          "reputation",
+          "VouchStat"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "borrower",
+                "type": 0,
+                "typeName": "AccountId"
+              },
+              {
+                "name": "successful",
+                "type": 9,
+                "typeName": "bool"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 12,
+      "type": {
+        "def": {
+          "primitive": "u64"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "type": {
+        "path": [
+          "ink_storage",
+          "lazy",
+          "mapping",
+          "Mapping"
+        ],
+        "params": [
+          {
+            "name": "K",
+            "type": 0
+          },
+          {
+            "name": "V",
+            "type": 14
+          },
+          {
+            "name": "KeyType",
+            "type": 15
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 14,
+      "type": {
+        "path": [
+          "reputation",
+          "reputation",
+          "UserReputation"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "stars",
+                "type": 5,
+                "typeName": "u32"
+              },
+              {
+                "name": "stars_at_stake",
+                "type": 5,
+                "typeName": "u32"
+              },
+              {
+                "name": "loan_history",
+                "type": 6,
+                "typeName": "Vec<LoanStat>"
+              },
+              {
+                "name": "vouch_history",
+                "type": 10,
+                "typeName": "Vec<VouchStat>"
+              },
+              {
+                "name": "creation_time",
+                "type": 12,
+                "typeName": "Timestamp"
+              },
+              {
+                "name": "banned",
+                "type": 9,
+                "typeName": "bool"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 15,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ResolverKey"
+        ],
+        "params": [
+          {
+            "name": "L",
+            "type": 16
+          },
+          {
+            "name": "R",
+            "type": 17
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 16,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "AutoKey"
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 17,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ManualKey"
+        ],
+        "params": [
+          {
+            "name": "ParentKey",
+            "type": 18
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 18,
+      "type": {
+        "def": {
+          "tuple": []
+        }
+      }
+    },
+    {
+      "id": 19,
+      "type": {
+        "path": [
+          "ink_storage",
+          "lazy",
+          "Lazy"
+        ],
+        "params": [
+          {
+            "name": "V",
+            "type": 20
+          },
+          {
+            "name": "KeyType",
+            "type": 21
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 20,
+      "type": {
+        "path": [
+          "Option"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 3
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "None",
+                "index": 0
+              },
+              {
+                "name": "Some",
+                "fields": [
+                  {
+                    "type": 3
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 21,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ResolverKey"
+        ],
+        "params": [
+          {
+            "name": "L",
+            "type": 16
+          },
+          {
+            "name": "R",
+            "type": 22
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 22,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ManualKey"
+        ],
+        "params": [
+          {
+            "name": "ParentKey",
+            "type": 18
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 23,
+      "type": {
+        "path": [
+          "ink_storage",
+          "lazy",
+          "Lazy"
+        ],
+        "params": [
+          {
+            "name": "V",
+            "type": 20
+          },
+          {
+            "name": "KeyType",
+            "type": 24
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 24,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ResolverKey"
+        ],
+        "params": [
+          {
+            "name": "L",
+            "type": 16
+          },
+          {
+            "name": "R",
+            "type": 25
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 25,
+      "type": {
+        "path": [
+          "ink_storage_traits",
+          "impls",
+          "ManualKey"
+        ],
+        "params": [
+          {
+            "name": "ParentKey",
+            "type": 18
+          }
+        ],
+        "def": {
+          "composite": {}
+        }
+      }
+    },
+    {
+      "id": 26,
+      "type": {
+        "path": [
+          "reputation",
+          "reputation",
+          "Reputation"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "name": "admin",
+                "type": 0,
+                "typeName": "<AccountId as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<1309530309u32, ()>,>>::Type"
+              },
+              {
+                "name": "config",
+                "type": 3,
+                "typeName": "<ConfigRef as::ink::storage::traits::AutoStorableHint<::ink::\nstorage::traits::ManualKey<1009249828u32, ()>,>>::Type"
+              },
+              {
+                "name": "user_reps",
+                "type": 13,
+                "typeName": "<Mapping<AccountId, UserReputation> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<1648395457u32,\n()>,>>::Type"
+              },
+              {
+                "name": "vouch_contract",
+                "type": 19,
+                "typeName": "<Lazy<Option<Address>> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<2807790375u32,\n()>,>>::Type"
+              },
+              {
+                "name": "loan_manager",
+                "type": 23,
+                "typeName": "<Lazy<Option<Address>> as::ink::storage::traits::\nAutoStorableHint<::ink::storage::traits::ManualKey<2764363298u32,\n()>,>>::Type"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 27,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 18
+          },
+          {
+            "name": "E",
+            "type": 28
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 18
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 28
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 28,
+      "type": {
+        "path": [
+          "ink_primitives",
+          "LangError"
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "CouldNotReadInput",
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 29,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 30
+          },
+          {
+            "name": "E",
+            "type": 28
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 30
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 28
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 30,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 18
+          },
+          {
+            "name": "E",
+            "type": 31
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 18
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 31
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 31,
+      "type": {
+        "path": [
+          "reputation",
+          "reputation",
+          "Error"
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "UserNotFound",
+                "index": 0
+              },
+              {
+                "name": "InsufficientStars",
+                "index": 1
+              },
+              {
+                "name": "InsufficientStakedStars",
+                "index": 2
+              },
+              {
+                "name": "UserBanned",
+                "index": 3
+              },
+              {
+                "name": "Unauthorized",
+                "index": 4
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 32,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 5
+          },
+          {
+            "name": "E",
+            "type": 28
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 5
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 28
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 33,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 9
+          },
+          {
+            "name": "E",
+            "type": 28
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 9
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 28
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 34,
+      "type": {
+        "path": [
+          "Result"
+        ],
+        "params": [
+          {
+            "name": "T",
+            "type": 0
+          },
+          {
+            "name": "E",
+            "type": 28
+          }
+        ],
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "name": "Ok",
+                "fields": [
+                  {
+                    "type": 0
+                  }
+                ],
+                "index": 0
+              },
+              {
+                "name": "Err",
+                "fields": [
+                  {
+                    "type": 28
+                  }
+                ],
+                "index": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 35,
+      "type": {
+        "path": [
+          "ink_primitives",
+          "types",
+          "Hash"
+        ],
+        "def": {
+          "composite": {
+            "fields": [
+              {
+                "type": 1,
+                "typeName": "[u8; 32]"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "storage": {
+    "root": {
+      "root_key": "0x00000000",
+      "layout": {
+        "struct": {
+          "name": "Reputation",
+          "fields": [
+            {
+              "name": "admin",
+              "layout": {
+                "leaf": {
+                  "key": "0x00000000",
+                  "ty": 0
+                }
+              }
+            },
+            {
+              "name": "config",
+              "layout": {
+                "struct": {
+                  "name": "ConfigRefFor",
+                  "fields": [
+                    {
+                      "name": "inner",
+                      "layout": {
+                        "struct": {
+                          "name": "CallBuilder",
+                          "fields": [
+                            {
+                              "name": "addr",
+                              "layout": {
+                                "leaf": {
+                                  "key": "0x00000000",
+                                  "ty": 3
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "user_reps",
+              "layout": {
+                "root": {
+                  "root_key": "0xc1844062",
+                  "layout": {
+                    "struct": {
+                      "name": "UserReputation",
+                      "fields": [
+                        {
+                          "name": "stars",
+                          "layout": {
+                            "leaf": {
+                              "key": "0xc1844062",
+                              "ty": 5
+                            }
+                          }
+                        },
+                        {
+                          "name": "stars_at_stake",
+                          "layout": {
+                            "leaf": {
+                              "key": "0xc1844062",
+                              "ty": 5
+                            }
+                          }
+                        },
+                        {
+                          "name": "loan_history",
+                          "layout": {
+                            "leaf": {
+                              "key": "0xc1844062",
+                              "ty": 6
+                            }
+                          }
+                        },
+                        {
+                          "name": "vouch_history",
+                          "layout": {
+                            "leaf": {
+                              "key": "0xc1844062",
+                              "ty": 10
+                            }
+                          }
+                        },
+                        {
+                          "name": "creation_time",
+                          "layout": {
+                            "leaf": {
+                              "key": "0xc1844062",
+                              "ty": 12
+                            }
+                          }
+                        },
+                        {
+                          "name": "banned",
+                          "layout": {
+                            "leaf": {
+                              "key": "0xc1844062",
+                              "ty": 9
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "ty": 13
+                }
+              }
+            },
+            {
+              "name": "vouch_contract",
+              "layout": {
+                "root": {
+                  "root_key": "0x277b5ba7",
+                  "layout": {
+                    "enum": {
+                      "name": "Option",
+                      "dispatchKey": "0x277b5ba7",
+                      "variants": {
+                        "0": {
+                          "name": "None",
+                          "fields": []
+                        },
+                        "1": {
+                          "name": "Some",
+                          "fields": [
+                            {
+                              "name": "0",
+                              "layout": {
+                                "leaf": {
+                                  "key": "0x277b5ba7",
+                                  "ty": 3
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "ty": 19
+                }
+              }
+            },
+            {
+              "name": "loan_manager",
+              "layout": {
+                "root": {
+                  "root_key": "0x22d6c4a4",
+                  "layout": {
+                    "enum": {
+                      "name": "Option",
+                      "dispatchKey": "0x22d6c4a4",
+                      "variants": {
+                        "0": {
+                          "name": "None",
+                          "fields": []
+                        },
+                        "1": {
+                          "name": "Some",
+                          "fields": [
+                            {
+                              "name": "0",
+                              "layout": {
+                                "leaf": {
+                                  "key": "0x22d6c4a4",
+                                  "ty": 3
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "ty": 23
+                }
+              }
+            }
+          ]
+        }
+      },
+      "ty": 26
+    }
+  },
+  "spec": {
+    "constructors": [
+      {
+        "label": "new",
+        "selector": "0x9bae9d5e",
+        "payable": false,
+        "args": [
+          {
+            "label": "config_address",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "Address"
+              ]
+            }
+          },
+          {
+            "label": "admin_account_id",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 27,
+          "displayName": [
+            "ink_primitives",
+            "ConstructorResult"
+          ]
+        },
+        "docs": [],
+        "default": false
+      }
+    ],
+    "messages": [
+      {
+        "label": "set_vouch_contract",
+        "selector": "0x3613a884",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "vouch_address",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "Address"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 29,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Set the vouch contract address (can only be set once)",
+          " This should be called after the Vouch contract is deployed"
+        ],
+        "default": false
+      },
+      {
+        "label": "set_loan_manager",
+        "selector": "0x87f1f66d",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "loan_manager_address",
+            "type": {
+              "type": 3,
+              "displayName": [
+                "Address"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 29,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Set the loan manager contract address (can only be set once)",
+          " This should be called after the LoanManager contract is deployed"
+        ],
+        "default": false
+      },
+      {
+        "label": "get_stars",
+        "selector": "0x44bf36de",
+        "mutates": false,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 32,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Function to get stars of a user"
+        ],
+        "default": false
+      },
+      {
+        "label": "add_stars",
+        "selector": "0x6e66303d",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "type": 5,
+              "displayName": [
+                "u32"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 29,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Function to add stars to a user",
+          " Only callable by authorized contracts (loan manager or vouch contract)"
+        ],
+        "default": false
+      },
+      {
+        "label": "can_vouch",
+        "selector": "0x0ad5e3fa",
+        "mutates": false,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 33,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Function to check if a user can vouch based on their stars"
+        ],
+        "default": false
+      },
+      {
+        "label": "slash_stars",
+        "selector": "0xf7ed7340",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "type": 5,
+              "displayName": [
+                "u32"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 29,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Slash stars from a user (penalty for defaults)",
+          " Only callable by the authorized loan manager contract"
+        ],
+        "default": false
+      },
+      {
+        "label": "stake_stars",
+        "selector": "0xbe3be7b0",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "type": 5,
+              "displayName": [
+                "u32"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 29,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Function to stake stars for a user",
+          " Only callable by the authorized vouch contract"
+        ],
+        "default": false
+      },
+      {
+        "label": "unstake_stars",
+        "selector": "0xd2519ab6",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "type": 5,
+              "displayName": [
+                "u32"
+              ]
+            }
+          },
+          {
+            "label": "borrower",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          },
+          {
+            "label": "success",
+            "type": {
+              "type": 9,
+              "displayName": [
+                "bool"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 29,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Function to unstake stars for a user after vouching and loan is repaid successfully",
+          " Only callable by the authorized vouch contract"
+        ],
+        "default": false
+      },
+      {
+        "label": "admin_set_stars",
+        "selector": "0x1010203b",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          },
+          {
+            "label": "stars",
+            "type": {
+              "type": 5,
+              "displayName": [
+                "u32"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 29,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Admin function: Set stars for a user (for testing)",
+          " Only callable by admin"
+        ],
+        "default": false
+      },
+      {
+        "label": "admin_add_stars",
+        "selector": "0xbdb6df2c",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "type": 5,
+              "displayName": [
+                "u32"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 29,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Admin function: Add stars to a user (for testing)",
+          " Only callable by admin"
+        ],
+        "default": false
+      },
+      {
+        "label": "admin_unban_user",
+        "selector": "0x35b40fc4",
+        "mutates": true,
+        "payable": false,
+        "args": [
+          {
+            "label": "user",
+            "type": {
+              "type": 0,
+              "displayName": [
+                "AccountId"
+              ]
+            }
+          }
+        ],
+        "returnType": {
+          "type": 29,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Admin function: Unban a user (for testing)",
+          " Only callable by admin"
+        ],
+        "default": false
+      },
+      {
+        "label": "get_admin",
+        "selector": "0x57b8a8a7",
+        "mutates": false,
+        "payable": false,
+        "args": [],
+        "returnType": {
+          "type": 34,
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ]
+        },
+        "docs": [
+          " Admin function: Get admin address (for verification)"
+        ],
+        "default": false
+      }
+    ],
+    "events": [],
+    "docs": [
+      " This contract manages reputation or star system across the application"
+    ],
+    "lang_error": {
+      "type": 28,
+      "displayName": [
+        "ink",
+        "LangError"
+      ]
+    },
+    "environment": {
+      "accountId": {
+        "type": 0,
+        "displayName": [
+          "AccountId"
+        ]
+      },
+      "balance": {
+        "type": 8,
+        "displayName": [
+          "Balance"
+        ]
+      },
+      "hash": {
+        "type": 35,
+        "displayName": [
+          "Hash"
+        ]
+      },
+      "timestamp": {
+        "type": 12,
+        "displayName": [
+          "Timestamp"
+        ]
+      },
+      "blockNumber": {
+        "type": 5,
+        "displayName": [
+          "BlockNumber"
+        ]
+      },
+      "nativeToEthRatio": 100000000,
+      "trustBackedAssetsPrecompileIndex": 288,
+      "poolAssetsPrecompileIndex": 800,
+      "staticBufferSize": 16384
+    }
+  }
+}

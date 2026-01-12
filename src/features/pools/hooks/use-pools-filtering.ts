@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import type { Pool } from '@/services/mock/pools.mock';
+import type { Pool } from '@/lib/types';
 import type { SortOption, StatusFilter } from '@/features/pools/components/pools-filters';
 
 export function usePoolsFiltering(pools: Pool[]) {
@@ -66,4 +66,3 @@ export function usePoolsFiltering(pools: Pool[]) {
     sortedPools,
   };
 }
-

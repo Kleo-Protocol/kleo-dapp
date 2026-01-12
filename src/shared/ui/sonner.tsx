@@ -11,10 +11,19 @@ const Toaster = ({ ...props }: ToasterProps) => {
       position='top-right'
       theme={theme as ToasterProps['theme']}
       className='toaster group'
+      toastOptions={{
+        classNames: {
+          toast: 'bg-card border-border text-card-foreground',
+          success: 'bg-card border-border text-card-foreground',
+          error: 'bg-card border-destructive text-card-foreground',
+          warning: 'bg-card border-amber-honey text-card-foreground',
+          info: 'bg-card border-border text-card-foreground',
+        },
+      }}
       style={
         {
-          '--normal-bg': 'var(--popover)',
-          '--normal-text': 'var(--popover-foreground)',
+          '--normal-bg': 'var(--card)',
+          '--normal-text': 'var(--card-foreground)',
           '--normal-border': 'var(--border)',
         } as React.CSSProperties
       }

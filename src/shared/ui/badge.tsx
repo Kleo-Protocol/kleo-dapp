@@ -9,9 +9,10 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        rojo: "bg-red-50 text-red-700 border border-red-200",
-        amarillo: "bg-yellow-50 text-yellow-700 border border-yellow-200",
-        verde: "bg-green-50 text-green-700 border border-green-200",
+        rojo: "bg-atomic-tangerine/10 text-atomic-tangerine border border-atomic-tangerine/20",
+        amarillo: "bg-amber-honey/10 text-amber-honey border border-amber-honey/20",
+        verde: "bg-amber-honey/10 text-amber-honey border border-amber-honey/20",
+        secondary: "bg-secondary text-secondary-foreground border border-border",
       },
     },
     defaultVariants: {

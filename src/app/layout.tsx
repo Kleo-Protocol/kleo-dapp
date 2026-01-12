@@ -1,6 +1,7 @@
 import './globals.css';
 import { AppProvider } from '@/providers/app-provider';
 import { QueryClientProviderWrapper } from '@/providers/query-client-provider';
+import { ErrorHandlerProvider } from '@/providers/error-handler-provider';
 import { Toaster } from '@/shared/ui/sonner';
 import { ConditionalLayout } from '@/shared/components/conditional-layout';
 import type { Metadata } from 'next';
@@ -22,12 +23,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang='en' suppressHydrationWarning className={figtree.variable}>
       <body>
-        <AppProvider>
-          <QueryClientProviderWrapper>
-            <ConditionalLayout>{children}</ConditionalLayout>
-            <Toaster />
-          </QueryClientProviderWrapper>
-        </AppProvider>
+        <ErrorHandlerProvider>
+          <AppProvider>
+            <QueryClientProviderWrapper>
+              <ConditionalLayout>{children}</ConditionalLayout>
+              <Toaster />
+            </QueryClientProviderWrapper>
+          </AppProvider>
+        </ErrorHandlerProvider>
       </body>
     </html>
   );

@@ -1,25 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  getLoansByBorrower,
-  getLoansByStatus,
-  getActiveLoans,
-  getFundingLoans,
-  getLoanDetails,
-  createLoan,
-  type LoanStatus,
-} from '@/services/mock/loans.mock';
+import type { LoanStatus, Loan } from '@/lib/types';
 
-// Query keys
+// Query keys - base keys to avoid circular reference
+const borrowBaseKey = ['borrow'] as const;
+const loansBaseKey = [...borrowBaseKey, 'loans'] as const;
+
 export const borrowKeys = {
-  all: ['borrow'] as const,
+  all: borrowBaseKey,
   loans: {
-    all: [...borrowKeys.all, 'loans'] as const,
-    byBorrower: (address: string) => [...borrowKeys.loans.all, 'borrower', address] as const,
-    byStatus: (status: LoanStatus) => [...borrowKeys.loans.all, 'status', status] as const,
-    active: [...borrowKeys.loans.all, 'active'] as const,
-    funding: [...borrowKeys.loans.all, 'funding'] as const,
+    all: loansBaseKey,
+    byBorrower: (address: string) => [...loansBaseKey, 'borrower', address] as const,
+    byStatus: (status: LoanStatus) => [...loansBaseKey, 'status', status] as const,
+    active: [...loansBaseKey, 'active'] as const,
+    funding: [...loansBaseKey, 'funding'] as const,
   },
-  detail: (loanId: string) => [...borrowKeys.all, 'loan', loanId] as const,
+  detail: (loanId: string) => [...borrowBaseKey, 'loan', loanId] as const,
 };
 
 /**
@@ -28,7 +23,10 @@ export const borrowKeys = {
 export function useAllLoans() {
   return useQuery({
     queryKey: borrowKeys.loans.all,
-    queryFn: () => getAllLoans(),
+    queryFn: () => {
+      throw new Error('getAllLoans not implemented - mock removed');
+    },
+    enabled: false, // Disabled until real implementation
     staleTime: 30000, // 30 seconds
   });
 }
@@ -37,7 +35,7 @@ export function useAllLoans() {
  * Hook to fetch loans by borrower address
  */
 export function useBorrowerLoans(borrowerAddress: string | undefined) {
-  return useQuery({
+  return useQuery<Loan[]>({
     queryKey: borrowerAddress
       ? borrowKeys.loans.byBorrower(borrowerAddress)
       : ['borrow', 'loans', 'borrower', 'null'],
@@ -45,9 +43,9 @@ export function useBorrowerLoans(borrowerAddress: string | undefined) {
       if (!borrowerAddress) {
         throw new Error('Borrower address is required');
       }
-      return getLoansByBorrower(borrowerAddress);
+      throw new Error('getLoansByBorrower not implemented - mock removed');
     },
-    enabled: !!borrowerAddress,
+    enabled: false, // Disabled until real implementation
     staleTime: 30000, // 30 seconds
   });
 }
@@ -58,7 +56,10 @@ export function useBorrowerLoans(borrowerAddress: string | undefined) {
 export function useLoansByStatus(status: LoanStatus) {
   return useQuery({
     queryKey: borrowKeys.loans.byStatus(status),
-    queryFn: () => getLoansByStatus(status),
+    queryFn: () => {
+      throw new Error('getLoansByStatus not implemented - mock removed');
+    },
+    enabled: false, // Disabled until real implementation
     staleTime: 30000, // 30 seconds
   });
 }
@@ -69,7 +70,10 @@ export function useLoansByStatus(status: LoanStatus) {
 export function useActiveLoans() {
   return useQuery({
     queryKey: borrowKeys.loans.active,
-    queryFn: () => getActiveLoans(),
+    queryFn: () => {
+      throw new Error('getActiveLoans not implemented - mock removed');
+    },
+    enabled: false, // Disabled until real implementation
     staleTime: 30000, // 30 seconds
   });
 }
@@ -80,7 +84,10 @@ export function useActiveLoans() {
 export function useFundingLoans() {
   return useQuery({
     queryKey: borrowKeys.loans.funding,
-    queryFn: () => getFundingLoans(),
+    queryFn: () => {
+      throw new Error('getFundingLoans not implemented - mock removed');
+    },
+    enabled: false, // Disabled until real implementation
     staleTime: 15000, // 15 seconds (more frequent for funding status)
   });
 }
@@ -95,9 +102,9 @@ export function useLoanDetail(loanId: string | undefined) {
       if (!loanId) {
         throw new Error('Loan ID is required');
       }
-      return getLoanDetails(loanId);
+      throw new Error('getLoanDetails not implemented - mock removed');
     },
-    enabled: !!loanId,
+    enabled: false, // Disabled until real implementation
     staleTime: 30000, // 30 seconds
   });
 }
@@ -109,14 +116,17 @@ export function useCreateLoan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mutationFn: (_params: {
       borrower: string;
       requestedAmount: bigint;
       interestRate: bigint;
       penaltyRate: bigint;
       duration: bigint;
       poolId: string;
-    }) => createLoan(params.borrower, params.requestedAmount, params.interestRate, params.penaltyRate, params.duration, params.poolId),
+    }) => {
+      throw new Error('createLoan not implemented - mock removed');
+    },
     onSuccess: (_, variables) => {
       // Invalidate borrower's loans
       queryClient.invalidateQueries({

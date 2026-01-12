@@ -5,10 +5,10 @@ import { Input } from '@/shared/ui/input';
 import { Button } from '@/shared/ui/button';
 import { Label } from '@/shared/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 import { ArrowDown, AlertCircle } from 'lucide-react';
 import { useBorrowForm } from '@/features/pools/hooks/use-borrow-form';
-import type { Pool } from '@/services/mock/pools.mock';
+import { TierRequirementsInfo } from '@/features/pools/components/tier-requirements-info';
+import type { Pool } from '@/lib/types';
 
 interface BorrowFormProps {
   pool: Pool;
@@ -86,9 +86,9 @@ export function BorrowForm({ pool, maxBorrow, onRequestCreated }: BorrowFormProp
 
           <div className="space-y-2">
             <Label htmlFor="borrow-duration">Loan Duration</Label>
-            <Select value={duration} onValueChange={setDuration} disabled={isSubmitting}>
+            <Select value={duration || '30'} onValueChange={setDuration} disabled={isSubmitting}>
               <SelectTrigger id="borrow-duration" className="w-full">
-                <SelectValue />
+                <SelectValue placeholder="Select duration" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="30">30 days</SelectItem>
@@ -106,61 +106,38 @@ export function BorrowForm({ pool, maxBorrow, onRequestCreated }: BorrowFormProp
             )}
           </div>
 
-          {errors.incomeRef && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-3">
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="size-4" />
-                {errors.incomeRef}
-              </p>
-            </div>
-          )}
-
           {amountNum > 0 && (
-            <div className="rounded-lg border border-border bg-secondary/50 p-4 space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Interest Rate</span>
-                <span className="font-semibold text-card-foreground">{interestRate.toFixed(2)}%</span>
+            <>
+              <div className="rounded-lg border border-border bg-secondary/50 p-4 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Interest Rate</span>
+                  <span className="font-semibold text-card-foreground">{interestRate.toFixed(2)}%</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Estimated Interest</span>
+                  <span className="font-semibold text-card-foreground">
+                    {estimatedInterest.toLocaleString('en-US', { maximumFractionDigits: 2 })} tokens
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm pt-2 border-t border-border">
+                  <span className="text-muted-foreground">Total Repayment</span>
+                  <span className="font-semibold text-card-foreground">
+                    {totalRepayment.toLocaleString('en-US', { maximumFractionDigits: 2 })} tokens
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Estimated Interest</span>
-                <span className="font-semibold text-card-foreground">
-                  {estimatedInterest.toLocaleString('en-US', { maximumFractionDigits: 2 })} tokens
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-sm pt-2 border-t border-border">
-                <span className="text-muted-foreground">Total Repayment</span>
-                <span className="font-semibold text-card-foreground">
-                  {totalRepayment.toLocaleString('en-US', { maximumFractionDigits: 2 })} tokens
-                </span>
-              </div>
-            </div>
+              <TierRequirementsInfo loanAmount={amountNum} />
+            </>
           )}
 
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="w-full">
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="w-full"
-                    disabled={isSubmitting || !isFormValid}
-                  >
-                    {isSubmitting ? 'Submitting Request...' : 'Request Loan'}
-                  </Button>
-                </div>
-              </TooltipTrigger>
-              {!isFormValid && (
-                <TooltipContent>
-                  <p>
-                    {pool.status !== 'active'
-                      ? 'Pool is not active. Loan requests are currently disabled.'
-                      : 'Please add an income reference in your profile first'}
-                  </p>
-                </TooltipContent>
-              )}
-            </Tooltip>
-          </TooltipProvider>
+          <Button
+            type="submit"
+            variant="primary"
+            className="w-full"
+            disabled={isSubmitting || !isFormValid}
+          >
+            {isSubmitting ? 'Requesting...' : 'Request Loan'}
+          </Button>
         </form>
       </CardContent>
     </Card>

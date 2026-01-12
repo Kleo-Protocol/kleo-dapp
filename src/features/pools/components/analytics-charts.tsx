@@ -102,7 +102,7 @@ export function AnalyticsCharts({ isLoading = false }: AnalyticsChartsProps) {
               <YAxis stroke="#64748b" />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#fff',
+                  backgroundColor: '#F2F2F2',
                   border: '1px solid #e2e8f0',
                   borderRadius: '6px',
                 }}
@@ -143,7 +143,7 @@ export function AnalyticsCharts({ isLoading = false }: AnalyticsChartsProps) {
               <YAxis stroke="#64748b" />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#fff',
+                  backgroundColor: '#F2F2F2',
                   border: '1px solid #e2e8f0',
                   borderRadius: '6px',
                 }}
@@ -166,7 +166,7 @@ export function AnalyticsCharts({ isLoading = false }: AnalyticsChartsProps) {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                 label={({ name, percent }) => `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
@@ -193,7 +193,7 @@ export function AnalyticsCharts({ isLoading = false }: AnalyticsChartsProps) {
               <YAxis stroke="#64748b" />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#fff',
+                  backgroundColor: '#F2F2F2',
                   border: '1px solid #e2e8f0',
                   borderRadius: '6px',
                 }}

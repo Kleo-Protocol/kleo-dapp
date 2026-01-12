@@ -1,11 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  getProfile,
-  getProfileStats,
-  updateCapital,
-  updateReputation,
-  updateIncomeReference,
-} from '@/services/mock/profile.mock';
+import type { ProfileStats, Profile } from '@/lib/types';
 
 // Query keys
 export const profileKeys = {
@@ -18,15 +12,15 @@ export const profileKeys = {
  * Hook to fetch user profile by wallet address
  */
 export function useProfile(walletAddress: string | undefined) {
-  return useQuery({
+  return useQuery<Profile>({
     queryKey: walletAddress ? profileKeys.detail(walletAddress) : ['profile', 'null'],
     queryFn: () => {
       if (!walletAddress) {
         throw new Error('Wallet address is required');
       }
-      return getProfile(walletAddress);
+      throw new Error('getProfile not implemented - mock removed');
     },
-    enabled: !!walletAddress,
+    enabled: false, // Disabled until real implementation
     staleTime: 30000, // 30 seconds
   });
 }
@@ -35,15 +29,15 @@ export function useProfile(walletAddress: string | undefined) {
  * Hook to fetch user profile statistics
  */
 export function useProfileStats(walletAddress: string | undefined) {
-  return useQuery({
+  return useQuery<ProfileStats>({
     queryKey: walletAddress ? profileKeys.stats(walletAddress) : ['profile', 'stats', 'null'],
     queryFn: () => {
       if (!walletAddress) {
         throw new Error('Wallet address is required');
       }
-      return getProfileStats(walletAddress);
+      throw new Error('getProfileStats not implemented - mock removed');
     },
-    enabled: !!walletAddress,
+    enabled: false, // Disabled until real implementation
     staleTime: 60000, // 1 minute
   });
 }
@@ -55,8 +49,10 @@ export function useUpdateCapital() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ walletAddress, capital }: { walletAddress: string; capital: bigint }) =>
-      updateCapital(walletAddress, capital),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mutationFn: (_params: { walletAddress: string; capital: bigint }) => {
+      throw new Error('updateCapital not implemented - mock removed');
+    },
     onSuccess: (_, variables) => {
       // Invalidate profile queries for this address
       queryClient.invalidateQueries({ queryKey: profileKeys.detail(variables.walletAddress) });
@@ -71,8 +67,10 @@ export function useUpdateReputation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ walletAddress, reputation }: { walletAddress: string; reputation: number }) =>
-      updateReputation(walletAddress, reputation),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mutationFn: (_params: { walletAddress: string; reputation: number }) => {
+      throw new Error('updateReputation not implemented - mock removed');
+    },
     onSuccess: (_, variables) => {
       // Invalidate profile queries for this address
       queryClient.invalidateQueries({ queryKey: profileKeys.detail(variables.walletAddress) });
@@ -87,13 +85,13 @@ export function useUpdateIncomeReference() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      walletAddress,
-      incomeReference,
-    }: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mutationFn: (_params: {
       walletAddress: string;
       incomeReference: string | null;
-    }) => updateIncomeReference(walletAddress, incomeReference),
+    }) => {
+      throw new Error('updateIncomeReference not implemented - mock removed');
+    },
     onSuccess: (_, variables) => {
       // Invalidate profile queries for this address
       queryClient.invalidateQueries({ queryKey: profileKeys.detail(variables.walletAddress) });

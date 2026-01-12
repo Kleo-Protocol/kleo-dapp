@@ -52,8 +52,8 @@ const WalletButton = ({ walletInfo, afterSelectWallet }: WalletButtonProps) => {
         size='sm'
         className={cn(
           installed
-            ? 'bg-green-50 dark:bg-green-900/20 text-green-600 hover:text-green-700 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-xl w-28'
-            : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl w-28',
+            ? 'bg-forest-green/20 text-forest-green hover:bg-forest-green/30 hover:text-forest-green rounded-xl w-28'
+            : 'bg-oxford-blue/50 text-muted-foreground hover:bg-oxford-blue/70 hover:text-foreground rounded-xl w-28',
         )}
         onClick={(e) => {
           e.stopPropagation();
@@ -87,7 +87,7 @@ export function WalletSelection({ buttonLabel = 'Connect Wallet', buttonClassNam
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button size='default' variant='outline' className={`${buttonClassName}`}>
+        <Button size='default' variant='secondary' className={`${buttonClassName}`}>
           {buttonLabel} <Link2 />
         </Button>
       </DialogTrigger>

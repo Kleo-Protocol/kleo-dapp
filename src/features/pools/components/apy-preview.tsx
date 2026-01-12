@@ -3,18 +3,17 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 import { TrendingUp, Info } from 'lucide-react';
-import type { Pool } from '@/services/mock/pools.mock';
+import type { Pool } from '@/lib/types';
 
 interface ApyPreviewProps {
   pool: Pool;
   depositAmount?: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ApyPreview({ pool, depositAmount = 0 }: ApyPreviewProps) {
-  const baseApy = Number(pool.baseInterestRate) / 100;
-  
-  // Mock APY calculation (simplified)
-  const effectiveApy = baseApy;
+  // Fixed APY at 10%
+  const effectiveApy = 10;
   const monthlyReturn = depositAmount > 0 ? (depositAmount * effectiveApy) / 12 : 0;
   const annualReturn = depositAmount > 0 ? depositAmount * effectiveApy : 0;
 
@@ -32,7 +31,9 @@ export function ApyPreview({ pool, depositAmount = 0 }: ApyPreviewProps) {
             <span className="text-3xl font-bold text-card-foreground">{effectiveApy.toFixed(2)}%</span>
             <span className="text-sm text-muted-foreground">APY</span>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">Based on current pool interest rate</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Current pool interest rate
+          </p>
         </div>
 
         {depositAmount > 0 && (

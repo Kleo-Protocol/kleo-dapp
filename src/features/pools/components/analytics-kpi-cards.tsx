@@ -1,9 +1,9 @@
 'use client';
 
 import { Card, CardContent } from '@/shared/ui/card';
-import { TrendingUp, DollarSign, Users, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { TrendingUp, DollarSign, Users, AlertTriangle } from 'lucide-react';
 import { formatBalance } from '@/shared/utils/format';
-import type { PoolStats } from '@/services/mock/pools.mock';
+import type { PoolStats } from '@/lib/types';
 
 interface AnalyticsKpiCardsProps {
   stats: PoolStats;
