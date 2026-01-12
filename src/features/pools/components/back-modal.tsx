@@ -14,7 +14,9 @@ import { Label } from '@/shared/ui/label';
 import { Button } from '@/shared/ui/button';
 import { AlertTriangle, DollarSign, Shield } from 'lucide-react';
 import { toast } from 'sonner';
-import { useUserStore } from '@/store/user.store';
+import { useVouchForLoan } from '@/features/pools/hooks/use-loan-transactions';
+import { useStars } from '@/features/profile/hooks/use-reputation-queries';
+import { useTypink } from 'typink';
 import type { LoanDetails } from '@/lib/types';
 
 interface BackModalProps {
@@ -25,8 +27,12 @@ interface BackModalProps {
 }
 
 export function BackModal({ loan, open, onOpenChange }: BackModalProps) {
-  const { capital, reputation } = useUserStore();
-  const [amount, setAmount] = useState('');
+  const { connectedAccount } = useTypink();
+  const { vouchForLoan } = useVouchForLoan();
+  const { data: userStars } = useStars(connectedAccount?.address);
+  
+  const [stars, setStars] = useState('');
+  const [capitalPercent, setCapitalPercent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
@@ -37,44 +43,53 @@ export function BackModal({ loan, open, onOpenChange }: BackModalProps) {
     return tokens.toLocaleString('en-US', { maximumFractionDigits: 2 });
   };
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleStarsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value === '' || /^\d*\.?\d*$/.test(value)) {
-      setAmount(value);
+    if (value === '' || /^\d*$/.test(value)) {
+      setStars(value);
       setError(null);
       setConfirmed(false);
     }
   };
 
-  const handleMax = () => {
-    const maxAmount = Number(loan.remainingAmount) / 1e18;
-    const availableCapital = capital;
-    const safeAmount = Math.min(maxAmount, availableCapital);
-    setAmount(safeAmount.toString());
-    setConfirmed(false);
+  const handleCapitalPercentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setCapitalPercent(value);
+      setError(null);
+      setConfirmed(false);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleMaxStars = () => {
+    if (userStars && userStars > 0) {
+      setStars(userStars.toString());
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const amountNum = parseFloat(amount);
+    if (!connectedAccount) {
+      setError('Wallet not connected');
+      return;
+    }
+
+    const starsNum = parseInt(stars);
+    const capitalPercentNum = parseFloat(capitalPercent);
     
-    if (!amount || amountNum <= 0) {
-      setError('Amount must be greater than 0');
+    if (!stars || starsNum <= 0) {
+      setError('Stars must be greater than 0');
       return;
     }
 
-    if (amountNum > capital) {
-      setError(`Insufficient capital. Available: ${formatBalance(capital)} tokens`);
+    if (!capitalPercent || capitalPercentNum <= 0 || capitalPercentNum > 100) {
+      setError('Capital percent must be between 1 and 100');
       return;
     }
 
-    // Note: In the contract, loans are immediately funded when created (status becomes Active)
-    // There's no "remaining amount" concept. This component may need to be rethought
-    // for the actual contract flow where vouchers stake capital upfront.
-    const loanAmount = Number(loan.amount) / 1e18;
-    if (amountNum > loanAmount) {
-      setError(`Amount exceeds loan amount (${formatBalance(loanAmount)} tokens)`);
+    if (userStars && starsNum > userStars) {
+      setError(`Insufficient stars. Available: ${userStars}`);
       return;
     }
 
@@ -83,27 +98,29 @@ export function BackModal({ loan, open, onOpenChange }: BackModalProps) {
       return;
     }
 
-    // Mock submission - no side effects
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setAmount('');
-      setConfirmed(false);
+    try {
+      setIsSubmitting(true);
       setError(null);
-      toast.success('Loan backed successfully', {
-        description: `${amountNum.toLocaleString()} tokens contributed to loan`,
-      });
+
+      const loanId = BigInt(loan.loanId);
+      await vouchForLoan(loanId, starsNum, capitalPercentNum);
+      
+      setStars('');
+      setCapitalPercent('');
+      setConfirmed(false);
       onOpenChange(false);
-      // In a real app, this would trigger a mutation
-    }, 1000);
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      setError(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const amountNum = parseFloat(amount) || 0;
+  const starsNum = parseInt(stars) || 0;
+  const capitalPercentNum = parseFloat(capitalPercent) || 0;
   const interestRate = Number(loan.interestRate) / 100;
-  const durationDays = Math.floor(Number(loan.term) / (24 * 60 * 60));
-  const estimatedReturn = amountNum > 0 ? (amountNum * interestRate * durationDays) / 365 : 0;
-  const totalReturn = amountNum + estimatedReturn;
-  const capitalExposure = (amountNum / capital) * 100;
+  const durationDays = Math.floor(Number(loan.term) / (24 * 60 * 60 * 1000));
   const riskScore = interestRate > 10 ? 'high' : interestRate > 6 ? 'medium' : 'low';
 
   return (
@@ -112,10 +129,10 @@ export function BackModal({ loan, open, onOpenChange }: BackModalProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <DollarSign className="size-5" />
-            Back Loan Request
+            Vouch for Loan
           </DialogTitle>
           <DialogDescription>
-            Fund this loan request. Review all risks carefully before proceeding.
+            Stake your stars and capital to vouch for this loan. Review all risks carefully before proceeding.
           </DialogDescription>
         </DialogHeader>
 
@@ -131,69 +148,76 @@ export function BackModal({ loan, open, onOpenChange }: BackModalProps) {
               <span className="font-semibold text-card-foreground">{interestRate.toFixed(2)}%</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Remaining to Fund</span>
-              <span className="font-semibold text-card-foreground">{formatBalance(Number(loan.remainingAmount) / 1e18)} tokens</span>
+              <span className="text-muted-foreground">Loan Term</span>
+              <span className="font-semibold text-card-foreground">{durationDays} days</span>
             </div>
           </div>
 
-          {/* Amount Input */}
+          {/* Stars Input */}
           <div className="space-y-2">
-            <Label htmlFor="back-amount">Your Contribution</Label>
+            <Label htmlFor="vouch-stars">Stars to Stake</Label>
             <div className="relative">
               <Input
-                id="back-amount"
+                id="vouch-stars"
                 type="text"
-                inputMode="decimal"
-                placeholder="0.00"
-                value={amount}
-                onChange={handleAmountChange}
+                inputMode="numeric"
+                placeholder="0"
+                value={stars}
+                onChange={handleStarsChange}
                 disabled={isSubmitting}
                 className="pr-20"
                 aria-invalid={!!error}
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">tokens</span>
+                <span className="text-sm text-muted-foreground">stars</span>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={handleMax}
-                  disabled={isSubmitting}
+                  onClick={handleMaxStars}
+                  disabled={isSubmitting || !userStars || userStars === 0}
                   className="h-6 px-2 text-xs"
                 >
                   MAX
                 </Button>
               </div>
             </div>
-            {error && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Available stars</span>
+              <span className="font-medium text-card-foreground">{userStars ?? 0}</span>
+            </div>
+          </div>
+
+          {/* Capital Percent Input */}
+          <div className="space-y-2">
+            <Label htmlFor="vouch-capital">Capital Percent (0-100)</Label>
+            <Input
+              id="vouch-capital"
+              type="text"
+              inputMode="decimal"
+              placeholder="0"
+              value={capitalPercent}
+              onChange={handleCapitalPercentChange}
+              disabled={isSubmitting}
+              className="pr-20"
+              aria-invalid={!!error}
+            />
+            <p className="text-xs text-muted-foreground">
+              Percentage of loan amount you're willing to fund
+            </p>
+          </div>
+
+          {error && (
+            <div className="rounded-lg border border-red-200 bg-red-50 p-3">
               <p className="text-sm text-red-600 flex items-center gap-1">
                 <AlertTriangle className="size-4" />
                 {error}
               </p>
-            )}
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Available capital</span>
-              <span className="font-medium text-card-foreground">{formatBalance(capital)} tokens</span>
-            </div>
-          </div>
-
-          {/* Returns Preview */}
-          {amountNum > 0 && (
-            <div className="rounded-lg border border-border bg-secondary/50 p-4 space-y-2">
-              <h3 className="text-sm font-semibold text-card-foreground">Expected Returns</h3>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Estimated Interest</span>
-                <span className="font-medium text-card-foreground">{formatBalance(estimatedReturn)} tokens</span>
-              </div>
-              <div className="flex items-center justify-between text-sm pt-2 border-t border-slate-200">
-                <span className="text-slate-600">Total Return</span>
-                <span className="font-semibold text-slate-900">{formatBalance(totalReturn)} tokens</span>
-              </div>
             </div>
           )}
 
           {/* Risk & Exposure Warning */}
-          {amountNum > 0 && (
+          {starsNum > 0 && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-4 space-y-3">
               <h3 className="text-sm font-semibold text-red-900 flex items-center gap-2">
                 <Shield className="size-4" />
@@ -201,23 +225,23 @@ export function BackModal({ loan, open, onOpenChange }: BackModalProps) {
               </h3>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-red-800">Capital at Risk</span>
-                  <span className="font-semibold text-red-900">{formatBalance(amountNum)} tokens</span>
+                  <span className="text-red-800">Stars at Risk</span>
+                  <span className="font-semibold text-red-900">{starsNum} stars</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-red-800">Capital Exposure</span>
-                  <span className="font-semibold text-red-900">{capitalExposure.toFixed(1)}%</span>
+                  <span className="text-red-800">Capital Percent</span>
+                  <span className="font-semibold text-red-900">{capitalPercentNum.toFixed(1)}%</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-red-800">Reputation at Risk</span>
-                  <span className="font-semibold text-red-900">-10 points if default</span>
+                  <span className="font-semibold text-red-900">Stars will be slashed if default</span>
                 </div>
                 {riskScore === 'high' && (
                   <div className="pt-2 border-t border-red-200">
                     <div className="flex items-start gap-2">
                       <AlertTriangle className="size-4 text-red-600 mt-0.5" />
                       <p className="text-xs text-red-800">
-                        High risk loan. Default could result in loss of {formatBalance(amountNum)} tokens and {reputation > 10 ? '10' : reputation.toString()} reputation points.
+                        High risk loan. Default could result in loss of {starsNum} stars and capital exposure.
                       </p>
                     </div>
                   </div>
@@ -251,9 +275,9 @@ export function BackModal({ loan, open, onOpenChange }: BackModalProps) {
             <Button
               type="submit"
               variant="primary"
-              disabled={isSubmitting || !amount || amountNum <= 0 || !confirmed}
+              disabled={isSubmitting || !stars || starsNum <= 0 || !capitalPercent || capitalPercentNum <= 0 || !confirmed}
             >
-              {isSubmitting ? 'Processing...' : 'Confirm & Back Loan'}
+              {isSubmitting ? 'Processing...' : 'Confirm & Vouch for Loan'}
             </Button>
           </DialogFooter>
         </form>

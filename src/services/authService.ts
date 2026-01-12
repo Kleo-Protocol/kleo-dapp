@@ -128,12 +128,12 @@ export async function signInWithGoogle(redirectTo?: string): Promise<{ error?: s
   try {
     const supabase = createClient();
 
-    const redirectUrl = redirectTo || `${window.location.origin}/auth/callback`;
+    const callbackUrl = redirectTo || `${window.location.origin}/auth/callback?next=/dashboard`;
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: redirectUrl,
+        redirectTo: callbackUrl,
       },
     });
 

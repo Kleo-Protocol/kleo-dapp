@@ -14,10 +14,11 @@ import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { AlertCircle, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
-import { useContract, useTypink, useBalances, txToaster, checkBalanceSufficiency } from 'typink';
-import { useQueryClient } from '@tanstack/react-query';
-import { ContractId } from '@/contracts/deployments';
+import { useRepayLoan } from '@/features/pools/hooks/use-loan-transactions';
+import { useRepaymentAmount } from '@/features/pools/hooks/use-loan-queries';
+import { useTypink } from 'typink';
 import { borrowKeys } from '@/features/pools/hooks/use-borrow-data';
+import { useQueryClient } from '@tanstack/react-query';
 import type { LoanDetails } from '@/lib/types';
 
 /**
@@ -41,21 +42,18 @@ export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const { contract } = useContract(ContractId.LENDING_POOL);
-  const { client, connectedAccount, network } = useTypink();
+  const { connectedAccount, network } = useTypink();
+  const { repayLoan } = useRepayLoan();
+  const { data: repaymentAmount } = useRepaymentAmount(BigInt(loan.loanId));
   const queryClient = useQueryClient();
 
   // Get network decimals (default to 12 for Asset Hub chains, fallback to 18)
   const decimals = network?.decimals ?? 12;
 
-  // Get addresses array for useBalances
-  const addresses = connectedAccount ? [connectedAccount.address] : [];
-  const balances = useBalances(addresses);
-
   if (!loan) return null;
 
-  // Convert bigint to number for display (assuming 18 decimals)
-  const totalRepayment = Number(loan.totalRepayment) / 10 ** decimals;
+  // Convert repayment amount from contract (18 decimals) to display format
+  const totalRepayment = repaymentAmount ? Number(repaymentAmount) / 10 ** 18 : 0;
   const formatBalance = (tokens: number) => {
     return tokens.toLocaleString('en-US', { maximumFractionDigits: 2 });
   };
@@ -75,15 +73,19 @@ export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!contract || !connectedAccount || !client) {
+    if (!connectedAccount) {
       toast.error('Wallet not connected', {
         description: 'Please connect your wallet to repay the loan',
       });
       return;
     }
 
+    if (!repaymentAmount) {
+      setError('Repayment amount not available');
+      return;
+    }
+
     const amountNum = parseFloat(amount);
-    const repaymentAmountBigInt = parseTokenAmount(amount, decimals);
     
     if (!amount || amountNum <= 0) {
       setError('Amount must be greater than 0');
@@ -95,64 +97,43 @@ export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
       return;
     }
 
-    if (repaymentAmountBigInt === 0n) {
-      setError('Invalid amount');
-      return;
-    }
-
-    // Check if user has enough balance
-    const currentBalance = balances[connectedAccount.address];
-    if (!currentBalance || currentBalance.free < repaymentAmountBigInt) {
-      setError('Insufficient balance for repayment');
-      return;
-    }
-
-    const toaster = txToaster();
-    
     try {
       setIsSubmitting(true);
       setError(null);
 
-      // Check balance sufficiency (for transaction fees)
-      await checkBalanceSufficiency(client, connectedAccount.address);
-
-      // Execute repayment transaction
-      // The receiveRepayment function is payable, so we send the amount as the transaction value
-      await contract.tx
-        .receiveRepayment({
-          amount: repaymentAmountBigInt,
-          value: repaymentAmountBigInt,
-        })
-        .signAndSend(connectedAccount.address, (progress) => {
-          toaster.onTxProgress(progress);
-
-          if (progress.status.type === 'BestChainBlockIncluded' || progress.status.type === 'Finalized') {
-            // Transaction successful
-            setAmount('');
-            setError(null);
-            const isFullPayment = amountNum >= totalRepayment;
-            
-            // Invalidate loan-related queries to refresh data
-            if (connectedAccount.address) {
-              queryClient.invalidateQueries({
-                queryKey: borrowKeys.loans.byBorrower(connectedAccount.address),
-              });
-            }
-            queryClient.invalidateQueries({ queryKey: borrowKeys.loans.active });
-            queryClient.invalidateQueries({ queryKey: borrowKeys.detail(loan.loanId.toString()) });
-            
-            toast.success(isFullPayment ? 'Loan repaid in full' : 'Payment processed', {
-              description: `${amountNum.toLocaleString()} tokens paid towards loan`,
-            });
-            onOpenChange(false);
-          }
-        })
-        .untilFinalized();
+      // Convert repayment amount from 18 decimals (loan contract) to network decimals
+      const loanDecimals = 18;
+      const conversionFactor = 10n ** BigInt(loanDecimals - decimals);
+      const repaymentAmountInNetworkDecimals = repaymentAmount / conversionFactor;
+      
+      // For partial payments, calculate the amount in network decimals
+      const paymentRatio = amountNum / totalRepayment;
+      const paymentAmountInNetworkDecimals = (repaymentAmountInNetworkDecimals * BigInt(Math.floor(paymentRatio * 10000))) / 10000n;
+      
+      const loanId = BigInt(loan.loanId);
+      await repayLoan(loanId, paymentAmountInNetworkDecimals);
+      
+      setAmount('');
+      setError(null);
+      const isFullPayment = amountNum >= totalRepayment;
+      
+      // Invalidate loan-related queries to refresh data
+      if (connectedAccount.address) {
+        queryClient.invalidateQueries({
+          queryKey: borrowKeys.loans.byBorrower(connectedAccount.address),
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: borrowKeys.loans.active });
+      queryClient.invalidateQueries({ queryKey: borrowKeys.detail(loan.loanId.toString()) });
+      
+      toast.success(isFullPayment ? 'Loan repaid in full' : 'Payment processed', {
+        description: `${amountNum.toLocaleString()} tokens paid towards loan`,
+      });
+      onOpenChange(false);
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
       console.error('Error repaying loan:', err);
       setError(err.message);
-      toaster.onTxError(err);
     } finally {
       setIsSubmitting(false);
     }

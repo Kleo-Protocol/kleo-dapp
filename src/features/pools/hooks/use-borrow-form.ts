@@ -2,11 +2,10 @@
 
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
-import { useContract, useTypink, txToaster, checkBalanceSufficiency } from 'typink';
-import { useQueryClient } from '@tanstack/react-query';
-import { useUserStore } from '@/store/user.store';
-import { ContractId } from '@/contracts/deployments';
+import { useTypink } from 'typink';
 import { borrowKeys } from './use-borrow-data';
+import { useRequestLoan } from './use-loan-transactions';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Pool } from '@/lib/types';
 import { DEFAULTS } from '@/lib/constants';
 
@@ -25,26 +24,15 @@ function parseTokenAmount(amount: string, decimals: number): bigint {
   return BigInt(Math.floor(num * 10 ** decimals));
 }
 
-/**
- * Encode a string to Uint8Array for contract calls
- */
-function encodePurpose(purpose: string): Uint8Array {
-  return new TextEncoder().encode(purpose);
-}
-
 export function useBorrowForm({ pool, maxBorrow, onRequestCreated }: UseBorrowFormProps) {
-  const { incomeReference } = useUserStore();
   const [amount, setAmount] = useState('');
   const [duration, setDuration] = useState(String(DEFAULTS.LOAN_DURATION_DAYS));
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<{ amount?: string; duration?: string; incomeRef?: string }>({});
+  const [errors, setErrors] = useState<{ amount?: string; duration?: string }>({});
   
-  const { contract } = useContract(ContractId.LOAN_MANAGER);
-  const { client, connectedAccount, network } = useTypink();
+  const { connectedAccount } = useTypink();
+  const { requestLoan } = useRequestLoan();
   const queryClient = useQueryClient();
-
-  // Get network decimals (default to 12 for Asset Hub chains, fallback to 18)
-  const decimals = network?.decimals ?? 12;
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -60,107 +48,46 @@ export function useBorrowForm({ pool, maxBorrow, onRequestCreated }: UseBorrowFo
     setAmount(maxBorrow.toString());
   };
 
-  const validate = () => {
-    const newErrors: typeof errors = {};
-    const amountNum = parseFloat(amount);
-
-    if (!amount || amountNum <= 0) {
-      newErrors.amount = 'Amount must be greater than 0';
-    } else if (amountNum > maxBorrow) {
-      newErrors.amount = `Amount exceeds maximum borrowable (${maxBorrow.toLocaleString()} tokens)`;
-    }
-
-    if (!duration) {
-      newErrors.duration = 'Please select a duration';
-    }
-
-    if (!incomeReference) {
-      newErrors.incomeRef = 'Income reference is required to borrow';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validate()) {
+    if (!connectedAccount) {
+      toast.error('Wallet not connected');
       return;
     }
 
-    if (!contract || !connectedAccount || !client) {
-      toast.error('Wallet not connected', {
-        description: 'Please connect your wallet to request a loan',
-      });
+    // Exact same logic as flow-testing
+    const amountBigInt = parseTokenAmount(amount, 18); // Loans use 18 decimals
+    const termDays = parseInt(duration);
+    const termMs = BigInt(termDays * 24 * 60 * 60 * 1000);
+
+    if (amountBigInt === 0n || isNaN(termDays)) {
+      toast.error('Invalid amount or term');
       return;
     }
 
-    const amountNum = parseFloat(amount);
-    const amountBigInt = parseTokenAmount(amount, decimals);
-
-    if (amountBigInt === 0n) {
-      toast.error('Invalid amount', {
-        description: 'Please enter a valid loan amount greater than 0',
-      });
-      return;
-    }
-
-    // Check if amount is too small (less than 1 unit in smallest denomination)
-    if (amountNum < 1 / 10 ** decimals) {
-      toast.error('Amount too small', {
-        description: `Minimum loan amount is ${1 / 10 ** decimals} tokens`,
-      });
-      return;
-    }
-
-    const toaster = txToaster();
-    
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
-
-      // Check balance sufficiency (for transaction fees)
-      await checkBalanceSufficiency(client, connectedAccount.address);
-
-      // Encode purpose - using duration as part of purpose or empty string
-      // The contract expects BytesLike (Vec<u8>), so we encode the string
-      const purposeText = `Loan request for ${amountNum} tokens, duration: ${duration} days`;
-      const purpose = encodePurpose(purposeText);
-
-      // Execute loan request transaction
-      await contract.tx
-        .requestLoan({
-          amount: amountBigInt,
-          purpose: purpose,
-        })
-        .signAndSend(connectedAccount.address, (progress) => {
-          toaster.onTxProgress(progress);
-
-          if (progress.status.type === 'BestChainBlockIncluded' || progress.status.type === 'Finalized') {
-            // Transaction successful
-            setAmount('');
-            setDuration(String(DEFAULTS.LOAN_DURATION_DAYS));
-            
-            // Invalidate loan-related queries to refresh data
-            if (connectedAccount.address) {
-              queryClient.invalidateQueries({
-                queryKey: borrowKeys.loans.byBorrower(connectedAccount.address),
-              });
-            }
-            queryClient.invalidateQueries({ queryKey: borrowKeys.loans.funding });
-            queryClient.invalidateQueries({ queryKey: borrowKeys.loans.all });
-            
-            toast.success('Loan request created', {
-              description: `Request for ${amountNum.toLocaleString()} tokens submitted successfully`,
-            });
-            onRequestCreated?.();
-          }
-        })
-        .untilFinalized();
-    } catch (error: unknown) {
-      const err = error instanceof Error ? error : new Error(String(error));
-      console.error('Error requesting loan:', err);
-      toaster.onTxError(err);
+      await requestLoan(amountBigInt, termMs);
+      setAmount('');
+      setDuration(String(DEFAULTS.LOAN_DURATION_DAYS));
+      setErrors({});
+      
+      // Invalidate loan-related queries
+      if (connectedAccount.address) {
+        queryClient.invalidateQueries({
+          queryKey: borrowKeys.loans.byBorrower(connectedAccount.address),
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: borrowKeys.loans.funding });
+      queryClient.invalidateQueries({ queryKey: borrowKeys.loans.all });
+      queryClient.invalidateQueries({ queryKey: ['loans', 'pending'] });
+      queryClient.invalidateQueries({ queryKey: ['loans', 'active'] });
+      
+      toast.success('Loan requested successfully');
+      onRequestCreated?.();
+    } catch (error) {
+      console.error('Error requesting loan:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -181,8 +108,9 @@ export function useBorrowForm({ pool, maxBorrow, onRequestCreated }: UseBorrowFo
   }, [amountNum, estimatedInterest]);
 
   const isFormValid = useMemo(() => {
-    return incomeReference !== undefined && pool.status === 'active' && !!contract && !!connectedAccount;
-  }, [incomeReference, pool.status, contract, connectedAccount]);
+    // Simple validation like flow-testing
+    return !!connectedAccount && !!amount && !!duration && parseFloat(amount) > 0 && parseInt(duration) > 0;
+  }, [amount, duration, connectedAccount]);
 
   return {
     amount,

@@ -26,8 +26,14 @@ export function MaxBorrowInfo({ pool }: MaxBorrowInfoProps) {
     const reputationMultiplier = Math.floor(reputation / 100);
     const maxBorrow = baseMultiplier * reputationMultiplier * 1000; // in tokens
     
-    // Cap at pool's available liquidity
-    const poolAvailable = Number(pool.availableLiquidity) / 1e18;
+    // Cap at pool's available liquidity (if pool has this field)
+    const poolAvailable = pool.availableLiquidity 
+      ? Number(pool.availableLiquidity) / 1e18 
+      : Infinity;
+    
+    // Also consider exposure cap if available in pool state
+    // Note: This component receives Pool, not PoolState, so we use availableLiquidity
+    // The actual max borrow calculation in use-pool-detail.ts uses exposureCap from PoolState
     return Math.min(maxBorrow, poolAvailable);
   };
 

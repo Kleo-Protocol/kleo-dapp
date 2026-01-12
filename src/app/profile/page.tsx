@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, Suspense, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
@@ -48,11 +47,7 @@ function ProfileContent() {
   const addresses = useMemo(() => (connectedAccount ? [connectedAccount.address] : []), [connectedAccount]);
   const balances = useBalances(addresses);
 
-  useEffect(() => {
-    if (accounts.length === 0) {
-      router.replace('/');
-    }
-  }, [accounts.length, router]);
+  // No redirigir automáticamente - permitir que el usuario vea la página sin wallet
 
   const copyAddress = () => {
     if (connectedAccount) {

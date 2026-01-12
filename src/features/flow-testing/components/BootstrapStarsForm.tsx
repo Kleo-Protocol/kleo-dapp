@@ -3,10 +3,14 @@
 import { useState } from 'react';
 import { useBootstrapStars } from '@/features/flow-testing/hooks/use-bootstrap-stars';
 import { useTypink } from 'typink';
+import { Input } from '@/shared/ui/input';
+import { Label } from '@/shared/ui/label';
+import { Button } from '@/shared/ui/button';
+import { AlertCircle } from 'lucide-react';
 
 /**
  * Form component to bootstrap stars for test accounts (admin function)
- * TEMPORARY - Only used in flow-testing page
+ * Used in Analytics tab for pool creators
  */
 export function BootstrapStarsForm() {
   const { connectedAccount } = useTypink();
@@ -14,15 +18,25 @@ export function BootstrapStarsForm() {
   const [userAddress, setUserAddress] = useState('');
   const [stars, setStarsValue] = useState('');
   const [isSetting, setIsSetting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
     if (!userAddress || !stars) {
+      setError('Please fill all fields');
       return;
     }
 
     const starsNum = parseInt(stars);
     if (isNaN(starsNum) || starsNum < 0) {
+      setError('Stars must be a positive number');
+      return;
+    }
+
+    if (!connectedAccount) {
+      setError('Please connect your wallet');
       return;
     }
 
@@ -31,51 +45,63 @@ export function BootstrapStarsForm() {
       await setStars(userAddress, starsNum);
       setUserAddress('');
       setStarsValue('');
-    } catch (error) {
-      console.error('Error setting stars:', error);
+      setError(null);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to set stars';
+      setError(errorMessage);
+      console.error('Error setting stars:', err);
     } finally {
       setIsSetting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div>
-        <label htmlFor="bootstrap-user-address" className="block mb-2 text-sm font-medium text-slate-700">
-          User Address
-        </label>
-        <input
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="bootstrap-user-address">User Address</Label>
+        <Input
           id="bootstrap-user-address"
           type="text"
           value={userAddress}
-          onChange={(e) => setUserAddress(e.target.value)}
+          onChange={(e) => {
+            setUserAddress(e.target.value);
+            setError(null);
+          }}
           placeholder="5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
           disabled={isSetting || !connectedAccount}
-          className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
+          aria-invalid={!!error}
         />
       </div>
-      <div>
-        <label htmlFor="bootstrap-stars" className="block mb-2 text-sm font-medium text-slate-700">
-          Stars
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="bootstrap-stars">Stars</Label>
+        <Input
           id="bootstrap-stars"
           type="number"
           value={stars}
-          onChange={(e) => setStarsValue(e.target.value)}
+          onChange={(e) => {
+            setStarsValue(e.target.value);
+            setError(null);
+          }}
           placeholder="100"
           min="0"
           disabled={isSetting || !connectedAccount}
-          className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed"
+          aria-invalid={!!error}
         />
       </div>
-      <button
+      {error && (
+        <div className="flex items-center gap-2 text-sm text-red-600">
+          <AlertCircle className="size-4" />
+          <p>{error}</p>
+        </div>
+      )}
+      <Button
         type="submit"
+        variant="primary"
+        className="w-full"
         disabled={isSetting || !connectedAccount || !userAddress || !stars}
-        className="px-6 py-3 text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors"
       >
         {isSetting ? 'Setting Stars...' : 'Set Stars'}
-      </button>
+      </Button>
     </form>
   );
 }

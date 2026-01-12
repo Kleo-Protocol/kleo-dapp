@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/ui/tabs';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { ArrowLeft, TrendingUp, DollarSign, Users, Clock, Percent, Shield, Zap, Target } from 'lucide-react';
 import { DepositForm } from '@/features/pools/components/deposit-form';
+import { WithdrawForm } from '@/features/pools/components/withdraw-form';
 import { ApyPreview } from '@/features/pools/components/apy-preview';
 import { MyDepositsTable } from '@/features/pools/components/my-deposits-table';
 import { MaxBorrowInfo } from '@/features/pools/components/max-borrow-info';
@@ -20,6 +21,7 @@ import { MyBacksTable } from '@/features/pools/components/my-backs-table';
 import { AnalyticsKpiCards } from '@/features/pools/components/analytics-kpi-cards';
 import { AnalyticsCharts } from '@/features/pools/components/analytics-charts';
 import { AnalyticsLoanHistory } from '@/features/pools/components/analytics-loan-history';
+import { BootstrapStarsForm } from '@/features/flow-testing/components/BootstrapStarsForm';
 import { usePoolDetailLogic } from '@/features/pools/hooks/use-pool-detail';
 
 export function PoolDetailPage() {
@@ -273,6 +275,9 @@ export function PoolDetailPage() {
                 <DepositForm pool={pool} onAmountChange={setDepositAmount} />
                 <ApyPreview pool={pool} depositAmount={depositAmount} />
               </div>
+              <div className='grid gap-6 lg:grid-cols-2'>
+                <WithdrawForm pool={pool} />
+              </div>
               <LenderPositionCard />
               <MyDepositsTable deposits={[]} />
               <PendingRequestsTable requests={[]} />
@@ -312,6 +317,15 @@ export function PoolDetailPage() {
               <AnalyticsKpiCards stats={poolStats} />
               <AnalyticsCharts />
               <AnalyticsLoanHistory loans={[]} isCreator={isPoolCreator} />
+              <Card>
+                <CardHeader>
+                  <CardTitle>Admin Tools</CardTitle>
+                  <CardDescription>Bootstrap stars for test accounts (admin only)</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <BootstrapStarsForm />
+                </CardContent>
+              </Card>
             </div>
           ) : (
             <Card>

@@ -20,12 +20,8 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const isAuthPage = pathname === '/signin' || pathname === '/signup';
   const isCallbackPage = pathname?.startsWith('/auth/callback');
 
-  if (isLandingPage) {
-    return <LandingLayout>{children}</LandingLayout>;
-  }
-
-  // Auth pages (signin/signup/callback) don't need AppLayout or protection
-  if (isAuthPage || isCallbackPage) {
+  // Landing page and auth pages don't need AppLayout or protection
+  if (isLandingPage || isAuthPage || isCallbackPage) {
     return <>{children}</>;
   }
 

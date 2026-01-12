@@ -1,16 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useTypink } from 'typink';
+import { useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useSyncWalletState } from '@/features/auth/hooks/use-sync-wallet-state';
 import type { UserRole } from '@/store/authStore';
 
 export function useDashboard() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const { accounts } = useTypink();
   const { userRole, setUserRole } = useAuthStore();
 
   // Sincronizar estado de typink con nuestro store
@@ -27,13 +24,9 @@ export function useDashboard() {
     }
   }, [searchParams, userRole, setUserRole]);
 
-  useEffect(() => {
-    if (accounts.length === 0) {
-      router.replace('/');
-    }
-  }, [accounts.length, router]);
-
-  const shouldShowContent = accounts.length > 0;
+  // No redirigir automáticamente - permitir que el usuario vea el dashboard sin wallet
+  // La wallet solo será necesaria para acciones específicas
+  const shouldShowContent = true;
 
   return {
     userRole,

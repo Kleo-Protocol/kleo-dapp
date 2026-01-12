@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 import { useTypink } from 'typink';
 import { useSyncWalletState } from '@/features/auth/hooks/use-sync-wallet-state';
 import { Button } from '@/shared/ui/button';
@@ -15,12 +14,7 @@ function BorrowContent() {
   // Sincronizar estado de typink con nuestro store
   useSyncWalletState();
 
-  // Verificar que haya wallet conectada
-  useEffect(() => {
-    if (accounts.length === 0) {
-      router.replace('/');
-    }
-  }, [accounts.length, router]);
+  // No redirigir automáticamente - permitir que el usuario vea la página sin wallet
 
   if (accounts.length === 0) {
     return (

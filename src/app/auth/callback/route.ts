@@ -1,9 +1,9 @@
-import { createClient } from '@/utils/supabase/server';
-import { NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const requestUrl = new URL(request.url);
     const code = requestUrl.searchParams.get('code');
@@ -14,7 +14,31 @@ export async function GET(request: Request) {
       return NextResponse.redirect(new URL('/signin?error=missing_code', requestUrl.origin));
     }
 
-    const supabase = await createClient();
+    // Use the same cookie handling approach as middleware to ensure cookies are properly set
+    let response = NextResponse.next({
+      request,
+    });
+
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+            response = NextResponse.next({
+              request,
+            });
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options),
+            );
+          },
+        },
+      },
+    );
     
     // Exchange code for session
     const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
@@ -69,7 +93,18 @@ export async function GET(request: Request) {
       }
     }
 
-    return NextResponse.redirect(new URL(next, requestUrl.origin));
+    // Redirect to dashboard (or specified next URL)
+    // Cookies are already set by exchangeCodeForSession in the response object
+    const redirectUrl = new URL(next, requestUrl.origin);
+    const redirectResponse = NextResponse.redirect(redirectUrl);
+    
+    // Copy all cookies from the supabase response to the redirect response
+    const cookies = response.cookies.getAll();
+    cookies.forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value);
+    });
+    
+    return redirectResponse;
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error));
     logger.error('Unexpected error in auth callback', { error: err.message }, err);
