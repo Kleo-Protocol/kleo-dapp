@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "typegen": "npx tsx ./scripts/typegen.ts"
+    "typegen": "npx tsx ./scripts/typegen.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@dedot/react-identicon": "^0.1.0",
