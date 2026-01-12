@@ -29,7 +29,7 @@ export function LoansTable({ loans = [], isLoading = false }: LoansTableProps) {
   const [repayLoanId, setRepayLoanId] = useState<string | null>(null);
 
   const formatDate = (timestamp: bigint) => {
-    // Timestamp is in seconds, convert to milliseconds
+    // Block timestamp is in seconds, convert to milliseconds for Date constructor
     return new Date(Number(timestamp) * 1000).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -92,10 +92,10 @@ export function LoansTable({ loans = [], isLoading = false }: LoansTableProps) {
                 return (
                   <TableRow key={loanIdStr}>
                     <TableCell className="font-medium">
-                      {formatBalance(loan.amount)} tokens
+                      {formatBalance(loan.amount, 10)} tokens
                     </TableCell>
                     <TableCell className="font-medium">
-                      {formatBalance(loan.totalRepayment)} tokens
+                      {formatBalance(loan.totalRepayment, 10)} tokens
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">

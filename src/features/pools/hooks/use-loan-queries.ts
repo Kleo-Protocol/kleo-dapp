@@ -91,7 +91,7 @@ export function usePendingLoans() {
       try {
         const result = await contract.query.getAllPendingLoans();
         const loanIds = (result as any).data ?? [];
-        
+        console.log('Pending loans:', result);
         return Array.isArray(loanIds) ? loanIds : [];
       } catch (error) {
         console.error('Error fetching pending loans:', error);
@@ -120,8 +120,9 @@ export function useActiveLoans() {
       try {
         const result = await contract.query.getAllActiveLoans();
         const loanIds = (result as any).data ?? [];
-        
+        console.log('Active loans:', result);
         return Array.isArray(loanIds) ? loanIds : [];
+        
       } catch (error) {
         console.error('Error fetching active loans:', error);
         return [];

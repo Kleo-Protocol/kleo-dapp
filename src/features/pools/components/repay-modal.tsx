@@ -54,8 +54,9 @@ export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
 
   if (!loan) return null;
 
-  // Convert bigint to number for display (assuming 18 decimals)
-  const totalRepayment = Number(loan.totalRepayment) / 10 ** decimals;
+  // Convert bigint to number for display (loans use 10 decimals)
+  const LOAN_DECIMALS = 10;
+  const totalRepayment = Number(loan.totalRepayment) / 10 ** LOAN_DECIMALS;
   const formatBalance = (tokens: number) => {
     return tokens.toLocaleString('en-US', { maximumFractionDigits: 2 });
   };
@@ -83,7 +84,9 @@ export function RepayModal({ loan, open, onOpenChange }: RepayModalProps) {
     }
 
     const amountNum = parseFloat(amount);
-    const repaymentAmountBigInt = parseTokenAmount(amount, decimals);
+    // Loans use 10 decimals for amounts
+    const LOAN_DECIMALS = 10;
+    const repaymentAmountBigInt = parseTokenAmount(amount, LOAN_DECIMALS);
     
     if (!amount || amountNum <= 0) {
       setError('Amount must be greater than 0');

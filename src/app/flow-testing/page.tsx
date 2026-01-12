@@ -325,7 +325,7 @@ export default function FlowTestingPage() {
               />
               {selectedLoan && (
                 <p className="mt-1 text-xs text-slate-600">
-                  Status: {selectedLoan.status} | Amount: {formatTokenAmount(selectedLoan.amount, 18).toFixed(4)} tokens
+                  Status: {selectedLoan.status} | Amount: {formatTokenAmount(selectedLoan.amount, 10).toFixed(4)} tokens
                 </p>
               )}
             </div>
@@ -393,9 +393,9 @@ export default function FlowTestingPage() {
               {repayLoanData && (
                 <div className="mt-2 p-3 bg-slate-50 rounded-md text-xs">
                   <p className="mb-1"><strong className="text-slate-700">Status:</strong> <span className="text-slate-800">{repayLoanData.status}</span></p>
-                  <p className="mb-1"><strong className="text-slate-700">Amount:</strong> <span className="text-slate-800">{formatTokenAmount(repayLoanData.amount, 18).toFixed(4)} tokens</span></p>
+                  <p className="mb-1"><strong className="text-slate-700">Amount:</strong> <span className="text-slate-800">{formatTokenAmount(repayLoanData.amount, 10).toFixed(4)} tokens</span></p>
                   {repaymentAmount && (
-                    <p><strong className="text-slate-700">Repayment:</strong> <span className="text-slate-800">{formatTokenAmount(repaymentAmount, 18).toFixed(4)} tokens</span></p>
+                    <p><strong className="text-slate-700">Repayment:</strong> <span className="text-slate-800">{formatTokenAmount(repaymentAmount, 10).toFixed(4)} tokens</span></p>
                   )}
                 </div>
               )}
