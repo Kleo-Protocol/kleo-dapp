@@ -6,7 +6,7 @@ import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/ui/tabs';
 import { Skeleton } from '@/shared/ui/skeleton';
-import { ArrowLeft, TrendingUp, DollarSign, Users, Clock, Percent, Shield, Zap, Target } from 'lucide-react';
+import { ArrowLeft, TrendingUp, DollarSign, Shield } from 'lucide-react';
 import { DepositForm } from '@/features/pools/components/deposit-form';
 import { WithdrawForm } from '@/features/pools/components/withdraw-form';
 import { ApyPreview } from '@/features/pools/components/apy-preview';
@@ -43,6 +43,7 @@ export function PoolDetailPage() {
     getStatusBadge,
     formatPoolStateValue,
     formatBasisPoints,
+    formatBaseInterestRate,
     formatOptimalUtilization,
     formatMaxRate,
     formatSlope2,
@@ -127,7 +128,7 @@ export function PoolDetailPage() {
         </div>
 
         {/* Key Metrics - Pool State */}
-        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+        <div className='grid gap-4 sm:grid-cols-3'>
           <Card>
             <CardContent className='pt-6'>
               <div className='flex items-center gap-2 text-muted-foreground mb-2'>
@@ -135,92 +136,7 @@ export function PoolDetailPage() {
                 <span className='text-sm'>Base Interest Rate</span>
               </div>
               <p className='text-2xl font-bold text-card-foreground'>
-                {formatBasisPoints(poolState.baseInterestRate)}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className='pt-6'>
-              <div className='flex items-center gap-2 text-muted-foreground mb-2'>
-                <Target className='size-4' />
-                <span className='text-sm'>Optimal Utilization</span>
-              </div>
-              <p className='text-2xl font-bold text-card-foreground'>
-                {formatOptimalUtilization(poolState.optimalUtilization)}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className='pt-6'>
-              <div className='flex items-center gap-2 text-muted-foreground mb-2'>
-                <Users className='size-4' />
-                <span className='text-sm'>Min Stars to Vouch</span>
-              </div>
-              <p className='text-2xl font-bold text-card-foreground'>{poolState.minStarsToVouch}</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className='pt-6'>
-              <div className='flex items-center gap-2 text-muted-foreground mb-2'>
-                <Zap className='size-4' />
-                <span className='text-sm'>Max Rate</span>
-              </div>
-              <p className='text-2xl font-bold text-card-foreground'>
-                {formatMaxRate(poolState.maxRate)}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Additional Pool State Metrics */}
-        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-5'>
-          <Card>
-            <CardContent className='pt-6'>
-              <div className='flex items-center gap-2 text-muted-foreground mb-2'>
-                <Percent className='size-4' />
-                <span className='text-sm'>Slope 1</span>
-              </div>
-              <p className='text-xl font-bold text-card-foreground'>
-                {formatSlope2(poolState.slope1)}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className='pt-6'>
-              <div className='flex items-center gap-2 text-muted-foreground mb-2'>
-                <Percent className='size-4' />
-                <span className='text-sm'>Slope 2</span>
-              </div>
-              <p className='text-xl font-bold text-card-foreground'>
-                {formatSlope2(poolState.slope2)}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className='pt-6'>
-              <div className='flex items-center gap-2 text-muted-foreground mb-2'>
-                <Zap className='size-4' />
-                <span className='text-sm'>Boost</span>
-              </div>
-              <p className='text-xl font-bold text-card-foreground'>
-                {formatMediumBasisPoints(poolState.boost)}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className='pt-6'>
-              <div className='flex items-center gap-2 text-muted-foreground mb-2'>
-                <Clock className='size-4' />
-                <span className='text-sm'>Cooldown Period</span>
-              </div>
-              <p className='text-xl font-bold text-card-foreground'>
-                {formatCooldownPeriod(poolState.cooldownPeriod)}
+                {formatBaseInterestRate(poolState?.baseInterestRate ?? pool?.baseInterestRate)}
               </p>
             </CardContent>
           </Card>
@@ -231,25 +147,24 @@ export function PoolDetailPage() {
                 <Shield className='size-4' />
                 <span className='text-sm'>Reserve Factor</span>
               </div>
-              <p className='text-xl font-bold text-card-foreground'>
+              <p className='text-2xl font-bold text-card-foreground'>
                 {poolState.reserveFactor}%
               </p>
             </CardContent>
           </Card>
-        </div>
 
-        {/* Exposure Cap */}
-        <Card>
-          <CardContent className='pt-6'>
-            <div className='flex items-center gap-2 text-muted-foreground mb-2'>
-              <DollarSign className='size-4' />
-              <span className='text-sm'>Exposure Cap</span>
-            </div>
-            <p className='text-2xl font-bold text-card-foreground'>
-              {formatPoolStateValue(poolState.exposureCap)} tokens
-            </p>
-          </CardContent>
-        </Card>
+          <Card>
+            <CardContent className='pt-6'>
+              <div className='flex items-center gap-2 text-muted-foreground mb-2'>
+                <DollarSign className='size-4' />
+                <span className='text-sm'>Exposure Cap</span>
+              </div>
+              <p className='text-2xl font-bold text-card-foreground'>
+                {formatPoolStateValue(poolState.exposureCap)} tokens
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Tabs Navigation */}

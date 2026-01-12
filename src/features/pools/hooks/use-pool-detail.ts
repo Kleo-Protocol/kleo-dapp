@@ -72,6 +72,22 @@ export function usePoolDetailLogic() {
     return `${num.toFixed(2)}%`;
   };
 
+  // Format base interest rate to 2 digits (no decimals)
+  // Can accept string (from poolState) or bigint (from pool)
+  const formatBaseInterestRate = (value: string | bigint | undefined): string => {
+    if (!value) return '—';
+    // If it's a string (from poolState), divide by 100000
+    // If it's a bigint (from pool), divide by 100 (basis points)
+    if (typeof value === 'string') {
+      const num = Number(value) / 1000000000;
+      return `${Math.round(num)}%`;
+    } else {
+      // bigint from pool - divide by 100 to get percentage
+      const num = Number(value) / 10000000;
+      return `${Math.round(num)}%`;
+    }
+  };
+
   // Format Optimal Utilization: divide by 10000000 * 100 = 1000000000
   const formatOptimalUtilization = (value: string): string => {
     return formatBasisPoints(value, 1000000000);
@@ -125,6 +141,7 @@ export function usePoolDetailLogic() {
     formatInterestRate,
     formatPoolStateValue,
     formatBasisPoints,
+    formatBaseInterestRate,
     formatOptimalUtilization,
     formatMaxRate,
     formatSlope2,

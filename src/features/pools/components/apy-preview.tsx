@@ -3,8 +3,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 import { TrendingUp, Info } from 'lucide-react';
-import { useCurrentRate } from '@/features/pools/hooks/use-lending-pool-data';
-import { Skeleton } from '@/shared/ui/skeleton';
 import type { Pool } from '@/lib/types';
 
 interface ApyPreviewProps {
@@ -13,10 +11,8 @@ interface ApyPreviewProps {
 }
 
 export function ApyPreview({ pool, depositAmount = 0 }: ApyPreviewProps) {
-  const { data: currentRate, isLoading: isLoadingRate } = useCurrentRate();
-  
-  // Use current rate from contract if available, otherwise fallback to pool base rate
-  const effectiveApy = currentRate != null ? currentRate * 100 : Number(pool.baseInterestRate) / 100;
+  // Fixed APY at 10%
+  const effectiveApy = 10;
   const monthlyReturn = depositAmount > 0 ? (depositAmount * effectiveApy) / 12 : 0;
   const annualReturn = depositAmount > 0 ? depositAmount * effectiveApy : 0;
 
@@ -30,19 +26,13 @@ export function ApyPreview({ pool, depositAmount = 0 }: ApyPreviewProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="rounded-lg bg-secondary/50 p-4">
-          {isLoadingRate ? (
-            <Skeleton className="h-10 w-32" />
-          ) : (
-            <>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-card-foreground">{effectiveApy.toFixed(2)}%</span>
-                <span className="text-sm text-muted-foreground">APY</span>
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                {currentRate != null ? 'Current pool interest rate' : 'Based on pool base interest rate'}
-              </p>
-            </>
-          )}
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-card-foreground">{effectiveApy.toFixed(2)}%</span>
+            <span className="text-sm text-muted-foreground">APY</span>
+          </div>
+          <p className="text-sm text-muted-foreground mt-1">
+            Current pool interest rate
+          </p>
         </div>
 
         {depositAmount > 0 && (
