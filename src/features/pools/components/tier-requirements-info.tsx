@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { Card, CardContent } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
-import { getTierRequirements, checkTierRequirements, getAllTiers } from '@/lib/loan-tiers';
+import { checkTierRequirements, getAllTiers } from '@/lib/loan-tiers';
 import { useStars } from '@/features/profile/hooks/use-reputation-queries';
 import { useTypink } from 'typink';
 
@@ -54,7 +54,7 @@ export function TierRequirementsInfo({
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <Badge variant={isActive ? 'verde' : 'default'}>
+                        <Badge variant={isActive ? 'verde' : 'secondary'}>
                           Tier {tier.tier}
                         </Badge>
                         <span className="text-sm text-muted-foreground">
@@ -112,7 +112,7 @@ export function TierRequirementsInfo({
     return null;
   }
 
-  const { requirements, isValid, missingStars } = tierInfo;
+  const { requirements, missingStars } = tierInfo;
 
   return (
     <Card>

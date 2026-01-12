@@ -10,6 +10,7 @@ interface ApyPreviewProps {
   depositAmount?: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ApyPreview({ pool, depositAmount = 0 }: ApyPreviewProps) {
   // Fixed APY at 10%
   const effectiveApy = 10;

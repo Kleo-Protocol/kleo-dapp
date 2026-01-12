@@ -6,7 +6,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shar
 import { Shield, Info } from 'lucide-react';
 import { formatBalance } from '@/shared/utils/format';
 import { useUserStore } from '@/store/user.store';
-import { TierRequirementsInfo } from '@/features/pools/components/tier-requirements-info';
 import type { Pool } from '@/lib/types';
 
 interface MaxBorrowInfoProps {

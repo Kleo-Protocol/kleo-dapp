@@ -194,7 +194,7 @@ function LoanItem({
           return true;
         }
       }
-    } catch (error) {
+    } catch {
       // Silently continue to other comparison methods
     }
     
@@ -310,7 +310,7 @@ function LoanItem({
         </div>
         <Button
           size="sm"
-          variant="default"
+          variant="primary"
           onClick={handleRepay}
           disabled={isRepaying || !repaymentAmount}
           className="gap-2"

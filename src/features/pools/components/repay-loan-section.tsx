@@ -9,7 +9,6 @@ import { Label } from '@/shared/ui/label';
 import { DollarSign } from 'lucide-react';
 import { useLoan, useRepaymentAmount } from '@/features/pools/hooks/use-loan-queries';
 import { useRepayLoan } from '@/features/pools/hooks/use-loan-transactions';
-import { AddressConverter } from '@/lib/address-converter';
 import { toast } from 'sonner';
 
 export function RepayLoanSection() {

@@ -3,7 +3,6 @@
 import { usePendingLoans, useActiveLoans, useLoan } from '@/features/pools/hooks/use-loan-queries';
 import { useVouchesForLoan } from '@/features/pools/hooks/use-vouch-queries';
 import { useMemo, useState } from 'react';
-import { AddressConverter } from '@/lib/address-converter';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/card';
 import {
   Table,
@@ -18,8 +17,8 @@ import { Button } from '@/shared/ui/button';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { Clock, Users, DollarSign, Inbox, Shield } from 'lucide-react';
 import { EmptyState } from '@/shared/components/empty-state';
-import { formatBalance, formatInterestRate } from '@/shared/utils/format';
 import { VouchModal } from './vouch-modal';
+import type { LoanDetails } from '@/lib/types';
 
 interface LoansListTableProps {
   showVouchButton?: boolean;
@@ -213,7 +212,9 @@ function LoanTableRow({ loanId, showVouchButton = false }: { loanId: bigint; sho
   const borrowerAddress = formatAddress(loan.borrower);
 
   // Convert loan to LoanDetails format for the modal (only if showVouchButton is true)
-  const loanDetails = showVouchButton ? {
+  // Note: We cast status to LoanStatus even though contract may return "Pending"
+  // The VouchModal doesn't use the status field, so this is safe
+  const loanDetails = showVouchButton ? ({
     loanId: BigInt(loanId),
     borrower: borrowerAddress,
     amount: loan.amount,
@@ -221,13 +222,13 @@ function LoanTableRow({ loanId, showVouchButton = false }: { loanId: bigint; sho
     term: loan.term,
     purpose: new Uint8Array(),
     startTime: loan.startTime || 0n,
-    status: loan.status as 'Active' | 'Repaid' | 'Defaulted' | 'Pending',
+    status: (loan.status === 'Pending' ? 'Active' : loan.status) as 'Active' | 'Repaid' | 'Defaulted',
     vouchers: [],
     dueTime: (loan.startTime || 0n) + loan.term,
     totalRepayment: totalRepayment || 0n,
     daysRemaining: typeof daysLeft === 'number' ? daysLeft : 0,
     isOverdue: false,
-  } : null;
+  } as LoanDetails) : null;
 
   return (
     <TableRow>
@@ -280,7 +281,7 @@ function LoanTableRow({ loanId, showVouchButton = false }: { loanId: bigint; sho
             <>
               <Button
                 size="sm"
-                variant="outline"
+                variant="secondary"
                 onClick={() => setVouchModalOpen(true)}
                 className="gap-2"
                 disabled={!loanDetails}

@@ -253,7 +253,7 @@ function PendingLoanCard({
                     {loanAmountTokens.toFixed(4)} tokens
                   </div>
                   {loanTier && (
-                    <Badge variant="default" className="mt-1 text-xs">
+                    <Badge variant="secondary" className="mt-1 text-xs">
                       Tier {loanTier}
                     </Badge>
                   )}
@@ -292,7 +292,7 @@ function PendingLoanCard({
           <Button
             onClick={onToggle}
             disabled={disabled || isVouching}
-            variant={isExpanded ? 'outline' : 'default'}
+            variant={isExpanded ? 'secondary' : 'primary'}
             size="sm"
           >
             {isExpanded ? 'Cancel' : 'Vouch'}

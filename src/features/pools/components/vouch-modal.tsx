@@ -177,7 +177,7 @@ export function VouchModal({ loan, open, onOpenChange }: VouchModalProps) {
           <DialogFooter>
             <Button
               type="button"
-              variant="outline"
+              variant="secondary"
               onClick={handleClose}
               disabled={isSubmitting}
             >

@@ -22,10 +22,8 @@ import { AnalyticsCharts } from '@/features/pools/components/analytics-charts';
 import { AnalyticsLoanHistory } from '@/features/pools/components/analytics-loan-history';
 import { BootstrapStarsForm } from '@/features/flow-testing/components/BootstrapStarsForm';
 import { usePoolDetailLogic } from '@/features/pools/hooks/use-pool-detail';
-import { useTypink } from 'typink';
 
 export function PoolDetailPage() {
-  const { connectedAccount } = useTypink();
   const {
     pool,
     poolState,
@@ -40,13 +38,7 @@ export function PoolDetailPage() {
     setDepositAmount,
     getStatusBadge,
     formatPoolStateValue,
-    formatBasisPoints,
     formatBaseInterestRate,
-    formatOptimalUtilization,
-    formatMaxRate,
-    formatSlope2,
-    formatCooldownPeriod,
-    formatMediumBasisPoints,
   } = usePoolDetailLogic();
 
   const statusBadge = getStatusBadge();
