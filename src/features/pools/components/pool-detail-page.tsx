@@ -23,8 +23,13 @@ import { AnalyticsCharts } from '@/features/pools/components/analytics-charts';
 import { AnalyticsLoanHistory } from '@/features/pools/components/analytics-loan-history';
 import { BootstrapStarsForm } from '@/features/flow-testing/components/BootstrapStarsForm';
 import { usePoolDetailLogic } from '@/features/pools/hooks/use-pool-detail';
+import { usePendingLoanDetails } from '@/features/pools/hooks/use-pending-loan-details';
+import { useActiveLoanDetails } from '@/features/pools/hooks/use-active-loan-details';
+import { useTypink } from 'typink';
+import { useMemo } from 'react';
 
 export function PoolDetailPage() {
+  const { connectedAccount } = useTypink();
   const {
     pool,
     poolState,
@@ -48,6 +53,13 @@ export function PoolDetailPage() {
   } = usePoolDetailLogic();
 
   const statusBadge = getStatusBadge();
+
+  // Load pending loans (for Lend tab - all pending loans for backing)
+  const { data: pendingLoans, isLoading: isLoadingPending } = usePendingLoanDetails();
+
+  // Load active loans (for Borrow tab - filtered by connected user)
+  const borrowerAddress = connectedAccount?.address;
+  const { data: activeLoans, isLoading: isLoadingActive } = useActiveLoanDetails(borrowerAddress);
 
   if (isLoading) {
     return (
@@ -280,7 +292,7 @@ export function PoolDetailPage() {
               </div>
               <LenderPositionCard />
               <MyDepositsTable deposits={[]} />
-              <PendingRequestsTable requests={[]} />
+              <PendingRequestsTable />
               <MyBacksTable backs={[]} />
             </div>
           )}
@@ -293,8 +305,8 @@ export function PoolDetailPage() {
                 <MaxBorrowInfo pool={pool} />
                 <BorrowForm pool={pool} maxBorrow={maxBorrow} />
               </div>
-              <RequestsTable requests={[]} />
-              <LoansTable loans={[]} />
+              <RequestsTable />
+              <LoansTable loans={activeLoans || []} isLoading={isLoadingActive} />
             </div>
           )}
         </TabsContent>

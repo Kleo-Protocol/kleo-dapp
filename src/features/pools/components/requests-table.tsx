@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/card';
 import {
   Table,
@@ -14,25 +15,27 @@ import { Skeleton } from '@/shared/ui/skeleton';
 import { Clock, Users, Inbox } from 'lucide-react';
 import { EmptyState } from '@/shared/components/empty-state';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
-import { getDaysRemaining } from '@/lib/loan-utils';
-import type { LoanDetails } from '@/lib/types';
+import { usePendingLoans, useLoan } from '@/features/pools/hooks/use-loan-queries';
+import { useVouchesForLoan } from '@/features/pools/hooks/use-vouch-queries';
+import { contractLoanToLoan } from '@/lib/loan-utils';
+import { useTypink } from 'typink';
 
-interface RequestsTableProps {
-  requests: LoanDetails[];
-  isLoading?: boolean;
-}
+/**
+ * Component to display loan requests - same pattern as LoansList
+ * Gets loan IDs from pending loans, then fetches full loan details for each
+ * Only shows loans for the connected user
+ */
+export function RequestsTable() {
+  const { connectedAccount } = useTypink();
+  const { data: pendingLoanIds, isLoading: isLoadingIds } = usePendingLoans();
 
-export function RequestsTable({ requests = [], isLoading = false }: RequestsTableProps) {
-  const formatDate = (timestamp: number | bigint) => {
-    const ts = typeof timestamp === 'bigint' ? Number(timestamp) * 1000 : timestamp;
-    return new Date(ts).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
+  // Convert IDs to bigints - same as LoansList
+  const loanIds = useMemo(() => {
+    if (!pendingLoanIds) return [];
+    return pendingLoanIds.map(id => typeof id === 'bigint' ? id : BigInt(id));
+  }, [pendingLoanIds]);
 
-  if (isLoading) {
+  if (isLoadingIds) {
     return (
       <Card>
         <CardHeader>
@@ -46,7 +49,11 @@ export function RequestsTable({ requests = [], isLoading = false }: RequestsTabl
     );
   }
 
-  if (requests.length === 0) {
+  // We'll filter loans by user in the RequestRow component
+  // So we pass all loanIds and let each row check if it belongs to the user
+  const userLoanIds = loanIds;
+
+  if (loanIds.length === 0 && !isLoadingIds) {
     return (
       <EmptyState
         icon={<Inbox className="size-12" />}
@@ -78,43 +85,111 @@ export function RequestsTable({ requests = [], isLoading = false }: RequestsTabl
             </TableRow>
           </TableHeader>
           <TableBody>
-            {requests.map((request) => {
-              const loanIdStr = request.loanId.toString();
-              const vouchersCount = request.vouchers?.length || 0;
-              
+            {userLoanIds.map((loanId) => {
+              const loanIdStr = typeof loanId === 'bigint' ? loanId.toString() : String(loanId);
               return (
-                <TableRow key={loanIdStr}>
-                  <TableCell className="font-medium">
-                    {formatBalance(request.amount)} tokens
-                  </TableCell>
-                  <TableCell>
-                    {/* Progress not applicable - loans are immediately Active when created */}
-                    <span className="text-sm text-slate-600">N/A</span>
-                  </TableCell>
-                  <TableCell>{formatInterestRate(request.interestRate)}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Users className="size-4 text-slate-400" />
-                      {vouchersCount} {vouchersCount === 1 ? 'voucher' : 'vouchers'}
-                    </div>
-                  </TableCell>
-                  <TableCell>{formatDate(request.startTime)}</TableCell>
-                  <TableCell>
-                    {request.status === 'Active' ? (
-                      <Badge variant="verde">Active</Badge>
-                    ) : request.status === 'Repaid' ? (
-                      <Badge variant="verde">Repaid</Badge>
-                    ) : (
-                      <Badge variant="rojo">Defaulted</Badge>
-                    )}
-                  </TableCell>
-                </TableRow>
+                <RequestRow key={loanIdStr} loanId={loanId} userAddress={connectedAccount?.address} />
               );
             })}
           </TableBody>
         </Table>
       </CardContent>
     </Card>
+  );
+}
+
+// Component for each loan row - uses useLoan directly like LoanCard
+function RequestRow({ loanId, userAddress }: { loanId: bigint; userAddress?: string }) {
+  // Fetch full loan details using getLoan - same as LoansList
+  const { data: loan, isLoading } = useLoan(loanId);
+  const { data: vouchCount } = useVouchesForLoan(loanId);
+
+  const formatDate = (timestamp: bigint) => {
+    // startTime is in seconds (block timestamp), convert to milliseconds for Date constructor
+    const ts = Number(timestamp) * 1000;
+    return new Date(ts).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  const formatAddress = (address: string | { raw?: string } | any): string => {
+    // Handle AccountId32 which might be an object with raw property
+    if (typeof address === 'object' && address !== null) {
+      if ('raw' in address) {
+        return String(address.raw);
+      }
+      if (typeof address.toString === 'function') {
+        return address.toString();
+      }
+      return String(address);
+    }
+    return String(address);
+  };
+
+  if (isLoading) {
+    return (
+      <TableRow>
+        <TableCell colSpan={6}>
+          <Skeleton className="h-12 w-full" />
+        </TableCell>
+      </TableRow>
+    );
+  }
+
+  if (!loan) {
+    return null;
+  }
+
+  // Check if this loan belongs to the connected user
+  if (!userAddress) {
+    return null; // No user connected
+  }
+  
+  const borrowerAddress = formatAddress(loan.borrower);
+  const isUserLoan = borrowerAddress.toLowerCase() === userAddress.toLowerCase();
+  
+  // Don't render if it's not the user's loan
+  if (!isUserLoan) {
+    return null;
+  }
+
+  // Convert to LoanDetails for display
+  const uiLoan = contractLoanToLoan(loan);
+  const vouchersCount = vouchCount ?? 0;
+  
+  return (
+    <TableRow>
+      <TableCell className="font-medium">
+        {formatBalance(uiLoan.amount)} tokens
+      </TableCell>
+      <TableCell>
+        {/* Progress not applicable - loans are immediately Active when created */}
+        <span className="text-sm text-slate-600">N/A</span>
+      </TableCell>
+      <TableCell>{formatInterestRate(uiLoan.interestRate)}</TableCell>
+      <TableCell>
+        <div className="flex items-center gap-1">
+          <Users className="size-4 text-slate-400" />
+          {vouchersCount} {vouchersCount === 1 ? 'voucher' : 'vouchers'}
+        </div>
+      </TableCell>
+      <TableCell>
+        {uiLoan.startTime ? formatDate(uiLoan.startTime) : 'N/A'}
+      </TableCell>
+      <TableCell>
+        {uiLoan.status === 'Active' ? (
+          <Badge variant="verde">Active</Badge>
+        ) : uiLoan.status === 'Repaid' ? (
+          <Badge variant="verde">Repaid</Badge>
+        ) : uiLoan.status === 'Defaulted' ? (
+          <Badge variant="rojo">Defaulted</Badge>
+        ) : (
+          <Badge variant="amarillo">{uiLoan.status}</Badge>
+        )}
+      </TableCell>
+    </TableRow>
   );
 }
 

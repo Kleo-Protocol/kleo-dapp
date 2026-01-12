@@ -13,11 +13,11 @@ export function LoansList() {
   const { data: activeLoans, isLoading: isLoadingActive } = useActiveLoans();
 
   // Combine all loan IDs (pending + active)
-  const allLoanIds = useMemo(() => {
-    const pending = (pendingLoans ?? []).map(id => typeof id === 'bigint' ? id : BigInt(id));
-    const active = (activeLoans ?? []).map(id => typeof id === 'bigint' ? id : BigInt(id));
-    return [...pending, ...active];
-  }, [pendingLoans, activeLoans]);
+    const allLoanIds = useMemo(() => {
+      const pending = (pendingLoans ?? []).map(id => typeof id === 'bigint' ? id : BigInt(id));
+      const active = (activeLoans ?? []).map(id => typeof id === 'bigint' ? id : BigInt(id));
+      return [...pending, ...active];
+    }, [pendingLoans, activeLoans]);
 
   const isLoading = isLoadingPending || isLoadingActive;
 

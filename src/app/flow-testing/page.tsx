@@ -119,7 +119,7 @@ export default function FlowTestingPage() {
       return;
     }
 
-    const amountBigInt = parseTokenAmount(loanAmount, 18); // Loans use 18 decimals
+    const amountBigInt = parseTokenAmount(loanAmount, 10); // Loans use 10 decimals (contract storage format)
     const termDays = parseInt(loanTerm);
     const termMs = BigInt(termDays * 24 * 60 * 60 * 1000);
 

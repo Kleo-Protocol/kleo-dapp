@@ -56,8 +56,8 @@ export function useBorrowForm({ pool, maxBorrow, onRequestCreated }: UseBorrowFo
       return;
     }
 
-    // Exact same logic as flow-testing
-    const amountBigInt = parseTokenAmount(amount, 18); // Loans use 18 decimals
+    // Loans use 10 decimals (based on contract storage format)
+    const amountBigInt = parseTokenAmount(amount, 10); // Loans use 10 decimals
     const termDays = parseInt(duration);
     const termMs = BigInt(termDays * 24 * 60 * 60 * 1000);
 
