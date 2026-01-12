@@ -112,7 +112,7 @@ export function TierRequirementsInfo({
     return null;
   }
 
-  const { requirements, isValid, missingStars, missingVouchers } = tierInfo;
+  const { requirements, isValid, missingStars } = tierInfo;
 
   return (
     <Card>
@@ -125,8 +125,8 @@ export function TierRequirementsInfo({
                 Tier {requirements.tier} Requirements
               </span>
             </div>
-            <Badge variant={isValid ? 'verde' : 'rojo'}>
-              {isValid ? 'Requirements Met' : 'Requirements Not Met'}
+            <Badge variant={missingStars === 0 ? 'verde' : 'rojo'}>
+              {missingStars === 0 ? 'Stars Requirement Met' : 'Stars Requirement Not Met'}
             </Badge>
           </div>
 
@@ -157,24 +157,9 @@ export function TierRequirementsInfo({
               </div>
             )}
 
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Min Vouchers Required</span>
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-card-foreground">{requirements.minVouchers}</span>
-                {currentVouchers > 0 && (
-                  <span className={`text-xs ${currentVouchers >= requirements.minVouchers ? 'text-forest-green' : 'text-atomic-tangerine'}`}>
-                    (Current: {currentVouchers})
-                  </span>
-                )}
-              </div>
+            <div className="text-sm text-muted-foreground pt-2 border-t border-border">
+              <p>You will need {requirements.minVouchers} vouchers to start this loan</p>
             </div>
-
-            {missingVouchers > 0 && (
-              <div className="flex items-center gap-2 text-xs text-atomic-tangerine bg-atomic-tangerine/10 p-2 rounded">
-                <AlertCircle className="size-3" />
-                <span>You need {missingVouchers} more vouchers</span>
-              </div>
-            )}
           </div>
         </div>
       </CardContent>

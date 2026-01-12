@@ -78,15 +78,9 @@ export function useBorrowForm({ pool, maxBorrow, onRequestCreated }: UseBorrowFo
     }
 
     const tierCheck = checkTierRequirements(amountNum, userStars, 0);
-    if (!tierCheck.isValid) {
-      const errors: string[] = [];
-      if (tierCheck.missingStars > 0) {
-        errors.push(`Need ${tierCheck.missingStars} more stars`);
-      }
-      if (tierCheck.missingVouchers > 0) {
-        errors.push(`Need ${tierCheck.missingVouchers} more vouchers`);
-      }
-      toast.error(`Tier ${tier} requirements not met: ${errors.join(', ')}`);
+    // Only check stars requirement, vouchers are informational only
+    if (tierCheck.missingStars > 0) {
+      toast.error(`Tier ${tier} requirements not met: Need ${tierCheck.missingStars} more stars`);
       return;
     }
 
