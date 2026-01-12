@@ -13,8 +13,7 @@ import { ApyPreview } from '@/features/pools/components/apy-preview';
 import { MyDepositsTable } from '@/features/pools/components/my-deposits-table';
 import { MaxBorrowInfo } from '@/features/pools/components/max-borrow-info';
 import { BorrowForm } from '@/features/pools/components/borrow-form';
-import { RequestsTable } from '@/features/pools/components/requests-table';
-import { LoansTable } from '@/features/pools/components/loans-table';
+import { LoansListTable } from '@/features/pools/components/loans-list-table';
 import { LenderPositionCard } from '@/features/pools/components/lender-position-card';
 import { PendingRequestsTable } from '@/features/pools/components/pending-requests-table';
 import { MyBacksTable } from '@/features/pools/components/my-backs-table';
@@ -23,7 +22,6 @@ import { AnalyticsCharts } from '@/features/pools/components/analytics-charts';
 import { AnalyticsLoanHistory } from '@/features/pools/components/analytics-loan-history';
 import { BootstrapStarsForm } from '@/features/flow-testing/components/BootstrapStarsForm';
 import { usePoolDetailLogic } from '@/features/pools/hooks/use-pool-detail';
-import { useActiveLoanDetails } from '@/features/pools/hooks/use-active-loan-details';
 import { useTypink } from 'typink';
 
 export function PoolDetailPage() {
@@ -52,10 +50,6 @@ export function PoolDetailPage() {
   } = usePoolDetailLogic();
 
   const statusBadge = getStatusBadge();
-
-  // Load active loans (for Borrow tab - filtered by connected user)
-  const borrowerAddress = connectedAccount?.address;
-  const { data: activeLoans, isLoading: isLoadingActive } = useActiveLoanDetails(borrowerAddress);
 
   if (isLoading) {
     return (
@@ -215,8 +209,7 @@ export function PoolDetailPage() {
                 <MaxBorrowInfo pool={pool} />
                 <BorrowForm pool={pool} maxBorrow={maxBorrow} />
               </div>
-              <RequestsTable />
-              <LoansTable loans={activeLoans || []} isLoading={isLoadingActive} />
+              <LoansListTable />
             </div>
           )}
         </TabsContent>
