@@ -19,9 +19,63 @@ import { PendingRequestsTable } from '@/features/pools/components/pending-reques
 import { MyBacksTable } from '@/features/pools/components/my-backs-table';
 import { AnalyticsKpiCards } from '@/features/pools/components/analytics-kpi-cards';
 import { AnalyticsCharts } from '@/features/pools/components/analytics-charts';
-import { AnalyticsLoanHistory } from '@/features/pools/components/analytics-loan-history';
-import { BootstrapStarsForm } from '@/features/flow-testing/components/BootstrapStarsForm';
+import { PoolHistory } from '@/features/pools/components/pool-history';
 import { usePoolDetailLogic } from '@/features/pools/hooks/use-pool-detail';
+import { usePoolLoans } from '@/features/pools/hooks/use-pool-loans';
+import type { LoanManagerLoan } from '@/contracts/types/loan-manager/types';
+
+// Helper function to transform loans for AnalyticsLoanHistory
+function transformLoansForAnalytics(loans: LoanManagerLoan[]): Array<{
+  loanId: string;
+  borrower: string;
+  amount: bigint;
+  interestRate: bigint;
+  dueDate: bigint;
+  status: 'active' | 'completed' | 'defaulted' | 'overdue';
+  repaidAmount: bigint;
+  isOverdue: boolean;
+  createdAt: number;
+}> {
+  const now = BigInt(Math.floor(Date.now() / 1000));
+  
+  return loans.map((loan) => {
+    const startTime = BigInt(loan.startTime || 0);
+    const term = BigInt(loan.term || 0);
+    const dueDate = startTime + term;
+    const isOverdue = loan.status === 'Active' && now > dueDate;
+    
+    // Calculate repayment amount (principal + interest)
+    const amount = BigInt(loan.amount || 0);
+    const interestRate = BigInt(loan.interestRate || 0);
+    const divisor = 365n * 86400n * 10000n;
+    const interestAmount = (amount * interestRate * term) / divisor;
+    const repaidAmount = loan.status === 'Repaid' ? amount + interestAmount : 0n;
+    
+    // Map status
+    let status: 'active' | 'completed' | 'defaulted' | 'overdue';
+    if (loan.status === 'Repaid') {
+      status = 'completed';
+    } else if (loan.status === 'Defaulted') {
+      status = 'defaulted';
+    } else if (isOverdue) {
+      status = 'overdue';
+    } else {
+      status = 'active';
+    }
+    
+    return {
+      loanId: String(loan.loanId || ''),
+      borrower: typeof loan.borrower === 'string' ? loan.borrower : String(loan.borrower),
+      amount,
+      interestRate,
+      dueDate,
+      status,
+      repaidAmount,
+      isOverdue,
+      createdAt: Number(startTime),
+    };
+  });
+}
 
 export function PoolDetailPage() {
   const {
@@ -40,6 +94,8 @@ export function PoolDetailPage() {
     formatPoolStateValue,
     formatBaseInterestRate,
   } = usePoolDetailLogic();
+  
+  const { loans: poolLoans, isLoading: isLoadingLoans } = usePoolLoans();
 
   const statusBadge = getStatusBadge();
 
@@ -200,32 +256,14 @@ export function PoolDetailPage() {
         </TabsContent>
 
         <TabsContent value='history'>
-          <Card>
-            <CardHeader>
-              <CardTitle>History</CardTitle>
-              <CardDescription>Pool transaction history</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className='text-slate-600'>History content will be displayed here.</p>
-            </CardContent>
-          </Card>
+          <PoolHistory />
         </TabsContent>
 
         <TabsContent value='analytics'>
-          {isPoolCreator && pool && poolStats ? (
+          {isPoolCreator && pool ? (
             <div className='space-y-6'>
-              <AnalyticsKpiCards stats={poolStats} />
-              <AnalyticsCharts />
-              <AnalyticsLoanHistory loans={[]} isCreator={isPoolCreator} />
-              <Card>
-                <CardHeader>
-                  <CardTitle>Admin Tools</CardTitle>
-                  <CardDescription>Bootstrap stars for test accounts (admin only)</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <BootstrapStarsForm />
-                </CardContent>
-              </Card>
+              {poolStats && <AnalyticsKpiCards stats={poolStats} />}
+              <AnalyticsCharts isLoading={isLoadingLoans} />
             </div>
           ) : (
             <Card>
