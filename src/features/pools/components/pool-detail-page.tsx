@@ -156,7 +156,6 @@ export function PoolDetailPage() {
       {/* Tabs Navigation */}
       <Tabs value={activePoolTab} onValueChange={(value) => setActivePoolTab(value as typeof activePoolTab)}>
         <TabsList>
-          <TabsTrigger value='overview'>Overview</TabsTrigger>
           <TabsTrigger value='lend'>Lend</TabsTrigger>
           <TabsTrigger value='borrow'>Borrow</TabsTrigger>
           <TabsTrigger value='vouch'>Vouch</TabsTrigger>
@@ -165,17 +164,6 @@ export function PoolDetailPage() {
         </TabsList>
 
         {/* Tab Panels */}
-        <TabsContent value='overview'>
-          <Card>
-            <CardHeader>
-              <CardTitle>Overview</CardTitle>
-              <CardDescription>Pool overview information</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className='text-slate-600'>Overview content will be displayed here.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value='lend'>
           {pool && (

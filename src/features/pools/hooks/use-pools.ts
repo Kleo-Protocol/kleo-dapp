@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useKleoClient } from '@/providers/kleo-client-provider';
 import { useTypink } from 'typink';
 import { QUERY_STALE_TIMES } from '@/lib/constants';
 import type { Pool } from '@/lib/types';
+import { usePoolContractData } from './use-pool-contract-data';
 
 // Query keys
 const poolsBaseKey = ['pools'] as const;
@@ -39,12 +41,13 @@ function transformSdkPool(sdkPool: any): Pool {
 }
 
 /**
- * Hook to fetch all pools using kleo-sdk
+ * Hook to fetch all pools using kleo-sdk and enrich with contract data
  */
 export function usePools() {
   const { client, isConnected } = useKleoClient();
+  const contractData = usePoolContractData();
 
-  return useQuery({
+  const poolsQuery = useQuery({
     queryKey: poolsKeys.lists.all,
     queryFn: async (): Promise<Pool[]> => {
       if (!client) {
@@ -56,29 +59,73 @@ export function usePools() {
     enabled: isConnected && !!client,
     staleTime: 60000, // 1 minute
   });
+
+  // Merge contract data into pools
+  const enrichedPools = useMemo(() => {
+    if (!poolsQuery.data) {
+      return [];
+    }
+
+    return poolsQuery.data.map((pool) => ({
+      ...pool,
+      // Replace with contract data if available
+      totalLiquidity: contractData.totalLiquidity,
+      availableLiquidity: contractData.availableLiquidity,
+      activeLoans: contractData.activeLoansCount,
+      baseInterestRate: contractData.currentRateBasisPoints,
+    }));
+  }, [poolsQuery.data, contractData]);
+
+  return {
+    ...poolsQuery,
+    data: enrichedPools,
+    isLoading: poolsQuery.isLoading || contractData.isLoading,
+  };
 }
 
 /**
- * Hook to fetch available pools (active with liquidity) using kleo-sdk
+ * Hook to fetch available pools (active with liquidity) using kleo-sdk and enrich with contract data
  */
 export function useAvailablePools() {
   const { client, isConnected } = useKleoClient();
+  const contractData = usePoolContractData();
 
-  return useQuery({
+  const poolsQuery = useQuery({
     queryKey: poolsKeys.lists.available,
     queryFn: async (): Promise<Pool[]> => {
       if (!client) {
         throw new Error('Kleo client is not connected');
       }
       const pools = await client.getPools();
-      // Filter for active pools with available liquidity
-      return pools
-        .map(transformSdkPool)
-        .filter((pool) => pool.status === 'active' && pool.availableLiquidity > 0n);
+      return pools.map(transformSdkPool);
     },
     enabled: isConnected && !!client,
     staleTime: 30000, // 30 seconds
   });
+
+  // Merge contract data into pools and filter
+  const enrichedPools = useMemo(() => {
+    if (!poolsQuery.data) {
+      return [];
+    }
+
+    return poolsQuery.data
+      .map((pool) => ({
+        ...pool,
+        // Replace with contract data if available
+        totalLiquidity: contractData.totalLiquidity,
+        availableLiquidity: contractData.availableLiquidity,
+        activeLoans: contractData.activeLoansCount,
+        baseInterestRate: contractData.currentRateBasisPoints,
+      }))
+      .filter((pool) => pool.status === 'active' && pool.availableLiquidity > 0n);
+  }, [poolsQuery.data, contractData]);
+
+  return {
+    ...poolsQuery,
+    data: enrichedPools,
+    isLoading: poolsQuery.isLoading || contractData.isLoading,
+  };
 }
 
 /**

@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/sha
 import { Button } from '@/shared/ui/button';
 import { Badge } from '@/shared/ui/badge';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
+import { useTypink } from 'typink';
+import { useUserDeposits } from '@/features/pools/hooks/use-lending-pool-data';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import type { Pool } from '@/lib/types';
@@ -15,6 +17,8 @@ interface DashboardPoolsProps {
 }
 
 export function DashboardPools({ pools, isLoading }: DashboardPoolsProps) {
+  const { connectedAccount } = useTypink();
+  const { data: userDeposits = 0n } = useUserDeposits(connectedAccount?.address);
   if (isLoading) {
     return (
       <Card>
@@ -83,7 +87,7 @@ export function DashboardPools({ pools, isLoading }: DashboardPoolsProps) {
                     </div>
                     <div>
                       <p className="text-muted-foreground">Available</p>
-                      <p className="font-semibold">{formatBalance(pool.availableLiquidity)}</p>
+                      <p className="font-semibold">{formatBalance(userDeposits, 10)}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Utilization</p>
