@@ -6,6 +6,8 @@ import { Button } from '@/shared/ui/button';
 import { Badge } from '@/shared/ui/badge';
 import { TrendingUp, Users, DollarSign, ArrowRight } from 'lucide-react';
 import { formatBalance, formatInterestRate } from '@/shared/utils/format';
+import { useTypink } from 'typink';
+import { useUserDeposits } from '@/features/pools/hooks/use-lending-pool-data';
 import type { Pool } from '@/lib/types';
 
 interface PoolCardProps {
@@ -13,6 +15,8 @@ interface PoolCardProps {
 }
 
 export function PoolCard({ pool }: PoolCardProps) {
+  const { connectedAccount } = useTypink();
+  const { data: userDeposits = 0n } = useUserDeposits(connectedAccount?.address);
 
   const utilizationRate = pool.totalLiquidity > 0n
     ? Number((pool.totalLiquidity - pool.availableLiquidity) * BigInt(100) / pool.totalLiquidity)
@@ -56,7 +60,7 @@ export function PoolCard({ pool }: PoolCardProps) {
               <DollarSign className="size-4" />
               <span className="text-xs">Available</span>
             </div>
-            <p className="text-lg font-semibold text-card-foreground">{formatBalance(pool.availableLiquidity)}</p>
+            <p className="text-lg font-semibold text-card-foreground">{formatBalance(userDeposits, 10)}</p>
           </div>
           <div>
             <div className="flex items-center gap-2 text-muted-foreground mb-1">
@@ -75,10 +79,6 @@ export function PoolCard({ pool }: PoolCardProps) {
 
         <div className="pt-2 border-t border-border">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Total Liquidity</span>
-            <span className="font-medium text-card-foreground">{formatBalance(pool.totalLiquidity)}</span>
-          </div>
-          <div className="flex items-center justify-between text-sm mt-1">
             <span className="text-muted-foreground">Active Loans</span>
             <span className="font-medium text-card-foreground">{pool.activeLoans}</span>
           </div>

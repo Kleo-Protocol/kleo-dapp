@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type PoolTab = 'overview' | 'lend' | 'borrow' | 'history' | 'analytics';
+export type PoolTab = 'lend' | 'borrow' | 'history' | 'analytics';
 
 interface ModalStates {
   [key: string]: boolean;
@@ -21,7 +21,7 @@ interface UiActions {
 }
 
 const initialState: UiState = {
-  activePoolTab: 'overview',
+  activePoolTab: 'lend',
   modalStates: {},
 };
 

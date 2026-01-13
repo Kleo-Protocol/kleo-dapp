@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/card';
+import { Card, CardContent } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/ui/tabs';
@@ -19,8 +19,7 @@ import { PendingRequestsTable } from '@/features/pools/components/pending-reques
 import { MyBacksTable } from '@/features/pools/components/my-backs-table';
 import { AnalyticsKpiCards } from '@/features/pools/components/analytics-kpi-cards';
 import { AnalyticsCharts } from '@/features/pools/components/analytics-charts';
-import { AnalyticsLoanHistory } from '@/features/pools/components/analytics-loan-history';
-import { BootstrapStarsForm } from '@/features/flow-testing/components/BootstrapStarsForm';
+import { PoolHistory } from '@/features/pools/components/pool-history';
 import { usePoolDetailLogic } from '@/features/pools/hooks/use-pool-detail';
 
 export function PoolDetailPage() {
@@ -156,7 +155,6 @@ export function PoolDetailPage() {
       {/* Tabs Navigation */}
       <Tabs value={activePoolTab} onValueChange={(value) => setActivePoolTab(value as typeof activePoolTab)}>
         <TabsList>
-          <TabsTrigger value='overview'>Overview</TabsTrigger>
           <TabsTrigger value='lend'>Lend</TabsTrigger>
           <TabsTrigger value='borrow'>Borrow</TabsTrigger>
           <TabsTrigger value='vouch'>Vouch</TabsTrigger>
@@ -165,17 +163,6 @@ export function PoolDetailPage() {
         </TabsList>
 
         {/* Tab Panels */}
-        <TabsContent value='overview'>
-          <Card>
-            <CardHeader>
-              <CardTitle>Overview</CardTitle>
-              <CardDescription>Pool overview information</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className='text-slate-600'>Overview content will be displayed here.</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value='lend'>
           {pool && (
@@ -212,32 +199,14 @@ export function PoolDetailPage() {
         </TabsContent>
 
         <TabsContent value='history'>
-          <Card>
-            <CardHeader>
-              <CardTitle>History</CardTitle>
-              <CardDescription>Pool transaction history</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className='text-slate-600'>History content will be displayed here.</p>
-            </CardContent>
-          </Card>
+          <PoolHistory />
         </TabsContent>
 
         <TabsContent value='analytics'>
-          {isPoolCreator && pool && poolStats ? (
+          {isPoolCreator && pool ? (
             <div className='space-y-6'>
-              <AnalyticsKpiCards stats={poolStats} />
+              {poolStats && <AnalyticsKpiCards stats={poolStats} />}
               <AnalyticsCharts />
-              <AnalyticsLoanHistory loans={[]} isCreator={isPoolCreator} />
-              <Card>
-                <CardHeader>
-                  <CardTitle>Admin Tools</CardTitle>
-                  <CardDescription>Bootstrap stars for test accounts (admin only)</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <BootstrapStarsForm />
-                </CardContent>
-              </Card>
             </div>
           ) : (
             <Card>

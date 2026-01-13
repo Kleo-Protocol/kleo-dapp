@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/ui/tooltip';
 import { TrendingUp, Info } from 'lucide-react';
@@ -10,12 +11,24 @@ interface ApyPreviewProps {
   depositAmount?: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ApyPreview({ pool, depositAmount = 0 }: ApyPreviewProps) {
-  // Fixed APY at 10%
-  const effectiveApy = 10;
-  const monthlyReturn = depositAmount > 0 ? (depositAmount * effectiveApy) / 12 : 0;
-  const annualReturn = depositAmount > 0 ? depositAmount * effectiveApy : 0;
+  // Convert baseInterestRate from stored format (10 decimal places precision) to percentage
+  // Example: 1000000112n / 10000000000 * 100 = 10.00000112%
+  const effectiveApy = useMemo(() => {
+    return (Number(pool.baseInterestRate) / 10000000000) * 100;
+  }, [pool.baseInterestRate]);
+
+  // Calculate returns: depositAmount * (APY / 100)
+  // Monthly return: annual return / 12
+  const monthlyReturn = useMemo(() => {
+    if (depositAmount <= 0) return 0;
+    return (depositAmount * (effectiveApy / 100)) / 12;
+  }, [depositAmount, effectiveApy]);
+
+  const annualReturn = useMemo(() => {
+    if (depositAmount <= 0) return 0;
+    return depositAmount * (effectiveApy / 100);
+  }, [depositAmount, effectiveApy]);
 
   return (
     <Card>
@@ -28,7 +41,9 @@ export function ApyPreview({ pool, depositAmount = 0 }: ApyPreviewProps) {
       <CardContent className="space-y-4">
         <div className="rounded-lg bg-secondary/50 p-4">
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-card-foreground">{effectiveApy.toFixed(2)}%</span>
+            <span className="text-3xl font-bold text-card-foreground">
+              {effectiveApy.toLocaleString('en-US', { maximumFractionDigits: 20, useGrouping: false, minimumFractionDigits: 2 })}%
+            </span>
             <span className="text-sm text-muted-foreground">APY</span>
           </div>
           <p className="text-sm text-muted-foreground mt-1">
