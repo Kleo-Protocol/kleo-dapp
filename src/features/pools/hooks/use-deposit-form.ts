@@ -83,13 +83,18 @@ export function useDepositForm({ pool, onAmountChange }: UseDepositFormProps) {
     return depositAmount > 0 && depositAmount <= userBalance && !!contract && !!connectedAccount;
   }, [depositAmount, userBalance, contract, connectedAccount]);
 
+  // Convert baseInterestRate from stored format (10 decimal places precision) to percentage
+  // Example: 1000000112n / 10000000000 * 100 = 10.00000112%
   const interestRate = useMemo(() => {
-    return Number(pool.baseInterestRate) / 100;
+    return (Number(pool.baseInterestRate) / 10000000000) * 100;
   }, [pool.baseInterestRate]);
 
+  // Calculate annual return: depositAmount * (APY / 100)
   const estimatedAnnualReturn = useMemo(() => {
-    return depositAmount * (Number(pool.baseInterestRate) / 10000);
-  }, [depositAmount, pool.baseInterestRate]);
+    if (depositAmount <= 0) return 0;
+    const apyPercentage = interestRate; // Already in percentage (e.g., 10.00000112)
+    return depositAmount * (apyPercentage / 100);
+  }, [depositAmount, interestRate]);
 
   const hasInsufficientBalance = depositAmount > userBalance;
 

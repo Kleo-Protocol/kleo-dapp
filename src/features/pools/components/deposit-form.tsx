@@ -106,7 +106,7 @@ export function DepositForm({ pool, onAmountChange }: DepositFormProps) {
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Estimated APY</span>
               <span className="font-semibold text-card-foreground">
-                {interestRate.toFixed(2)}%
+                {interestRate.toLocaleString('en-US', { maximumFractionDigits: 20, useGrouping: false, minimumFractionDigits: 2 })}%
               </span>
             </div>
             {depositAmount > 0 && (
